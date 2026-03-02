@@ -1,0 +1,84 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { tag, region, district } from './components/tag'
+
+const TAG = tag.common
+
+export const writeConsole = (TAG: string, text: string) =>{
+    const now = new Date()
+    const hours = now.getHours()
+    const minutes = now.getMinutes()
+    const secends = now.getSeconds()
+    const milliseconds = now.getMilliseconds()
+
+    const msg = `[${hours}:${minutes}:${secends}:${milliseconds}] [${TAG}] ${text}`
+    console.log(msg)
+}
+
+export const AsyncStoreData = async (key: string, value: string) => {
+  try {
+    writeConsole(TAG, `Saving data key: ${key} | value: ${value}`)
+    await AsyncStorage.setItem(key, value)
+  } catch (e) {
+    writeConsole(TAG, `Error saving data ${e}`)
+  }
+}
+
+export const AsyncGetData = async (key: string, defaultValue?: string) => {
+  try {
+    const value = await AsyncStorage.getItem(key)
+    if (value !== null) {
+      writeConsole(TAG, `Get data key: ${key} | value: ${value}`)
+      return value;
+    }
+    else if (defaultValue){
+      return defaultValue
+    }
+    else {
+      return undefined
+    }
+  } catch (e) {
+    writeConsole(TAG, `Error reading data ${e}`)
+  }
+}
+
+export const regionCodeToLabel = (code: string) => {
+    const map: Record<string, string> = {
+        "1": "HK",
+        "2": "KLN",
+        "3": "NT",
+    }
+    return map[code] || code
+}
+
+export const regionCodeToFullLabel = (code: string) => {
+    const map: Record<string, string> = {
+        "1": "Hong Kong Island",
+        "2": "Kowloon",
+        "3": "New Territories",
+    }
+    return map[code] || code
+}
+
+export const districtCodeToLabel = (code: string) => {
+    const map: Record<string, string> = {
+        "1": "Central and Western",
+        "2": "Wan Chai",
+        "3": "Eastern",
+        "4": "Southern",
+        "5": "Yau Tsim Mong",
+        "6": "Sham Shui Po",
+        "7": "Kowloon City",
+        "8": "Wong Tai Sin",
+        "9": "Kwun Tong",
+        "10": "Kwai Tsing",
+        "11": "Tsuen Wan",
+        "12": "Tuen Mun",
+        "13": "Yuen Long",
+        "14": "North",
+        "15": "Tai Po",
+        "16": "Sha Tin",
+        "17": "Sai Kung",
+        "18": "Islands",
+    }
+    return map[code] || code
+}
