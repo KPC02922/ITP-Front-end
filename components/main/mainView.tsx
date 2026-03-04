@@ -12,6 +12,7 @@ import { ActivityIndicator, Alert } from "react-native"
 import { Asset } from "expo-asset"
 import * as FileSystem from "expo-file-system/legacy"
 import * as Location from 'expo-location'
+import { initMarkerVisibility } from "@/controller/map/homeMapMarkerController"
 
 const TAG = tag.mainView
 
@@ -76,6 +77,8 @@ const MainView = ({}) => {
 
         loadHtml()
 
+        initMarkerVisibility()
+
         return () => {
             isMounted = false
         }
@@ -89,7 +92,7 @@ const MainView = ({}) => {
         <>
             <StatusBar style={view == tag.homeView ? "dark" : "light"}/>
 
-            {headerVisible && <Header />}
+            {headerVisible && <Header view={view} />}
             
             {/* MainView */}
             {

@@ -90,6 +90,22 @@ export const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 10,
   },
+  closeBtnRowContainer: {
+      backgroundColor: '#4A4A4A',
+      flexDirection: 'row',
+      width: '80%',
+      borderBottomStartRadius: 5,
+      borderBottomEndRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+  },
+  closeBtnRowBtnContainer: {
+    flex: 100,
+    paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
 
   homeMapContainer: {
     flex: 60,
@@ -124,5 +140,16 @@ export const styles = StyleSheet.create({
   listItemContainerRight: {
     width: '69%',
     textAlign: 'left',
+  },
+
+  mapMarkerControlPanelRowContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
+
+  bottomBorderContainer: {
+    width: '100%',
+    borderBottomColor: '#333',
+    borderBottomWidth: 0.5,
   },
 })

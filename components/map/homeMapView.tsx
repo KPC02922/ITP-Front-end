@@ -1,31 +1,28 @@
-import { tag } from "@/components/tag"
+import { tag, mapMarkerTag } from "@/components/tag"
 import { styles } from "@/assets/styles/styles"
+import * as Common from "@/common"
 import { Text } from "@/components/ui/text"
 import { VStack } from "@/components/ui/vstack"
 import { Box } from "../ui/box"
 // import MapView, { Marker, LatLng, Region, PROVIDER_GOOGLE } from 'react-native-maps'
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ActivityIndicator, Dimensions } from "react-native"
-import * as Common from "@/common"
 import { Fab, FabIcon, FabLabel } from "../ui/fab"
-import { Settings, Locate } from 'lucide-react-native'
+import { Settings, Locate, CloudRain } from 'lucide-react-native'
 import * as Location from 'expo-location'
-import { AnimationType, INFINITE_ANIMATION_ITERATIONS, LatLng, LeafletView, WebviewLeafletMessage } from 'react-native-leaflet-view'
+import { AnimationType, INFINITE_ANIMATION_ITERATIONS, LatLng, LeafletView, MapMarker, WebviewLeafletMessage } from 'react-native-leaflet-view'
+import { rainfallJson } from "@/demoData/rainfallJson"
+import { sfExpressJson } from "@/demoData/sfExpressJson"
+import { jockeyClubJson } from "@/demoData/jockeyClubJson"
+import { getMarkerVisibility } from "@/controller/map/homeMapMarkerController"
 
 const TAG = tag.homeMapView
 
-export const HomeMapView = ({onChangeView, webViewContent}: any) => {
-    const {width, height} = Dimensions.get("window");
-    const ASPECT_RATIO = width/height;
-    const LATITUDE_DELTA = 0.02;
-    const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalRef, rerender}: {onChangeView: any; webViewContent: string; mapControlPanelModalRef: any; rerender: boolean}) => {
     const VTCL_POSITION = {
         latitude: 22.342747295665276,
         longitude: 114.1087984919611,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
     }
-    // const mapRef = useRef<MapView | null>(null)
     const initPosition = Common.getCurrentPosition()
     const [mapCenterPosition, setMapCenterPosition] = useState<{lat: number, lng: number}>
     (initPosition.latitude > 0 && initPosition.longitude > 0 
@@ -33,10 +30,12 @@ export const HomeMapView = ({onChangeView, webViewContent}: any) => {
         : {lat: VTCL_POSITION.latitude, lng: VTCL_POSITION.longitude}
     )
     const [zoom, setZoom] = useState<number>(17)
+    const [mapMarkerList, setMapMarkerList] = useState<MapMarker[]>([])
 
     const onSettingFabPress = () => {
         Common.writeConsole(TAG, `FAB pressed`)
-        onChangeView(TAG, tag.infoView)
+        // onChangeView(TAG, tag.infoView)
+        mapControlPanelModalRef.current?.open()
     }
 
     // onZoomStart. onMoveStart, onMove, onZoom, onZoomEnd, onMoveEnd, onMapClicked, onMapMarkerClicked
@@ -51,12 +50,6 @@ export const HomeMapView = ({onChangeView, webViewContent}: any) => {
             setMapCenterPosition({lat: initPosition.latitude, lng: initPosition.longitude})
             
         }
-
-        // let { status } = await Location.requestForegroundPermissionsAsync()
-        // if (status == 'granted') {
-        //     const location = await Location.getCurrentPositionAsync({})
-        //     Common.writeConsole(tag.app, `Location: ${location.coords.latitude} | ${location.coords.longitude}`)
-        // }
     }
 
     if (!webViewContent) {
@@ -66,6 +59,49 @@ export const HomeMapView = ({onChangeView, webViewContent}: any) => {
             </Box>
         )
     }
+
+    useEffect(() => {
+        const tempMapMarkerList: MapMarker[] = []
+        
+        if (getMarkerVisibility(mapMarkerTag.rainfall)) {
+            const rainfallMarkers = rainfallJson.map((item) => ({
+                id: `rainfall-${item.id}`,
+                title: `Rainfall rate: ${item.rate}`,
+                position: { lat: item.latitude, lng: item.longitude },
+                icon: "💧",
+            }))
+            tempMapMarkerList.push(...rainfallMarkers)
+        }
+        
+        // flooding markers
+
+        if (getMarkerVisibility(mapMarkerTag.sfExpress)) {
+            const sfMarkers = sfExpressJson.map((item) => ({
+                id: `sf-${item.code}`,
+                title: `SF Express: ${item.code}`,
+                position: { lat: item.latitude, lng: item.longitude },
+                icon: "📦",
+            }))
+            tempMapMarkerList.push(...sfMarkers)          
+        }
+
+        if (getMarkerVisibility(mapMarkerTag.jockeyClub)) {
+            const jockeyClubMarkers = jockeyClubJson.map((item, index) => ({
+                id: `jockey-${index}`,
+                title: `Jockey Club`,
+                position: { lat: item.latitude, lng: item.longitude },
+                icon: "🏇",
+            }))
+            tempMapMarkerList.push(...jockeyClubMarkers)
+        }
+
+
+        // other store markers
+        setMapMarkerList([...tempMapMarkerList])
+
+         // For testing: log the markers
+        Common.writeConsole(TAG, `Map markers: ${JSON.stringify(tempMapMarkerList)}`)
+    }, [rerender])
 
     return (
         <Box style={styles.homeMapContainer}>
@@ -99,25 +135,14 @@ export const HomeMapView = ({onChangeView, webViewContent}: any) => {
                     icon: "📍",
                     size: [24, 24],
                     animation: {
-                        type: AnimationType.BOUNCE, // Requires importing AnimationType
-                        duration: 2,
+                        type: AnimationType.PULSE, // Requires importing AnimationType
+                        duration: 5,
                         delay: 0,
                         iterationCount: INFINITE_ANIMATION_ITERATIONS
                     }
                 }}
+                mapMarkers={mapMarkerList}
             />
-
-            {/* <MapView
-                ref={mapRef}
-                style={{flex: 100}}
-                provider={PROVIDER_GOOGLE}
-                initialRegion={INITIAL_POSITION}
-                onPress={onMapPress}
-                showsUserLocation={true}
-                showsMyLocationButton={false}
-            >
-
-            </MapView> */}
         </Box>
     )
 }

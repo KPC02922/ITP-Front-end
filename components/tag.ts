@@ -50,4 +50,16 @@ export const store = [
     selectDistrictModal: 'selectDistrictModal',
     selectStoreModal: 'selectStoreModal',
     rainRelateListItem: 'rainRelateListItem',
+    homeMapMarkerController: 'homeMapMarkerController',
+    mapControllPanelModal: 'mapControllPanelModal',
 } as const
+
+export const mapMarkerTag = {
+    rainfall: 'Rainfall',
+    flooding: 'Flooding',
+    allUmbrellaRental: 'All Umbrella Rental',
+    umbrellaRental: 'Umbrella rental',
+    sfExpress: 'SF Express',
+    jockeyClub: 'Jockey Club',
+    otherStore: 'Other store',
+}
