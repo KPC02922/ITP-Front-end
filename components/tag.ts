@@ -31,29 +31,6 @@ export const store = [
     { id: 3, label: 'Others'},
 ]
 
- export const tag = {
-    app: 'app',
-    common: 'common',
-    header: 'header',
-    mainView: 'mainView',
-    navigator: 'navigator',
-    homeView: 'homeView',
-    homeMapView: 'homeMapView',
-    infoView: 'infoView',
-    reportView: 'reportView',
-    settingView: 'settingView',
-    infoViewRainfallTab: 'Rainfall',
-    infoViewFloodingTab: 'Flooding',
-    infoViewUmbrellaRentalTab: 'Umbrella Rental',
-    infoViewRainRelatedTab: 'rainRelatedTab',
-    selectRegionModal: 'selectRegionModal',
-    selectDistrictModal: 'selectDistrictModal',
-    selectStoreModal: 'selectStoreModal',
-    rainRelateListItem: 'rainRelateListItem',
-    homeMapMarkerController: 'homeMapMarkerController',
-    mapControllPanelModal: 'mapControllPanelModal',
-} as const
-
 export const mapMarkerTag = {
     rainfall: 'Rainfall',
     flooding: 'Flooding',
@@ -63,3 +40,45 @@ export const mapMarkerTag = {
     jockeyClub: 'Jockey Club',
     otherStore: 'Other store',
 }
+
+ export const tag = {
+    // common & funtional view
+    app: 'app',
+    common: 'common',
+    header: 'header',
+    mainView: 'mainView',
+    navigator: 'navigator',
+    settingView: 'settingView',
+
+    // home view
+    homeView: 'homeView',
+    homeMapView: 'homeMapView',
+    homeWeatherView: 'homeWeatherView',
+
+    // info view
+    infoView: 'infoView',
+    infoViewRainfallTab: 'Rainfall',
+    infoViewFloodingTab: 'Flooding',
+    infoViewUmbrellaRentalTab: 'Umbrella Rental',
+    infoViewRainRelatedTab: 'rainRelatedTab',   
+
+    // report view
+    reportView: 'reportView',
+
+    // modal
+    selectRegionModal: 'selectRegionModal',
+    selectDistrictModal: 'selectDistrictModal',
+    selectStoreModal: 'selectStoreModal',
+    mapControllPanelModal: 'mapControllPanelModal',
+
+    // api
+    weatherApi: 'weatherApi',
+
+    // controller
+    homeMapMarkerController: 'homeMapMarkerController',
+
+    // other
+    rainRelateListItem: 'rainRelateListItem',
+    
+    
+} as const

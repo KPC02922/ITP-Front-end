@@ -2,7 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { tag, region, district } from './components/tag'
 
 const TAG = tag.common
-let currentPosition = {latitude: 0, longitude: 0}
+let currentPosition = {lat: 0, lng: 0}
+let lastPosition = {lat: 0, lng: 0}
+let lastZoom = 0
 
 export const writeConsole = (TAG: string, text: string) =>{
     const now = new Date()
@@ -88,6 +90,22 @@ export const getCurrentPosition = () => {
     return currentPosition
 }
 
-export const setCurrentPosition = (position: {latitude: number, longitude: number}) => {
+export const setCurrentPosition = (position: {lat: number, lng: number}) => {
     currentPosition = position
+}
+
+export const getLastPosition = () => {
+    return lastPosition
+}
+
+export const setLastPosition = (position: {lat: number, lng: number}) => {
+    lastPosition = position
+}
+
+export const getLastZoom = () => {
+    return lastZoom
+}
+
+export const setLastZoom = (zoom: number) => {
+    lastZoom = zoom
 }

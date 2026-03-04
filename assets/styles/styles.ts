@@ -114,7 +114,7 @@ export const styles = StyleSheet.create({
   homeContentContainer: {
     flex: 40,
     borderTopColor: '#333',
-    borderWidth: 0.5,
+    borderTopWidth: 2,
     
   },
 
@@ -151,5 +151,17 @@ export const styles = StyleSheet.create({
     width: '100%',
     borderBottomColor: '#333',
     borderBottomWidth: 0.5,
+  },
+
+  homeViewWeatherInfoCentreLabel: {
+    textAlign: 'center',
+  },
+  homeViewWeatherInfoContainer: {
+    borderWidth: 1, 
+    borderColor: 'gray', 
+    borderRadius: 4, 
+    padding: 8, 
+    justifyContent: 'center', 
+    alignItems: 'center'
   },
 })

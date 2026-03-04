@@ -3,14 +3,14 @@ import { styles } from "@/assets/styles/styles"
 import * as Common from "@/common"
 import { Text } from "@/components/ui/text"
 import { VStack } from "@/components/ui/vstack"
-import { Box } from "../ui/box"
+import { Box } from "../../components/ui/box"
 // import MapView, { Marker, LatLng, Region, PROVIDER_GOOGLE } from 'react-native-maps'
-import { useEffect, useRef, useState } from "react"
+import { use, useEffect, useRef, useState } from "react"
 import { ActivityIndicator, Dimensions } from "react-native"
-import { Fab, FabIcon, FabLabel } from "../ui/fab"
+import { Fab, FabIcon, FabLabel } from "../../components/ui/fab"
 import { Settings, Locate, CloudRain } from 'lucide-react-native'
 import * as Location from 'expo-location'
-import { AnimationType, INFINITE_ANIMATION_ITERATIONS, LatLng, LeafletView, MapMarker, WebviewLeafletMessage } from 'react-native-leaflet-view'
+import { AnimationType, INFINITE_ANIMATION_ITERATIONS, LatLng, LeafletView, MapMarker, WebviewLeafletMessage, WebviewLeafletMessagePayload } from 'react-native-leaflet-view'
 import { rainfallJson } from "@/demoData/rainfallJson"
 import { sfExpressJson } from "@/demoData/sfExpressJson"
 import { jockeyClubJson } from "@/demoData/jockeyClubJson"
@@ -20,14 +20,14 @@ const TAG = tag.homeMapView
 
 export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalRef, rerender}: {onChangeView: any; webViewContent: string; mapControlPanelModalRef: any; rerender: boolean}) => {
     const VTCL_POSITION = {
-        latitude: 22.342747295665276,
-        longitude: 114.1087984919611,
+        lat: 22.342747295665276,
+        lng: 114.1087984919611,
     }
     const initPosition = Common.getCurrentPosition()
     const [mapCenterPosition, setMapCenterPosition] = useState<{lat: number, lng: number}>
-    (initPosition.latitude > 0 && initPosition.longitude > 0 
-        ? {lat: initPosition.latitude, lng: initPosition.longitude} 
-        : {lat: VTCL_POSITION.latitude, lng: VTCL_POSITION.longitude}
+    (initPosition.lat > 0 && initPosition.lng > 0 
+        ? {lat: initPosition.lat, lng: initPosition.lng} 
+        : {lat: VTCL_POSITION.lat, lng: VTCL_POSITION.lng}
     )
     const [zoom, setZoom] = useState<number>(17)
     const [mapMarkerList, setMapMarkerList] = useState<MapMarker[]>([])
@@ -40,14 +40,25 @@ export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalR
 
     // onZoomStart. onMoveStart, onMove, onZoom, onZoomEnd, onMoveEnd, onMapClicked, onMapMarkerClicked
     const mapReceivedMsgHandler = (message: WebviewLeafletMessage) => {
-        // Common.writeConsole(TAG, `Map received message: ${JSON.stringify(message)}`)
+        const event = message?.event || 'unknown'
+        const playload: WebviewLeafletMessagePayload = message?.payload || {} as WebviewLeafletMessagePayload
+
+        switch (event) {
+            case 'onMoveEnd':
+                const mapCenterPosition = playload?.mapCenterPosition
+                Common.setLastPosition({lat: mapCenterPosition.lat, lng: mapCenterPosition.lng})
+                Common.setLastZoom(mapCenterPosition.zoom)
+                Common.writeConsole(TAG, `Map moved to ${mapCenterPosition.lat}, ${mapCenterPosition.lng}, zoom: ${playload.zoom}`)
+                break
+            default: 
+        }
     }
 
     const onLocateFabPress = async () => {
         Common.writeConsole(TAG, `Locate FAB pressed`)
-        if (initPosition.latitude > 0 && initPosition.longitude > 0) {
+        if (initPosition.lat > 0 && initPosition.lng > 0) {
             setZoom(17)
-            setMapCenterPosition({lat: initPosition.latitude, lng: initPosition.longitude})
+            setMapCenterPosition({lat: initPosition.lat, lng: initPosition.lng})
             
         }
     }
@@ -103,6 +114,16 @@ export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalR
         Common.writeConsole(TAG, `Map markers: ${JSON.stringify(tempMapMarkerList)}`)
     }, [rerender])
 
+    useEffect(() => {
+        const lastPosition = Common.getLastPosition()
+        const lastZoom = Common.getLastZoom()
+        if (lastPosition.lat > 0 && lastPosition.lng > 0) {
+            setMapCenterPosition({lat: lastPosition.lat, lng: lastPosition.lng})
+            setZoom(lastZoom)
+            Common.writeConsole(TAG, `Restored last position: ${lastPosition.lat}, ${lastPosition.lng}, zoom: ${lastZoom}`)
+        }
+    }, [])
+
     return (
         <Box style={styles.homeMapContainer}>
             <Fab
@@ -131,7 +152,7 @@ export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalR
                 ownPositionMarker={{
                     title: "You are here",
                     id: 'userPosition',
-                    position: { lat: initPosition.latitude, lng: initPosition.longitude },
+                    position: { lat: initPosition.lat, lng: initPosition.lng },
                     icon: "📍",
                     size: [24, 24],
                     animation: {

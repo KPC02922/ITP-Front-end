@@ -1,6 +1,6 @@
 import { GluestackUIProvider, } from '@/components/ui/gluestack-ui-provider'
 import '@/global.css'
-import MainView from './components/main/mainView'
+import MainView from './screen/functionalView/mainView'
 import * as SplashScreen from "expo-splash-screen"
 import { use, useEffect, useState } from 'react'
 import * as Common from "@/common"

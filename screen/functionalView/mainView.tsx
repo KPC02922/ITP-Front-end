@@ -1,13 +1,13 @@
-import { HomeView } from "@/screen/mainView/homeView"
-import { tag } from "../tag"
+import { HomeView } from "@/screen/homeView/homeView"
+import { tag } from "../../components/tag"
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
 import * as Common from "@/common"
-import { Header } from "./header"
-import { Navigator } from "./navigator"
-import { InfoView } from "@/screen/mainView/infoView"
-import { SettingView } from "@/screen/mainView/settingView"
-import { ReportView } from "@/screen/mainView/reportView"
+import { Header } from "../../components/main/header"
+import { Navigator } from "../../components/main/navigator"
+import { InfoView } from "@/screen/infoView/infoView"
+import { SettingView } from "@/screen/functionalView/settingView"
+import { ReportView } from "@/screen/reportView/reportView"
 import { ActivityIndicator, Alert } from "react-native"
 import { Asset } from "expo-asset"
 import * as FileSystem from "expo-file-system/legacy"
@@ -70,7 +70,7 @@ const MainView = ({}) => {
             }
 
             let location = await Location.getCurrentPositionAsync({});
-            Common.setCurrentPosition(location.coords);
+            Common.setCurrentPosition({lat: location.coords.latitude, lng: location.coords.longitude});
         }
 
         getCurrentLocation()

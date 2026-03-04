@@ -5,11 +5,12 @@ import { Text } from "@/components/ui/text"
 import { VStack } from "@/components/ui/vstack"
 import { Navigator } from "@/components/main/navigator"
 import { Header } from "@/components/main/header"
-import { HomeMapView } from "@/components/map/homeMapView"
+import { HomeMapView } from "@/screen/homeView/homeMapView"
 import { Box } from "../../components/ui/box"
 import { HStack } from "@/components/ui/hstack"
 import { MapControlPanelModal, MapControlPanelModalHandle } from "@/components/modal/mapControllPanelModal"
 import { useRef, useState } from "react"
+import { HomeWeatherView } from "./homeWeatherView"
 
 const TAG = tag.homeView
 
@@ -30,13 +31,7 @@ export const HomeView = ({onChangeView, webViewContent}: {onChangeView: any; web
 
             <Box style={styles.homeContentContainer}>
 
-                <VStack>
-                    <HStack>
-                        <Text size='md'>Map control panel</Text>
-                    </HStack>
-
-                </VStack>
-                
+                <HomeWeatherView />
                 
             </Box>
             
