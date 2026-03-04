@@ -10,10 +10,10 @@ import { HStack } from "@/components/ui/hstack"
 
 const TAG = tag.homeView
 
-export const HomeView = ({onChangeView}: any) => {
+export const HomeView = ({onChangeView, webViewContent}: {onChangeView: any; webViewContent: string}) => {
     return (
         <>
-            <HomeMapView onChangeView={onChangeView}/>
+            <HomeMapView onChangeView={onChangeView} webViewContent={webViewContent} />
 
             <Box style={styles.homeContentContainer}>
 

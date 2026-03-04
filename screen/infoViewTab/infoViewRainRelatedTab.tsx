@@ -16,6 +16,7 @@ import { floodingJson } from "@/demoData/floodingJson"
 import RainRelateType from "@/interfcaeType/RainRelateType"
 import { useEffect, useState } from "react"
 import { jockeyClubJson } from "@/demoData/jockeyClubJson"
+import { sfExpressJson } from "@/demoData/sfExpressJson"
 
 const TAG = tag.infoViewRainRelatedTab
 
@@ -30,6 +31,9 @@ export const InfoViewRainRelatedTab = (
     const [floodingJsonData, setFloodingJsonData] = useState<RainRelateType[]>([])
     const [umbrellaRentalJson, setUmbrellaRentalJson] = useState<RainRelateType[]>([])
     const [DFumbrellaRentalJson, setDFUmbrellaRentalJson] = useState<RainRelateType[]>([])
+    const [showAllItem, setShowAllItem] = useState<boolean>(false)
+    const [listIndex, setListIndex] = useState<number>(20)
+    const [showBtnLabel, setShowBtnLabel] = useState<string>("Show More")
 
     const pressHndler = (mode: string) => {
         Common.writeConsole(TAG, `press ${mode} button`)
@@ -78,7 +82,7 @@ export const InfoViewRainRelatedTab = (
             }
             else {               
                 if (mode == defaultStoreLabel && storeLabel != defaultStoreLabel) {
-                    setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => item.storeName == storeLabel))
+                    setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => item.storeName?.includes(storeLabel)))
                 }
                 else if (mode == defaultDistrictLabel || (mode == defaultStoreLabel && storeLabel == defaultStoreLabel)) {
                     setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => Common.districtCodeToLabel(Common.districtCodeToLabel(item.districtCode)) == districtLabel))
@@ -90,11 +94,19 @@ export const InfoViewRainRelatedTab = (
         }
     }
 
+    const listStatusHandler = () => {
+        return
+        setListIndex(showAllItem ? 20 : 20)
+        setShowBtnLabel(showAllItem ? "Show Less" : "Show More")
+        setShowAllItem(prev => !prev)
+        Common.writeConsole(TAG, `list index changed to: ${listIndex}`)
+    }
+
     useEffect(() => {
         setRainfallJsonData(rainfallJson)
         setFloodingJsonData(floodingJson)
         jockeyClubJson.forEach((item) => {
-            const data: RainRelateType = {
+            const jcData: RainRelateType = {
                 id: Math.random(),
                 regionCode: item.regionCode,
                 districtCode: item.districtCode,
@@ -105,8 +117,24 @@ export const InfoViewRainRelatedTab = (
                 storeName: 'Jockey Club',
                 officeHours: item.officeHours.replaceAll(', ', '\n')
             }
-            setUmbrellaRentalJson(prev => [...prev, data])
-            setDFUmbrellaRentalJson(prev => [...prev, data])
+            setUmbrellaRentalJson(prev => [...prev, jcData])
+            setDFUmbrellaRentalJson(prev => [...prev, jcData])
+        })
+        
+        sfExpressJson.forEach((item) => {
+            const sfData: RainRelateType = {
+                id: Math.random(),
+                regionCode: item.regionCode,
+                districtCode: item.districtCode,
+                location: item.location,
+                latitude: parseFloat(item.latitude),
+                longitude: parseFloat(item.longitude),
+                status: 'N',
+                storeName: `SF Express (${item.code})`,
+                officeHours: item.weekDayOfficeHours.replaceAll(', ', '\n')
+            }
+            setUmbrellaRentalJson(prev => [...prev, sfData])
+            setDFUmbrellaRentalJson(prev => [...prev, sfData])
         })
     }, [])
 
@@ -218,11 +246,17 @@ export const InfoViewRainRelatedTab = (
                                     <Text style={{textAlign: 'center'}}>No data</Text>
                                 </Box>
                             :
-                            umbrellaRentalJson.map((item) => (
+                            umbrellaRentalJson.map((item, index) => ( index < listIndex ) && (
                                 <Box key={item.id} style={{paddingHorizontal: 10}}>
                                     <RainRelateListItem type={type} item={item} />
                                 </Box>
                             ))
+                        }
+
+                        {umbrellaRentalJson.length > 0 &&
+                            <Button variant="outline" size="md" action="primary" onPress={() => listStatusHandler()} style={{alignSelf: 'center'}}>
+                                <ButtonText style={styles.infoPageSubNavText}>{showBtnLabel}</ButtonText>
+                            </Button>
                         }
                         </VStack>
                     </ScrollView>

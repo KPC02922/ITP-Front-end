@@ -7,7 +7,7 @@ import { Header } from "@/components/main/header"
 
 const TAG = tag.reportView
 
-export const ReportView = () => {
+export const ReportView = ({webViewContent}: {webViewContent: string}) => {
     return (
         <>
 

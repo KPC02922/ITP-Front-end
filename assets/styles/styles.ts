@@ -97,6 +97,9 @@ export const styles = StyleSheet.create({
   },
   homeContentContainer: {
     flex: 40,
+    borderTopColor: '#333',
+    borderWidth: 0.5,
+    
   },
 
   infoPageSubNavContainer: {

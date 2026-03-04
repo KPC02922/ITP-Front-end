@@ -39,6 +39,15 @@ export const RainRelateListItem = (
 
     return (
         <Card size="md" variant="outline" className="rounded-lg" style={{padding: 10}}>
+
+            {displayStoreNameTag.includes(type) &&
+                <HStack style={styles.fullWidth}>
+                    <Text style={styles.listItemContainerLeft}>Store Name</Text>
+                    <Text style={styles.listItemContainerColon}>: </Text>
+                    <Text style={styles.listItemContainerRight}>{item.storeName}</Text>
+                </HStack>
+            }
+
             <HStack style={styles.fullWidth}>
                 <Text style={styles.listItemContainerLeft}>District</Text>
                 <Text style={styles.listItemContainerColon}>: </Text>
@@ -74,14 +83,6 @@ export const RainRelateListItem = (
                     <Text style={styles.listItemContainerLeft}>Post Time</Text>
                     <Text style={styles.listItemContainerColon}>: </Text>
                     <Text style={styles.listItemContainerRight}>{item.postTime}</Text>
-                </HStack>
-            }
-
-            {displayStoreNameTag.includes(type) &&
-                <HStack style={styles.fullWidth}>
-                    <Text style={styles.listItemContainerLeft}>Store Name</Text>
-                    <Text style={styles.listItemContainerColon}>: </Text>
-                    <Text style={styles.listItemContainerRight}>{item.storeName}</Text>
                 </HStack>
             }
 

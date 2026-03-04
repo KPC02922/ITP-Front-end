@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { tag, region, district } from './components/tag'
 
 const TAG = tag.common
+let currentPosition = {latitude: 0, longitude: 0}
 
 export const writeConsole = (TAG: string, text: string) =>{
     const now = new Date()
@@ -81,4 +82,12 @@ export const districtCodeToLabel = (code: string) => {
         "18": "Islands",
     }
     return map[code] || code
+}
+
+export const getCurrentPosition = () => {
+    return currentPosition
+}
+
+export const setCurrentPosition = (position: {latitude: number, longitude: number}) => {
+    currentPosition = position
 }

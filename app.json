@@ -27,7 +27,8 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "react-native-navigation-mode"
+      "react-native-navigation-mode",
+      "expo-asset"
     ]
   }
 }

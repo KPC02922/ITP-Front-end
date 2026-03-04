@@ -19,7 +19,7 @@ import { S } from "@expo/html-elements"
 
 const TAG = tag.infoView
 
-export const InfoView = () => {
+export const InfoView = ({webViewContent}: {webViewContent: string}) => {
     const tabList: string[] = [tag.infoViewRainfallTab, tag.infoViewFloodingTab, tag.infoViewUmbrellaRentalTab]
     const [currentTab, setCurrentTab] = useState<string>(tag.infoViewRainfallTab)
     const [regionLabel, setRegionLabel] = useState<string>("Region")
