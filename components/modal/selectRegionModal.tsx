@@ -16,6 +16,7 @@ const TAG = tag.selectRegionModal
 export interface SelectRegionModalHandle {
     open: () => void
     close: () => void
+    resetSelectedRegion: () => void
 }
 
 interface SelectRegionModalProps {
@@ -30,7 +31,8 @@ export const SelectRegionModal = forwardRef<SelectRegionModalHandle, SelectRegio
 
     useImperativeHandle(ref, () => ({
         open: () => openHandler(),
-        close: () => closeHandler()
+        close: () => closeHandler(),
+        resetSelectedRegion: () => setSelectedRegion(defaultRegionLabel)
     }))
 
     const openHandler = () => {

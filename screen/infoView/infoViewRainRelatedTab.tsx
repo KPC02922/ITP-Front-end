@@ -21,8 +21,8 @@ import { sfExpressJson } from "@/demoData/sfExpressJson"
 const TAG = tag.infoViewRainRelatedTab
 
 export const InfoViewRainRelatedTab = (
-    {type, pressRegionBtn, pressDistrictBtn, pressStoreBtn, regionLabel, districtLabel, storeLabel}: 
-    {type: string, pressRegionBtn: () => void, pressDistrictBtn: () => void, pressStoreBtn: () => void, regionLabel: string, districtLabel: string, storeLabel: string}
+    {type, pressRegionBtn, pressDistrictBtn, pressStoreBtn, resetSelected, regionLabel, districtLabel, storeLabel}: 
+    {type: string, pressRegionBtn: () => void, pressDistrictBtn: () => void, pressStoreBtn: () => void, resetSelected: () => void, regionLabel: string, districtLabel: string, storeLabel: string}
 ) => {
     const defaultRegionLabel = "Region"
     const defaultDistrictLabel = "District"
@@ -103,39 +103,43 @@ export const InfoViewRainRelatedTab = (
     }
 
     useEffect(() => {
-        setRainfallJsonData(rainfallJson)
-        setFloodingJsonData(floodingJson)
-        jockeyClubJson.forEach((item) => {
-            const jcData: RainRelateType = {
-                id: Math.random(),
-                regionCode: item.regionCode,
-                districtCode: item.districtCode,
-                location: item.location,
-                latitude: parseFloat(item.latitude),
-                longitude: parseFloat(item.longitude),
-                status: 'N',
-                storeName: 'Jockey Club',
-                officeHours: item.officeHours.replaceAll(', ', '\n')
-            }
-            setUmbrellaRentalJson(prev => [...prev, jcData])
-            setDFUmbrellaRentalJson(prev => [...prev, jcData])
-        })
-        
-        sfExpressJson.forEach((item) => {
-            const sfData: RainRelateType = {
-                id: Math.random(),
-                regionCode: item.regionCode,
-                districtCode: item.districtCode,
-                location: item.location,
-                latitude: parseFloat(item.latitude),
-                longitude: parseFloat(item.longitude),
-                status: 'N',
-                storeName: `SF Express (${item.code})`,
-                officeHours: item.weekDayOfficeHours.replaceAll(', ', '\n')
-            }
-            setUmbrellaRentalJson(prev => [...prev, sfData])
-            setDFUmbrellaRentalJson(prev => [...prev, sfData])
-        })
+        setTimeout(() => {
+            Common.writeConsole(TAG, `init - set data`)
+            setRainfallJsonData(rainfallJson)
+            setFloodingJsonData(floodingJson)
+            jockeyClubJson.forEach((item) => {
+                const jcData: RainRelateType = {
+                    id: Math.random(),
+                    regionCode: item.regionCode,
+                    districtCode: item.districtCode,
+                    location: item.location,
+                    latitude: parseFloat(item.latitude),
+                    longitude: parseFloat(item.longitude),
+                    status: 'N',
+                    storeName: 'Jockey Club',
+                    officeHours: item.officeHours.replaceAll(', ', '\n')
+                }
+                setUmbrellaRentalJson(prev => [...prev, jcData])
+                setDFUmbrellaRentalJson(prev => [...prev, jcData])
+            })
+            
+            sfExpressJson.forEach((item) => {
+                const sfData: RainRelateType = {
+                    id: Math.random(),
+                    regionCode: item.regionCode,
+                    districtCode: item.districtCode,
+                    location: item.location,
+                    latitude: parseFloat(item.latitude),
+                    longitude: parseFloat(item.longitude),
+                    status: 'N',
+                    storeName: `SF Express (${item.code})`,
+                    officeHours: item.weekDayOfficeHours.replaceAll(', ', '\n')
+                }
+                setUmbrellaRentalJson(prev => [...prev, sfData])
+                setDFUmbrellaRentalJson(prev => [...prev, sfData])
+            })
+        }, 50)
+
     }, [])
 
     useEffect(() => {
@@ -152,6 +156,10 @@ export const InfoViewRainRelatedTab = (
         Common.writeConsole(TAG, `storeLabel: ${storeLabel} | reredner`)
         setDataHandler(defaultStoreLabel, (storeLabel == defaultStoreLabel && regionLabel == defaultRegionLabel && districtLabel == defaultDistrictLabel))
     }, [storeLabel])
+
+    useEffect(() => {
+        resetSelected()
+    }, [type])
 
     return (
         <Box style={styles.container}>
@@ -218,13 +226,15 @@ export const InfoViewRainRelatedTab = (
                 <Box>
                     <ScrollView>
                         <VStack space="sm" style={[styles.paddingNav, {paddingTop: 10}]}>
+                            <Box style={{padding: 10}}>
+                                <Text style={{textAlign: 'center'}}>No data</Text>
+                            </Box>
                         {
                             // floodingJsonData.length == 0 ?
-                            floodingJsonData.length != 0 ?
-                                <Box style={{padding: 10}}>
-                                    <Text style={{textAlign: 'center'}}>No data</Text>
-                                </Box>
-                            : null
+                            //     <Box style={{padding: 10}}>
+                            //         <Text style={{textAlign: 'center'}}>No data</Text>
+                            //     </Box>
+                            // :
                             // floodingJsonData.map((item) => (
                             //     <Box key={item.id} style={{paddingHorizontal: 10}}>
                             //         <RainRelateListItem type={type} item={item} />

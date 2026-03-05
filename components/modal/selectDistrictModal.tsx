@@ -18,6 +18,7 @@ export interface SelectDistrictModalHandle {
     open: () => void
     close: () => void
     setSelectedRegion: (district: string) => void
+    resetSelectedDistrict: () => void
 }
 
 interface SelectDistrictModalProps {
@@ -36,7 +37,8 @@ export const SelectDistrictModal = forwardRef<SelectDistrictModalHandle, SelectD
     useImperativeHandle(ref, () => ({
         open: () => openHandler(),
         close: () => closeHandler(),
-        setSelectedRegion: (region: string) => setSelectedRegionHandler(region)
+        setSelectedRegion: (region: string) => setSelectedRegionHandler(region),
+        resetSelectedDistrict: () => setSelectedDistrict(defaultDistrictLabel)
     }))
 
     const openHandler = () => {

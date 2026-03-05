@@ -31,8 +31,8 @@ export const HomeView = ({onChangeView, webViewContent}: {onChangeView: any; web
 
             <Box style={styles.homeContentContainer}>
 
-                <HomeWeatherView />
-                
+                <HomeWeatherView onChangeView={onChangeView} />
+
             </Box>
             
 

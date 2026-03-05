@@ -64,15 +64,23 @@ export const mapMarkerTag = {
 
     // report view
     reportView: 'reportView',
+    reportViewTab: 'reportViewTab',
+    reportViewRainfallTab: 'Rainfall',
+    reportViewFloodingTab: 'Flooding',
+    reportViewUmbrellaRentalTab: 'Umbrella Rental',
 
     // modal
     selectRegionModal: 'selectRegionModal',
     selectDistrictModal: 'selectDistrictModal',
     selectStoreModal: 'selectStoreModal',
     mapControllPanelModal: 'mapControllPanelModal',
+    mapSelectLatLngModal: 'mapSelectLatLngModal',
+    messageModal: 'messageModal',
 
     // api
     weatherApi: 'weatherApi',
+    currentWeatherReport: 'currentWeatherReport',
+    automaticWeatherStation: 'automaticWeatherStation',
 
     // controller
     homeMapMarkerController: 'homeMapMarkerController',

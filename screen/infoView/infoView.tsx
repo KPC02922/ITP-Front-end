@@ -19,9 +19,9 @@ import { S } from "@expo/html-elements"
 
 const TAG = tag.infoView
 
-export const InfoView = ({webViewContent}: {webViewContent: string}) => {
+export const InfoView = ({webViewContent, defaultTab}: {webViewContent: string, defaultTab?: string}) => {
     const tabList: string[] = [tag.infoViewRainfallTab, tag.infoViewFloodingTab, tag.infoViewUmbrellaRentalTab]
-    const [currentTab, setCurrentTab] = useState<string>(tag.infoViewRainfallTab)
+    const [currentTab, setCurrentTab] = useState<string>(defaultTab || tag.infoViewRainfallTab)
     const [regionLabel, setRegionLabel] = useState<string>("Region")
     const [districtLabel, setDistrictLabel] = useState<string>("District")
     const [storeLabel, setStoreLabel] = useState<string>("Store")
@@ -32,6 +32,8 @@ export const InfoView = ({webViewContent}: {webViewContent: string}) => {
     const changeTab = (tab: string) => {
         Common.writeConsole(TAG, `change tab: ${tab}`)
         setCurrentTab(tab)
+        selectRegionModalRef.current?.resetSelectedRegion()
+        selectDistrictModalRef.current?.resetSelectedDistrict()
     }
 
     const pressRegionBtn = () => {
@@ -65,6 +67,13 @@ export const InfoView = ({webViewContent}: {webViewContent: string}) => {
         setStoreLabel(label)
     }
 
+    const resetSelected = () => {
+        setRegionLabel("Region")
+        setDistrictLabel("District")
+        setStoreLabel("Store")
+        selectDistrictModalRef.current?.setSelectedRegion("Region")
+    }
+
     return (
         <>
             <VStack style={styles.container}>
@@ -96,10 +105,10 @@ export const InfoView = ({webViewContent}: {webViewContent: string}) => {
 
                 <Divider />
 
-                {currentTab == tag.infoViewRainfallTab ? <InfoViewRainRelatedTab type={tag.infoViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel=""/> :
-                currentTab == tag.infoViewFloodingTab ? <InfoViewRainRelatedTab type={tag.infoViewFloodingTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel=""/> :
-                currentTab == tag.infoViewUmbrellaRentalTab ? <InfoViewRainRelatedTab type={tag.infoViewUmbrellaRentalTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel}/> :
-                <InfoViewRainRelatedTab type={tag.infoViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel=""/>}
+                {currentTab == tag.infoViewRainfallTab ? <InfoViewRainRelatedTab type={tag.infoViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected}/> :
+                currentTab == tag.infoViewFloodingTab ? <InfoViewRainRelatedTab type={tag.infoViewFloodingTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected}/> :
+                currentTab == tag.infoViewUmbrellaRentalTab ? <InfoViewRainRelatedTab type={tag.infoViewUmbrellaRentalTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected}/> :
+                <InfoViewRainRelatedTab type={tag.infoViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected}/>}
 
             </VStack>
 

@@ -28,7 +28,8 @@
     },
     "plugins": [
       "react-native-navigation-mode",
-      "expo-asset"
+      "expo-asset",
+      "@react-native-community/datetimepicker"
     ]
   }
 }

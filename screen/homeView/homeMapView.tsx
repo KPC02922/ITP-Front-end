@@ -19,10 +19,7 @@ import { getMarkerVisibility } from "@/controller/map/homeMapMarkerController"
 const TAG = tag.homeMapView
 
 export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalRef, rerender}: {onChangeView: any; webViewContent: string; mapControlPanelModalRef: any; rerender: boolean}) => {
-    const VTCL_POSITION = {
-        lat: 22.342747295665276,
-        lng: 114.1087984919611,
-    }
+    const VTCL_POSITION = {lat: 22.342747295665276,lng: 114.1087984919611,}
     const initPosition = Common.getCurrentPosition()
     const [mapCenterPosition, setMapCenterPosition] = useState<{lat: number, lng: number}>
     (initPosition.lat > 0 && initPosition.lng > 0 
@@ -59,7 +56,6 @@ export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalR
         if (initPosition.lat > 0 && initPosition.lng > 0) {
             setZoom(17)
             setMapCenterPosition({lat: initPosition.lat, lng: initPosition.lng})
-            
         }
     }
 
@@ -79,7 +75,7 @@ export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalR
                 id: `rainfall-${item.id}`,
                 title: `Rainfall rate: ${item.rate}`,
                 position: { lat: item.latitude, lng: item.longitude },
-                icon: "💧",
+                icon: "🌧️",
             }))
             tempMapMarkerList.push(...rainfallMarkers)
         }

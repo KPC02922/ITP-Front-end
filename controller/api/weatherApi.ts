@@ -31,3 +31,7 @@ export const fetchAutomaticWeatherStation = async () => {
     const url = 'https://data.weather.gov.hk/weatherAPI/opendata/hourlyRainfall.php?lang=en'
     return await goApi(url, 'fetchAutomaticWeatherStation')
 }
+
+// https://data.weather.gov.hk/weatherAPI/doc/HKO_Open_Data_API_Documentation_tc.pdf
+// https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=flw&lang=tc
+// https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=tc

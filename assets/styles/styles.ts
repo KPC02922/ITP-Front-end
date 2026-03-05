@@ -16,6 +16,12 @@ export const styles = StyleSheet.create({
     flex: 50,
   },
 
+  hastckContainer: {
+    width: '100%',
+    alignItems: 'center',
+    // backgroundColor: '#333',
+  },
+
   headerBar: {
     backgroundColor: '#333',
     alignItems: 'center',
