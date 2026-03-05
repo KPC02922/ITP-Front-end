@@ -17,21 +17,26 @@ const TAG = tag.homeView
 export const HomeView = ({onChangeView, webViewContent}: {onChangeView: any; webViewContent: string}) => {
     const mapControlPanelModalRef = useRef<MapControlPanelModalHandle>(null)
     const [rerender, setRerender] = useState<boolean>(false)
+    const [expended, setExpanded] = useState<boolean>(false)
 
     const triggerRerender = () => {
         Common.writeConsole(TAG, `Trigger rerender from HomeView`)
         setRerender(!rerender)
     }
 
+    const expendHomeWeatherView = () => {
+        setExpanded(!expended)
+    }
+
     return (
         <>
             <MapControlPanelModal ref={mapControlPanelModalRef} triggerRerender={triggerRerender} />
 
-            <HomeMapView onChangeView={onChangeView} webViewContent={webViewContent} mapControlPanelModalRef={mapControlPanelModalRef} rerender={rerender} />
+            <HomeMapView onChangeView={onChangeView} webViewContent={webViewContent} mapControlPanelModalRef={mapControlPanelModalRef} rerender={rerender} expended={expended}/>
 
-            <Box style={styles.homeContentContainer}>
+            <Box style={expended ? {flex: 90} : {flex: 45}}>
 
-                <HomeWeatherView onChangeView={onChangeView} />
+                <HomeWeatherView onChangeView={onChangeView} expendHomeWeatherView={expendHomeWeatherView} expended={expended}/>
 
             </Box>
             

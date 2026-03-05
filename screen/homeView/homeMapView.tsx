@@ -18,7 +18,10 @@ import { getMarkerVisibility } from "@/controller/map/homeMapMarkerController"
 
 const TAG = tag.homeMapView
 
-export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalRef, rerender}: {onChangeView: any; webViewContent: string; mapControlPanelModalRef: any; rerender: boolean}) => {
+export const HomeMapView = (
+    {onChangeView, webViewContent, mapControlPanelModalRef, rerender, expended}
+    :{onChangeView: any; webViewContent: string; mapControlPanelModalRef: any; rerender: boolean; expended: boolean}
+) => {
     const VTCL_POSITION = {lat: 22.342747295665276,lng: 114.1087984919611,}
     const initPosition = Common.getCurrentPosition()
     const [mapCenterPosition, setMapCenterPosition] = useState<{lat: number, lng: number}>
@@ -28,6 +31,8 @@ export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalR
     )
     const [zoom, setZoom] = useState<number>(17)
     const [mapMarkerList, setMapMarkerList] = useState<MapMarker[]>([])
+    const [expendedHomeWeatherView, setExpendedHomeWeatherView] = useState<boolean>(false)
+    const [mapKey, setMapKey] = useState(0)
 
     const onSettingFabPress = () => {
         Common.writeConsole(TAG, `FAB pressed`)
@@ -120,26 +125,39 @@ export const HomeMapView = ({onChangeView, webViewContent, mapControlPanelModalR
         }
     }, [])
 
+    useEffect(() => {
+        setExpendedHomeWeatherView(expended)
+        setMapKey(prevKey => prevKey + 1) // Force remount LeafletView to reset map state
+        const lastPosition = Common.getLastPosition()
+        const lastZoom = Common.getLastZoom()
+        if (lastPosition.lat > 0 && lastPosition.lng > 0) {
+            setMapCenterPosition({lat: lastPosition.lat, lng: lastPosition.lng})
+            setZoom(lastZoom)
+            Common.writeConsole(TAG, `Restored last position on expended change: ${lastPosition.lat}, ${lastPosition.lng}, zoom: ${lastZoom}`)
+        }
+    }, [expended])
+
     return (
-        <Box style={styles.homeMapContainer}>
-            <Fab
+        <Box style={expended ? {flex: 10, height: '100%'} : {flex: 55, height: '100%'}}>
+            {!expended && <Fab
                 size="lg"
                 placement="top right"
                 onPress={onSettingFabPress}
                 style={{marginTop: 24}}
             >
                 <FabIcon as={Settings} />
-            </Fab>
+            </Fab>}
 
-             <Fab
+             {!expended && <Fab
                 size="lg"
                 placement="bottom right"
                 onPress={onLocateFabPress}
             >
                 <FabIcon as={Locate} />
-            </Fab>
+            </Fab>}
 
             <LeafletView
+                key={mapKey}
                 source={{ html: webViewContent }}
                 mapCenterPosition={mapCenterPosition}
                 zoom={zoom}

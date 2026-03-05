@@ -24,16 +24,32 @@ const MainView = ({}) => {
     const noHeaderViews: string[] = [tag.homeView]
     const noNavigatorViews: string[] = [tag.settingView]
     const [webViewContent, setWebViewContent] = useState<string | null>(null)
-    const [infoViewDefaultTab, setInfoViewDefaultTab] = useState<string>(tag.infoViewRainfallTab)
 
-    const onChangeView = (fromView: string, toView: string, subView?: string) => {
+    // info view state
+    const [infoViewDefaultTab, setInfoViewDefaultTab] = useState<string>(tag.infoViewRainfallTab)
+    const [infoViewDefaultRegion, setInfoViewDefaultRegion] = useState<string>('Region')
+    const [infoViewDefaultDistrict, setInfoViewDefaultDistrict] = useState<string>('District')
+    const [setDefaultRD, setSetDefaultRD] = useState<boolean>(false)
+
+    const onChangeView = (fromView: string, toView: string, subView?: string, extra1?: any, extra2?: any) => {
         setFromView(fromView)
         setView(toView)
         setHeaderVisible(!noHeaderViews.includes(toView))
         setNavigatorVisible(!noNavigatorViews.includes(toView))
 
         if (toView == tag.infoView && subView) {
-            setInfoViewDefaultTab(subView)
+            if (subView) {
+                setInfoViewDefaultTab(subView)
+            }
+            if (extra1) {
+                setInfoViewDefaultRegion(extra1)
+            }
+            if (extra2) {
+                setInfoViewDefaultDistrict(extra2)
+            }
+            if (extra1 || extra2) {
+                setSetDefaultRD(!setDefaultRD)
+            } 
         }
 
         Common.writeConsole(TAG, `Change view from ${fromView} to ${toView}`)
@@ -102,7 +118,7 @@ const MainView = ({}) => {
             {/* MainView */}
             {
                 view == tag.homeView ? <HomeView onChangeView={onChangeView} webViewContent={webViewContent} /> :
-                view == tag.infoView ? <InfoView webViewContent={webViewContent} defaultTab={infoViewDefaultTab} /> :
+                view == tag.infoView ? <InfoView webViewContent={webViewContent} defaultTab={infoViewDefaultTab} defaultRegion={infoViewDefaultRegion} defaultDistrict={infoViewDefaultDistrict} reredner={setDefaultRD} /> :
                 view == tag.reportView ? <ReportView webViewContent={webViewContent}/> :
                 view == tag.settingView ? <SettingView /> :
                 <HomeView onChangeView={onChangeView} webViewContent={webViewContent} />

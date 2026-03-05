@@ -76,6 +76,7 @@ export const mapMarkerTag = {
     mapControllPanelModal: 'mapControllPanelModal',
     mapSelectLatLngModal: 'mapSelectLatLngModal',
     messageModal: 'messageModal',
+    mapMarkerModal: 'mapMarkerModal',
 
     // api
     weatherApi: 'weatherApi',

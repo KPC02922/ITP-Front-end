@@ -119,9 +119,15 @@ export const styles = StyleSheet.create({
   },
   homeContentContainer: {
     flex: 40,
-    borderTopColor: '#333',
-    borderTopWidth: 2,
-    
+  },
+  homeExpendChevronContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#333',
   },
 
   infoPageSubNavContainer: {

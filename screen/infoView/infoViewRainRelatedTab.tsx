@@ -21,8 +21,8 @@ import { sfExpressJson } from "@/demoData/sfExpressJson"
 const TAG = tag.infoViewRainRelatedTab
 
 export const InfoViewRainRelatedTab = (
-    {type, pressRegionBtn, pressDistrictBtn, pressStoreBtn, resetSelected, regionLabel, districtLabel, storeLabel}: 
-    {type: string, pressRegionBtn: () => void, pressDistrictBtn: () => void, pressStoreBtn: () => void, resetSelected: () => void, regionLabel: string, districtLabel: string, storeLabel: string}
+    {type, pressRegionBtn, pressDistrictBtn, pressStoreBtn, resetSelected, openMapMarkerModal, regionLabel, districtLabel, storeLabel}: 
+    {type: string, pressRegionBtn: () => void, pressDistrictBtn: () => void, pressStoreBtn: () => void, resetSelected: () => void, openMapMarkerModal: (lat: number, lng: number) => void, regionLabel: string, districtLabel: string, storeLabel: string}
 ) => {
     const defaultRegionLabel = "Region"
     const defaultDistrictLabel = "District"
@@ -213,7 +213,7 @@ export const InfoViewRainRelatedTab = (
                             :
                             rainfallJsonData.map((item) => (
                                 <Box key={item.id} style={{paddingHorizontal: 10}}>
-                                    <RainRelateListItem type={type} item={item} />
+                                    <RainRelateListItem type={type} item={item} openMapMarkerModal={openMapMarkerModal}/>
                                 </Box>
                             ))
                         }
@@ -237,7 +237,7 @@ export const InfoViewRainRelatedTab = (
                             // :
                             // floodingJsonData.map((item) => (
                             //     <Box key={item.id} style={{paddingHorizontal: 10}}>
-                            //         <RainRelateListItem type={type} item={item} />
+                            //         <RainRelateListItem type={type} item={item} openMapMarkerModal={openMapMarkerModal}/>
                             //     </Box>
                             // ))
                         }
@@ -258,7 +258,7 @@ export const InfoViewRainRelatedTab = (
                             :
                             umbrellaRentalJson.map((item, index) => ( index < listIndex ) && (
                                 <Box key={item.id} style={{paddingHorizontal: 10}}>
-                                    <RainRelateListItem type={type} item={item} />
+                                    <RainRelateListItem type={type} item={item} openMapMarkerModal={openMapMarkerModal}/>
                                 </Box>
                             ))
                         }

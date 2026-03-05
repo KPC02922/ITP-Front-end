@@ -9,17 +9,20 @@ import { HStack } from "@/components/ui/hstack"
 import { Button, ButtonText } from "@/components/ui/button"
 import { Box } from "@/components/ui/box"
 import { Divider } from "@/components/ui/divider"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { InfoViewRainRelatedTab } from "./infoViewRainRelatedTab"
 import * as Common from "@/common"
 import { SelectRegionModal, SelectRegionModalHandle } from "@/components/modal/selectRegionModal"
 import { SelectDistrictModal, SelectDistrictModalHandle } from "@/components/modal/selectDistrictModal"
 import { SelectStoreModal, SelectStoreModalHandle } from "@/components/modal/selectStoreModal"
-import { S } from "@expo/html-elements"
+import { MapMarkerModal, MapMarkerModalHandle } from "@/components/modal/mapMarkerModal"
 
 const TAG = tag.infoView
 
-export const InfoView = ({webViewContent, defaultTab}: {webViewContent: string, defaultTab?: string}) => {
+export const InfoView = (
+    {webViewContent, defaultTab, defaultRegion, defaultDistrict, reredner}
+    : {webViewContent: string, defaultTab?: string, defaultRegion: string, defaultDistrict: string, reredner: boolean}
+) => {
     const tabList: string[] = [tag.infoViewRainfallTab, tag.infoViewFloodingTab, tag.infoViewUmbrellaRentalTab]
     const [currentTab, setCurrentTab] = useState<string>(defaultTab || tag.infoViewRainfallTab)
     const [regionLabel, setRegionLabel] = useState<string>("Region")
@@ -28,6 +31,7 @@ export const InfoView = ({webViewContent, defaultTab}: {webViewContent: string, 
     const selectRegionModalRef = useRef<SelectRegionModalHandle>(null)
     const selectDistrictModalRef = useRef<SelectDistrictModalHandle>(null)
     const selectStoreModalRef = useRef<SelectStoreModalHandle>(null)
+    const mapMarkerModalRef = useRef<MapMarkerModalHandle>(null)
 
     const changeTab = (tab: string) => {
         Common.writeConsole(TAG, `change tab: ${tab}`)
@@ -74,6 +78,24 @@ export const InfoView = ({webViewContent, defaultTab}: {webViewContent: string, 
         selectDistrictModalRef.current?.setSelectedRegion("Region")
     }
 
+    const openMapMarkerModal = (lat: number, lng: number) => {
+        Common.writeConsole(TAG, `open map marker modal`)
+        mapMarkerModalRef.current?.setLatLng(lat, lng)
+        mapMarkerModalRef.current?.open()
+    }
+
+    useEffect(() => {
+        if (defaultRegion && defaultRegion != "Region") {
+            setRegionLabel(defaultRegion)
+            selectDistrictModalRef.current?.setSelectedRegion(defaultRegion)
+        }
+        if (defaultDistrict && defaultDistrict != "District") {
+            setDistrictLabel(defaultDistrict)
+        }
+    }, [reredner])
+
+
+
     return (
         <>
             <VStack style={styles.container}>
@@ -89,6 +111,11 @@ export const InfoView = ({webViewContent, defaultTab}: {webViewContent: string, 
                     ref={selectStoreModalRef}
                     selectBtnFun={(label:string) => storeLabelSetter(label)}
                 />
+                <MapMarkerModal
+                    ref={mapMarkerModalRef}
+                    webViewContent={webViewContent}
+                />
+                
 
                 <HStack space="md" style={{padding: 10}}>
 
@@ -105,10 +132,10 @@ export const InfoView = ({webViewContent, defaultTab}: {webViewContent: string, 
 
                 <Divider />
 
-                {currentTab == tag.infoViewRainfallTab ? <InfoViewRainRelatedTab type={tag.infoViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected}/> :
-                currentTab == tag.infoViewFloodingTab ? <InfoViewRainRelatedTab type={tag.infoViewFloodingTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected}/> :
-                currentTab == tag.infoViewUmbrellaRentalTab ? <InfoViewRainRelatedTab type={tag.infoViewUmbrellaRentalTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected}/> :
-                <InfoViewRainRelatedTab type={tag.infoViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected}/>}
+                {currentTab == tag.infoViewRainfallTab ? <InfoViewRainRelatedTab type={tag.infoViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected} openMapMarkerModal={openMapMarkerModal}/> :
+                currentTab == tag.infoViewFloodingTab ? <InfoViewRainRelatedTab type={tag.infoViewFloodingTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected} openMapMarkerModal={openMapMarkerModal}/> :
+                currentTab == tag.infoViewUmbrellaRentalTab ? <InfoViewRainRelatedTab type={tag.infoViewUmbrellaRentalTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected} openMapMarkerModal={openMapMarkerModal}/> :
+                <InfoViewRainRelatedTab type={tag.infoViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected} openMapMarkerModal={openMapMarkerModal}/>}
 
             </VStack>
 

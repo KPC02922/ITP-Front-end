@@ -4,16 +4,17 @@ import * as Common from "@/common"
 import RainRelateType from "@/interfcaeType/RainRelateType"
 import { Card } from "../ui/card"
 import { Text } from "../ui/text"
-import { Droplet } from 'lucide-react-native'
+import { Droplet, Map } from 'lucide-react-native'
 import { HStack } from "../ui/hstack"
 import { Box } from "../ui/box"
 import { useEffect, useState } from "react"
+import { Button, ButtonText } from "../ui/button"
 
 const TAG = tag.rainRelateListItem
 
 export const RainRelateListItem = (
-    {type, item}:
-    {type: string, item: RainRelateType}
+    {type, item, openMapMarkerModal}:
+    {type: string, item: RainRelateType, openMapMarkerModal: (lat: number, lng: number) => void}
 ) => {
     // Common.writeConsole(TAG, `render RainRelateListItem - id: ${item.id}, location: ${item.location}, status: ${item.status}, region: ${Common.regionCodeToLabel(item.regionCode)}, district: ${Common.districtCodeToLabel(item.districtCode)}`)
     const displayPostTimeTag: string[] = [tag.infoViewRainfallTab, tag.infoViewFloodingTab]
@@ -93,6 +94,13 @@ export const RainRelateListItem = (
                     <Text style={styles.listItemContainerRight}>{item.officeHours}</Text>
                 </HStack>
             }
+
+            <Button variant="outline" size="sm" action="primary" onPress={() => openMapMarkerModal(item.latitude, item.longitude)} style={{marginTop: 10}}>
+                <HStack space="sm" style={[styles.hastckContainer, {justifyContent: 'center', alignItems: 'center'}]}>
+                    <Map color="#000000" size={16} />
+                    <Text>View location on Map</Text>
+                </HStack>
+            </Button>
 
         </Card>
     )
