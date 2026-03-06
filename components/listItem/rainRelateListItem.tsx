@@ -22,13 +22,7 @@ export const RainRelateListItem = (
     const displaytStoreName: string[] = [tag.infoViewUmbrellaRentalTab]
     const displayRateTag: string[] = [tag.infoViewRainfallTab]
     const displayOfficeHourTag: string[] = [tag.infoViewUmbrellaRentalTab]
-    const [data, setData] = useState<RainRelateType>(item)
     const rateList = [1, 2, 3, 4, 5]
-
-
-    useEffect(() => {
-        setData(item)
-    }, [item])
 
     return (
         <Card size="md" variant="outline" className="rounded-lg" style={{padding: 10}}>
@@ -74,61 +68,6 @@ export const RainRelateListItem = (
                     </HStack>
                 </HStack>}
             </VStack>
-            
-
-            {/* {displayStoreNameTag.includes(type) &&
-                <HStack style={styles.fullWidth}>
-                    <Text style={styles.listItemContainerLeft}>Store Name</Text>
-                    <Text style={styles.listItemContainerColon}>: </Text>
-                    <Text style={styles.listItemContainerRight}>{item.storeName}</Text>
-                </HStack>
-            }
-
-            <HStack style={styles.fullWidth}>
-                <Text style={styles.listItemContainerLeft}>District</Text>
-                <Text style={styles.listItemContainerColon}>: </Text>
-                <Text style={styles.listItemContainerRight}>{Common.districtCodeToLabel(item.districtCode)} - ({Common.regionCodeToLabel(item.regionCode)})</Text>
-            </HStack>
-
-            <HStack style={styles.fullWidth}>
-                <Text style={styles.listItemContainerLeft}>Location</Text>
-                <Text style={styles.listItemContainerColon}>: </Text>
-                <Text style={styles.listItemContainerRight}>{item.location}</Text>
-            </HStack>
-            
-            {displayRateTag.includes(type) && 
-                <HStack style={styles.fullWidth}>
-                    <Text style={styles.listItemContainerLeft}>Rainfall Rate</Text>
-                    <Text style={styles.listItemContainerColon}>: </Text>
-                    <Box style={[styles.listItemContainerRight, {flexDirection: 'row', alignItems: 'center'}]}>
-                        <HStack>
-                            {rate.map((_, i) => (
-                                <Droplet key={i} color="#007AFF" size={16} />
-                            ))}
-
-                            {unRate.map((_, i) => (
-                                <Droplet key={i} color="rgba(131, 131, 131, 1)" size={16} />
-                            ))}
-                        </HStack>
-                    </Box>
-                </HStack>
-            }
-
-            {displayPostTimeTag.includes(type) &&
-                <HStack style={styles.fullWidth}>
-                    <Text style={styles.listItemContainerLeft}>Post Time</Text>
-                    <Text style={styles.listItemContainerColon}>: </Text>
-                    <Text style={styles.listItemContainerRight}>{item.postTime}</Text>
-                </HStack>
-            }
-
-            {displayOfficeHourTag.includes(type) &&
-                <HStack style={styles.fullWidth}>
-                    <Text style={styles.listItemContainerLeft}>Office Hours</Text>
-                    <Text style={styles.listItemContainerColon}>: </Text>
-                    <Text style={styles.listItemContainerRight}>{item.officeHours}</Text>
-                </HStack>
-            } */}
 
             <Button variant="outline" size="sm" action="primary" onPress={() => openMapMarkerModal(item.latitude, item.longitude)}>
                 <HStack space="sm" style={[styles.hastckContainer, {justifyContent: 'center', alignItems: 'center'}]}>

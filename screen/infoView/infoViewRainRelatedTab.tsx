@@ -10,16 +10,17 @@ import { VStack } from "@/components/ui/vstack"
 import { rainfallJson } from "@/demoData/rainfallJson"
 import { Keyboard, ScrollView, ToastAndroid } from "react-native"
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input'
-import { Key, Search } from 'lucide-react-native'
+import { Key, Search, MoveUp } from 'lucide-react-native'
 import { RainRelateListItem } from "@/components/listItem/rainRelateListItem"
 import { floodingJson } from "@/demoData/floodingJson"
 import RainRelateType from "@/interfcaeType/RainRelateType"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { jockeyClubJson } from "@/demoData/jockeyClubJson"
 import { sfExpressJson } from "@/demoData/sfExpressJson"
 import { Spinner } from "@/components/ui/spinner"
 import { SendHorizonal } from "lucide-react-native"
 import { Toast } from "@/components/ui/toast"
+import { Fab, FabIcon } from "@/components/ui/fab"
 
 const TAG = tag.infoViewRainRelatedTab
 
@@ -39,6 +40,9 @@ export const InfoViewRainRelatedTab = (
     const [showBtnLabel, setShowBtnLabel] = useState<string>("Show More")
     const [loading, setLoading] = useState<boolean>(true)
     const [searchInput, setSearchInput] = useState<string>("")
+    const rainfallScrollRef = useRef<ScrollView>(null)
+    const floodingScrollRef = useRef<ScrollView>(null)
+    const umbrellaRentalScrollRef = useRef<ScrollView>(null)
 
     const pressHndler = (mode: string) => {
         Common.writeConsole(TAG, `press ${mode} button`)
@@ -125,6 +129,22 @@ export const InfoViewRainRelatedTab = (
         }, 50)
     }
 
+    const backToTop = () => {
+        Common.writeConsole(TAG, `back to top`)
+        if (type == tag.infoViewRainfallTab) {
+            Common.writeConsole(TAG, `scroll to top | ${rainfallScrollRef.current}`)
+            rainfallScrollRef.current?.scrollTo({x: 0, y: 0, animated: true})
+        }
+        else if (type == tag.infoViewFloodingTab) {
+            Common.writeConsole(TAG, `scroll to top | ${floodingScrollRef.current}`)
+            floodingScrollRef.current?.scrollTo({x: 0, y: 0, animated: true})
+        }
+        else if (type == tag.infoViewUmbrellaRentalTab) {
+            Common.writeConsole(TAG, `scroll to top | ${umbrellaRentalScrollRef.current}`)
+            umbrellaRentalScrollRef.current?.scrollTo({x: 0, y: 0, animated: true})
+        }
+    }
+
     useEffect(() => {
         setTimeout(() => {
             Common.writeConsole(TAG, `init - set data`)
@@ -192,6 +212,15 @@ export const InfoViewRainRelatedTab = (
 
     return (
         <Box style={styles.container}>
+            {/* <Fab
+                size="lg"
+                placement="bottom right"
+                onPress={() => backToTop()}
+                style={{}}
+            >
+                <FabIcon as={MoveUp} color="white" />
+            </Fab> */}
+
             <VStack space="sm">
                 <HStack space="md" style={{paddingHorizontal: 10, paddingTop: 10}}>
                     <Box style={styles.common2BtnHStackContainer}>
@@ -243,7 +272,7 @@ export const InfoViewRainRelatedTab = (
 
             {(type == tag.infoViewRainfallTab && !loading) && 
                 <Box>
-                    <ScrollView>
+                    <ScrollView ref={rainfallScrollRef}>
                         <VStack space="sm" style={[styles.paddingNav, {paddingTop: 10}]}>
                         {
                             rainfallJsonData.length == 0 ?
@@ -264,22 +293,19 @@ export const InfoViewRainRelatedTab = (
 
             {(type == tag.infoViewFloodingTab && !loading) && 
                 <Box>
-                    <ScrollView>
+                    <ScrollView ref={floodingScrollRef}>
                         <VStack space="sm" style={[styles.paddingNav, {paddingTop: 10}]}>
-                            <Box style={{padding: 10}}>
-                                <Text style={{textAlign: 'center'}}>No data</Text>
-                            </Box>
                         {
-                            // floodingJsonData.length == 0 ?
-                            //     <Box style={{padding: 10}}>
-                            //         <Text style={{textAlign: 'center'}}>No data</Text>
-                            //     </Box>
-                            // :
-                            // floodingJsonData.map((item) => (
-                            //     <Box key={item.id} style={{paddingHorizontal: 10}}>
-                            //         <RainRelateListItem type={type} item={item} openMapMarkerModal={openMapMarkerModal}/>
-                            //     </Box>
-                            // ))
+                            floodingJsonData.length == 1 ?
+                                <Box style={{padding: 10}}>
+                                    <Text style={{textAlign: 'center'}}>No data</Text>
+                                </Box>
+                            :
+                            floodingJsonData.map((item) => (
+                                <Box key={item.id} style={{paddingHorizontal: 10}}>
+                                    <RainRelateListItem type={type} item={item} openMapMarkerModal={openMapMarkerModal}/>
+                                </Box>
+                            ))
                         }
                         </VStack>
                     </ScrollView>
@@ -288,7 +314,7 @@ export const InfoViewRainRelatedTab = (
 
             {(type == tag.infoViewUmbrellaRentalTab && !loading) && 
                 <Box>
-                    <ScrollView>
+                    <ScrollView ref={umbrellaRentalScrollRef}>
                         <VStack space="sm" style={[styles.paddingNav, {paddingTop: 10}]}>
                         {
                             umbrellaRentalJson.length == 0 ?

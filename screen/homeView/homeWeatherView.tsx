@@ -13,7 +13,7 @@ import { Divider } from "@/components/ui/divider"
 import { Card } from "@/components/ui/card"
 import { rainfallJson } from "@/demoData/rainfallJson"
 import { floodingJson } from "@/demoData/floodingJson"
-import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff, Droplet, CloudRain, Waves, ChevronsDown, ChevronsRight, Clock } from 'lucide-react-native'
+import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff, Droplet, CloudRain, Waves, ChevronsDown, ChevronsRight, Clock, MirrorRectangular, MapPin } from 'lucide-react-native'
 import { Button, ButtonText } from "@/components/ui/button"
 
 const TAG = tag.homeWeatherView
@@ -259,9 +259,10 @@ export const HomeWeatherView = (
                     {rainfallData && 
                     <VStack space="sm" style={{padding: 10}}>
                         <HStack space="md" style={styles.hastckContainer}>
-                            <Text size='md' style={{flex: 99}}>18 district 1 hour rainfall</Text>
+                            <CloudRain size={20} color="gray" />
+                            <Text size='lg' style={{flex: 99}}>18 district 1 hour rainfall</Text>
                             <Pressable onPress={() => refetchData(reFetchTag.currentWeatherRepoert, 'Fetching current weather report data...')}>
-                                <RefreshCw size={16} color="gray"/>
+                                <RefreshCw size={20} color="gray"/>
                             </Pressable>
                         </HStack>
 
@@ -269,12 +270,14 @@ export const HomeWeatherView = (
                         {region.map((item) => (
                             <VStack key={item.id} space="sm">
                                 <Pressable onPress={() => expend1hourRainfallRegionHandler(item.id)}>
-                                    <Text style={{width: '100%', borderBottomWidth: 1, borderBottomColor: '#E0E0E0'}}>{item.label}</Text>
-                                    {getExpend1hourRainfallRegion(item.id) ?
-                                        <ChevronUp size={16} color="gray" style={{position: 'absolute', right: 0, top: 5}} />
-                                        :<ChevronDown size={16} color="gray" style={{position: 'absolute', right: 0, top: 5}} />
-                                    }
-                                    
+                                    <HStack space="sm" style={{borderBottomWidth: 1, borderBottomColor: '#E0E0E0', marginHorizontal: 5}}>
+                                        <MapPin size={16} color="gray" />
+                                        <Text size="sm" style={{flex: 99}}>{item.label}</Text>
+                                        {getExpend1hourRainfallRegion(item.id) ?
+                                            <ChevronUp size={16} color="gray" style={{position: 'absolute', right: 0, top: 5}} />
+                                            :<ChevronDown size={16} color="gray" style={{position: 'absolute', right: 0, top: 5}} />
+                                        }
+                                    </HStack>
                                 </Pressable>                        
 
                                 {getExpend1hourRainfallRegion(item.id) && <VStack space="md">
@@ -327,7 +330,7 @@ export const HomeWeatherView = (
                                                     
                                                     <HStack space="xs" >
                                                         <HStack style={{flex: 99}}>
-                                                            <Text size="sm">Number of report: </Text>
+                                                            <Text size="sm">User report: </Text>
                                                             <Text size="sm" style={[styles.homeViewWeatherInfoCentreLabel]}>
                                                                 {rainfallJson.filter((item: any) => (Common.districtCodeToLabel(item.districtCode)) == districtItem.label).length}
                                                             </Text>
@@ -363,9 +366,10 @@ export const HomeWeatherView = (
                     {AutomaticWeatherStationRawData && 
                         <VStack space="sm" style={{padding: 10}}>
                             <HStack space="md" style={styles.hastckContainer}>
-                                <Text size='md' style={{flex: 99}}>Automatic weather station data</Text>
+                                <MirrorRectangular size={20} color="gray" />
+                                <Text size='lg' style={{flex: 99}}>Automatic weather station data</Text>
                                 <Pressable onPress={() => refetchData(reFetchTag.automaticWeatherStation, 'Fetching automatic weather station data...')}>
-                                    <RefreshCw size={16} color="gray"/>
+                                    <RefreshCw size={20} color="gray"/>
                                 </Pressable>
                             </HStack>
                             
