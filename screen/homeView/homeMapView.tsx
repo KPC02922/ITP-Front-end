@@ -64,14 +64,6 @@ export const HomeMapView = (
         }
     }
 
-    if (!webViewContent) {
-        return (
-            <Box style={styles.homeMapContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
-            </Box>
-        )
-    }
-
     useEffect(() => {
         const tempMapMarkerList: MapMarker[] = []
         
@@ -80,7 +72,7 @@ export const HomeMapView = (
                 id: `rainfall-${item.id}`,
                 title: `Rainfall rate: ${item.rate}`,
                 position: { lat: item.latitude, lng: item.longitude },
-                icon: "🌧️",
+                icon: "☔",
             }))
             tempMapMarkerList.push(...rainfallMarkers)
         }
@@ -137,6 +129,14 @@ export const HomeMapView = (
         }
     }, [expended])
 
+    if (!webViewContent) {
+        return (
+            <Box style={styles.homeMapContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </Box>
+        )
+    }
+
     return (
         <Box style={expended ? {flex: 10, height: '100%'} : {flex: 62, height: '100%'}}>
             {!expended && <Fab
@@ -177,7 +177,15 @@ export const HomeMapView = (
                         iterationCount: INFINITE_ANIMATION_ITERATIONS
                     }
                 }}
-                mapMarkers={mapMarkerList}  
+                mapMarkers={mapMarkerList}
+                mapLayers={[
+                    {
+                        baseLayer: true,
+                        baseLayerName: "MapTiler Streets",
+                        url: `https://api.maptiler.com/maps/dataviz-v4/{z}/{x}/{y}.png?key=HQS1C7ORPgw7GbeKEIVZ`,
+                        attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap</a> contributors'              
+                    }
+                ]}
             />
         </Box>
     )

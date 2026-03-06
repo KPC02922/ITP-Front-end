@@ -100,6 +100,14 @@ export const MapMarkerModal = forwardRef<MapMarkerModalHandle, MapMarkerModalPro
                         zoom={17}
                         zoomControl={false}
                         mapMarkers={markerList}
+                        mapLayers={[
+                            {
+                                baseLayer: true,
+                                baseLayerName: "MapTiler Streets",
+                                url: `https://api.maptiler.com/maps/dataviz-v4/{z}/{x}/{y}.png?key=HQS1C7ORPgw7GbeKEIVZ`,
+                                attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap</a> contributors'              
+                            }
+                        ]}
                     />
                 </Box>
 
