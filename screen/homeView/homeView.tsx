@@ -34,7 +34,7 @@ export const HomeView = ({onChangeView, webViewContent}: {onChangeView: any; web
 
             <HomeMapView onChangeView={onChangeView} webViewContent={webViewContent} mapControlPanelModalRef={mapControlPanelModalRef} rerender={rerender} expended={expended}/>
 
-            <Box style={expended ? {flex: 90} : {flex: 45}}>
+            <Box style={expended ? {flex: 90} : {flex: 38}}>
 
                 <HomeWeatherView onChangeView={onChangeView} expendHomeWeatherView={expendHomeWeatherView} expended={expended}/>
 

@@ -15,10 +15,10 @@ export const Header = ({view} : {view: string}) => {
     useEffect(() => {
         switch (view) {
             case tag.infoView:
-                setTitle('Information')
+                setTitle('User Report')
                 break
             case tag.reportView:
-                setTitle('Report')
+                setTitle('Create Report')
                 break
             case tag.settingView:
                 setTitle('Setting')

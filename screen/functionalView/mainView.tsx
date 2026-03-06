@@ -124,7 +124,7 @@ const MainView = ({}) => {
                 <HomeView onChangeView={onChangeView} webViewContent={webViewContent} />
             }
 
-            {navigatorVisible && <Navigator onChangeView={onChangeView} />}
+            {navigatorVisible && <Navigator onChangeView={onChangeView} view={view} />}
         </>
     )
 }

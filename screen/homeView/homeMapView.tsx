@@ -138,7 +138,7 @@ export const HomeMapView = (
     }, [expended])
 
     return (
-        <Box style={expended ? {flex: 10, height: '100%'} : {flex: 55, height: '100%'}}>
+        <Box style={expended ? {flex: 10, height: '100%'} : {flex: 62, height: '100%'}}>
             {!expended && <Fab
                 size="lg"
                 placement="top right"

@@ -3,9 +3,14 @@ import { StyleSheet } from 'react-native'
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fefefe',
   },
   fullWidth: {
     width: '100%',
+  },
+  center: {
+    alignItems: 'center',
+    justifyContent: 'center'
   },
 
   paddingNav: {
@@ -40,6 +45,15 @@ export const styles = StyleSheet.create({
   },
   navigatorBtnContainer: {
     flex: 33,
+    justifyContent: 'center', 
+    alignItems: 'center',
+  },
+   navigatorBtnContainerSelected: {
+    backgroundColor: '#fefefe',
+    justifyContent: 'center', 
+    alignItems: 'center',
+    borderRadius: 10,
+    width: '80%',
   },
   navigatorText: {
     textAlign: 'center'
