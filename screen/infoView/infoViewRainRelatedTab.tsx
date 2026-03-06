@@ -8,15 +8,18 @@ import { Box } from "@/components/ui/box"
 import { Divider } from "@/components/ui/divider"
 import { VStack } from "@/components/ui/vstack"
 import { rainfallJson } from "@/demoData/rainfallJson"
-import { ScrollView } from "react-native"
+import { Keyboard, ScrollView, ToastAndroid } from "react-native"
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input'
-import { Search } from 'lucide-react-native'
+import { Key, Search } from 'lucide-react-native'
 import { RainRelateListItem } from "@/components/listItem/rainRelateListItem"
 import { floodingJson } from "@/demoData/floodingJson"
 import RainRelateType from "@/interfcaeType/RainRelateType"
 import { useEffect, useState } from "react"
 import { jockeyClubJson } from "@/demoData/jockeyClubJson"
 import { sfExpressJson } from "@/demoData/sfExpressJson"
+import { Spinner } from "@/components/ui/spinner"
+import { SendHorizonal } from "lucide-react-native"
+import { Toast } from "@/components/ui/toast"
 
 const TAG = tag.infoViewRainRelatedTab
 
@@ -32,8 +35,10 @@ export const InfoViewRainRelatedTab = (
     const [umbrellaRentalJson, setUmbrellaRentalJson] = useState<RainRelateType[]>([])
     const [DFumbrellaRentalJson, setDFUmbrellaRentalJson] = useState<RainRelateType[]>([])
     const [showAllItem, setShowAllItem] = useState<boolean>(false)
-    const [listIndex, setListIndex] = useState<number>(20)
+    const [listIndex, setListIndex] = useState<number>(50)
     const [showBtnLabel, setShowBtnLabel] = useState<string>("Show More")
+    const [loading, setLoading] = useState<boolean>(true)
+    const [searchInput, setSearchInput] = useState<string>("")
 
     const pressHndler = (mode: string) => {
         Common.writeConsole(TAG, `press ${mode} button`)
@@ -47,51 +52,57 @@ export const InfoViewRainRelatedTab = (
         }
     }
 
-    const setDataHandler = (mode: string, noFiltering: boolean)=> {
+    const setDataHandler = async (mode: string, noFiltering: boolean)=> {
         Common.writeConsole(TAG, `set data handler - type: ${type}, mode: ${mode}, noFiltering: ${noFiltering}`)
-        if (type == tag.infoViewRainfallTab) {
-            if (noFiltering) {
-                setRainfallJsonData(rainfallJson)
-            } 
-            else {
-                if (mode == defaultDistrictLabel) {
-                    setRainfallJsonData(rainfallJson.filter(item => Common.districtCodeToLabel(Common.districtCodeToLabel(item.districtCode)) == districtLabel))
+        setLoading(true)
+        try {
+            if (type == tag.infoViewRainfallTab) {
+                if (noFiltering) {
+                    setRainfallJsonData(rainfallJson)
+                } 
+                else {
+                    if (mode == defaultDistrictLabel) {
+                        setRainfallJsonData(rainfallJson.filter(item => Common.districtCodeToLabel(Common.districtCodeToLabel(item.districtCode)) == districtLabel))
+                    }
+                    else if (mode == defaultRegionLabel && regionLabel == defaultRegionLabel) {
+                        setRainfallJsonData(rainfallJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
+                    }
+                    
                 }
-                else if (mode == defaultRegionLabel && regionLabel == defaultRegionLabel) {
-                    setRainfallJsonData(rainfallJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
-                }
-                 
             }
+            else if (type == tag.infoViewFloodingTab) {
+                if (noFiltering) {
+                    setFloodingJsonData(floodingJson)
+                } 
+                else {
+                    if (mode == defaultDistrictLabel) {
+                        setFloodingJsonData(floodingJson.filter(item => Common.districtCodeToLabel(Common.districtCodeToLabel(item.districtCode)) == districtLabel))
+                    }
+                    else if (mode == defaultRegionLabel && regionLabel == defaultRegionLabel) {
+                        setFloodingJsonData(floodingJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
+                    }
+                }
+            }
+            else if (type == tag.infoViewUmbrellaRentalTab) {
+                if (noFiltering) {
+                    setUmbrellaRentalJson(DFumbrellaRentalJson)
+                }
+                else {               
+                    if (mode == defaultStoreLabel && storeLabel != defaultStoreLabel) {
+                        setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => item.storeName?.includes(storeLabel)))
+                    }
+                    else if (mode == defaultDistrictLabel || (mode == defaultStoreLabel && storeLabel == defaultStoreLabel)) {
+                        setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => Common.districtCodeToLabel(Common.districtCodeToLabel(item.districtCode)) == districtLabel))
+                    }
+                    else if (mode == defaultRegionLabel && regionLabel == defaultRegionLabel) {
+                        setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
+                    }
+                }
+            }
+        } catch (error) {
+            Common.writeConsole(TAG, `set data handler error: ${error}`)
         }
-        else if (type == tag.infoViewFloodingTab) {
-            if (noFiltering) {
-                setFloodingJsonData(floodingJson)
-            } 
-            else {
-                if (mode == defaultDistrictLabel) {
-                    setFloodingJsonData(floodingJson.filter(item => Common.districtCodeToLabel(Common.districtCodeToLabel(item.districtCode)) == districtLabel))
-                }
-                else if (mode == defaultRegionLabel && regionLabel == defaultRegionLabel) {
-                    setFloodingJsonData(floodingJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
-                }
-            }
-        }
-        else if (type == tag.infoViewUmbrellaRentalTab) {
-            if (noFiltering) {
-                setUmbrellaRentalJson(DFumbrellaRentalJson)
-            }
-            else {               
-                if (mode == defaultStoreLabel && storeLabel != defaultStoreLabel) {
-                    setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => item.storeName?.includes(storeLabel)))
-                }
-                else if (mode == defaultDistrictLabel || (mode == defaultStoreLabel && storeLabel == defaultStoreLabel)) {
-                    setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => Common.districtCodeToLabel(Common.districtCodeToLabel(item.districtCode)) == districtLabel))
-                }
-                else if (mode == defaultRegionLabel && regionLabel == defaultRegionLabel) {
-                    setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
-                }
-            }
-        }
+
     }
 
     const listStatusHandler = () => {
@@ -100,6 +111,18 @@ export const InfoViewRainRelatedTab = (
         setShowBtnLabel(showAllItem ? "Show Less" : "Show More")
         setShowAllItem(prev => !prev)
         Common.writeConsole(TAG, `list index changed to: ${listIndex}`)
+    }
+
+    const searchHandler = (input: string) => {
+        Common.writeConsole(TAG, `search handler: ${input}`)
+        ToastAndroid.show(`Search for ${input} (function not implemented)`, ToastAndroid.SHORT)
+        Keyboard.dismiss()
+    }
+
+    const fakeLoading = () => {
+        setTimeout(() => {
+            setLoading(false)
+        }, 50)
     }
 
     useEffect(() => {
@@ -138,27 +161,33 @@ export const InfoViewRainRelatedTab = (
                 setUmbrellaRentalJson(prev => [...prev, sfData])
                 setDFUmbrellaRentalJson(prev => [...prev, sfData])
             })
+            fakeLoading()
         }, 50)
 
     }, [])
 
     useEffect(() => {
         Common.writeConsole(TAG, `regionLabel: ${regionLabel} | reredner`)
-        setDataHandler(defaultRegionLabel, regionLabel == defaultRegionLabel)
+        setLoading(true)
+        setDataHandler(defaultRegionLabel, regionLabel == defaultRegionLabel).then(() => {fakeLoading()})
     }, [regionLabel])
 
     useEffect(() => {
         Common.writeConsole(TAG, `districtLabel: ${districtLabel} | reredner`)
-        setDataHandler(defaultDistrictLabel, districtLabel == defaultDistrictLabel)
+        setLoading(true)
+        setDataHandler(defaultDistrictLabel, districtLabel == defaultDistrictLabel).then(() => {fakeLoading()})
     }, [districtLabel])
 
     useEffect(() => {
         Common.writeConsole(TAG, `storeLabel: ${storeLabel} | reredner`)
-        setDataHandler(defaultStoreLabel, (storeLabel == defaultStoreLabel && regionLabel == defaultRegionLabel && districtLabel == defaultDistrictLabel))
+        setLoading(true)
+        setDataHandler(defaultStoreLabel, (storeLabel == defaultStoreLabel && regionLabel == defaultRegionLabel && districtLabel == defaultDistrictLabel)).then(() => {fakeLoading()})
     }, [storeLabel])
 
     useEffect(() => {
         resetSelected()
+        setSearchInput("")
+        Keyboard.dismiss()
     }, [type])
 
     return (
@@ -188,20 +217,31 @@ export const InfoViewRainRelatedTab = (
                 }
 
                 
-                {/* <HStack space="md" style={{paddingHorizontal: 10}}>
+                <HStack space="md" style={{paddingHorizontal: 10}}>
                     <Input variant="outline" size="md" style={{flex: 80}}>
                     <InputSlot style={{marginLeft: 10}}>
                         <InputIcon as={Search} />
                     </InputSlot>
-                        <InputField placeholder="Search by location" value={""} onChange={() => {}} />
+                        <InputField placeholder="Search by location" value={searchInput} onChange={(e) => setSearchInput(e.nativeEvent.text)} />
                     </Input>
-                </HStack> */}
+
+                    <Button variant="solid" size="md" onPress={() => {searchHandler(searchInput)}}>
+                        <SendHorizonal size={20} color="white" />
+                    </Button>
+                </HStack>
                 
 
                 <Divider />
-            </VStack>            
+            </VStack>    
 
-            {type == tag.infoViewRainfallTab && 
+            {loading && 
+                <Box style={{padding: 10}}>
+                    <Spinner size="large" color="grey" />
+                    <Text style={{textAlign: 'center'}}>Loading...</Text>
+                </Box>
+            }
+
+            {(type == tag.infoViewRainfallTab && !loading) && 
                 <Box>
                     <ScrollView>
                         <VStack space="sm" style={[styles.paddingNav, {paddingTop: 10}]}>
@@ -222,7 +262,7 @@ export const InfoViewRainRelatedTab = (
                 </Box>
             }
 
-            {type == tag.infoViewFloodingTab && 
+            {(type == tag.infoViewFloodingTab && !loading) && 
                 <Box>
                     <ScrollView>
                         <VStack space="sm" style={[styles.paddingNav, {paddingTop: 10}]}>
@@ -246,7 +286,7 @@ export const InfoViewRainRelatedTab = (
                 </Box>
             }
 
-            {type == tag.infoViewUmbrellaRentalTab && 
+            {(type == tag.infoViewUmbrellaRentalTab && !loading) && 
                 <Box>
                     <ScrollView>
                         <VStack space="sm" style={[styles.paddingNav, {paddingTop: 10}]}>

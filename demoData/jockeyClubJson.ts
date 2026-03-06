@@ -345,7 +345,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Jordan Road G/F, Ho Kwan Building, 48-50 Jordan Road",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:43",
       "latitude": "22.30563757",
@@ -353,7 +353,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Mong Kok, Argyle Street G-2/F, Argyle House, 45 Argyle Street",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:44",
       "latitude": "22.31991958",
@@ -361,7 +361,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Mong Kok, Dundas Street G/F, Po Hang Building, 2 - 6 Dundas Street",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:45",
       "latitude": "22.31476986",
@@ -369,7 +369,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Mong Kok, Fa Yuen Street Shop 25, G/F, Ho King Commercial Centre, 2-16 Fa Yuen Street",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:46",
       "latitude": "22.31613054",
@@ -377,7 +377,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Mong Kok, Nathan Centre Shop G3A on G/F, M/F, 1-2/F, Nathan Centre, 580 Nathan Road",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:47",
       "latitude": "22.32491099",
@@ -385,7 +385,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Prince Edward, Nathan Road Shop B, 1/F and G/F, Newish Mansion, 763-767 Nathan Road",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:48",
       "latitude": "22.32488354",
@@ -393,7 +393,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Tai Kok Tsui, Ivy Street G/F, Tai Chung Building, 79-83 Ivy Street",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:49",
       "latitude": "22.32141878",
@@ -401,7 +401,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Tsim Sha Tsui, Hankow Road Basement and G/F, Maxwell Centre, 39-41 Hankow Road",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:50",
       "latitude": "22.29752638",
@@ -409,7 +409,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Tsim Sha Tsui, Prat Avenue UG and 1/F, Kundamal House, 2-4 Prat Avenue",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:51",
       "latitude": "22.29861258",
@@ -417,7 +417,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Tsim Sha Tsui East Shop 86, G/F, New Mandarin Plaza, 14 Science Museum Road",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:52",
       "latitude": "22.30026215",
@@ -425,7 +425,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Yau Ma Tei, Portland Street G/F, Cheong Wai Building, 62-66 Portland Street",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:53",
       "latitude": "22.31356441",
@@ -433,7 +433,7 @@ export const jockeyClubJson = [
     },
     {
       "regionCode": "2",
-      "districtCode": "5 ",
+      "districtCode": "5",
       "location": "Yau Ma Tei, Shanghai Street G/F, 213-219 and 223-225 Shanghai Street",
       "officeHours": "Day races: 09:00-20:00, Night races: 12:00-21:35, Mark six draw day: 12:00-23:15, Other days: 12:00-18:00, Other days Friday: 12:00-20:54",
       "latitude": "22.32496806",

@@ -201,7 +201,7 @@ export const HomeWeatherView = (
                                 
                                 <Button size="sm" variant="solid" style={{}} onPress={() => onPressHandler(tag.infoView, tag.infoViewUmbrellaRentalTab, "Region", "District")}>
                                     <HStack style={styles.center}>
-                                        <ButtonText>Explore store</ButtonText>
+                                        <ButtonText>Explore Store</ButtonText>
                                         <ChevronsRight size={16} color="white" />
                                     </HStack>
                                     

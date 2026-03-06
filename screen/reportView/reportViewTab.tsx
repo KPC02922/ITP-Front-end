@@ -3,13 +3,13 @@ import { styles } from "@/assets/styles/styles"
 import * as Common from "@/common"
 import { Text } from "@/components/ui/text"
 import { VStack } from "@/components/ui/vstack"
-import { Platform, Pressable, TextInput } from "react-native"
+import { Keyboard, Platform, Pressable, TextInput } from "react-native"
 import { Button, ButtonText } from "@/components/ui/button"
 import { Box } from "@/components/ui/box"
 import { FormControl, FormControlError, FormControlErrorIcon, FormControlErrorText, FormControlHelper, FormControlHelperText, FormControlLabel, FormControlLabelText } from "@/components/ui/form-control"
 import { Input, InputField, InputSlot } from "@/components/ui/input"
 import { useState, useEffect, use } from "react"
-import { CircleAlert, ChevronDown, MapPin, Droplet, Divide, VanIcon } from "lucide-react-native"
+import { CircleAlert, ChevronDown, MapPin, Droplet, RotateCcw, Send } from "lucide-react-native"
 import { HStack } from "@/components/ui/hstack"
 import { ScrollView } from "react-native"
 import { Divider } from "@/components/ui/divider"
@@ -88,6 +88,7 @@ export const ReportViewTab = (
         setOfficeOpenHoursValid(true)
         setOfficeCloseHoursValid(true)
         setValid(true)
+        Keyboard.dismiss()
     }
 
     const validateForm = () => {
@@ -266,19 +267,19 @@ export const ReportViewTab = (
 
                     <Box style={styles.fullWidth}>
                         <FormControlLabel>
-                            <FormControlLabelText>Location</FormControlLabelText>
+                            <FormControlLabelText>{type == tag.reportViewUmbrellaRentalTab ? 'Address' : 'Location'}</FormControlLabelText>
                         </FormControlLabel>
                         
                         <Input style={styles.hastckContainer} isInvalid={!locationValid}>
                             <InputField 
-                                placeholder="Enter location" 
+                                placeholder={type == tag.reportViewUmbrellaRentalTab ? 'Enter address' : 'Enter location'} 
                                 value={location}
                                 onChangeText={(input) => setLocation(input)}
                             />
                         </Input>
                         
                         <FormControlHelper>
-                            <FormControlHelperText >Enter location e.g. Causway Bay Station / IFC mall</FormControlHelperText>
+                            <FormControlHelperText >{type == tag.reportViewUmbrellaRentalTab ? 'Enter store full address' : 'Enter location e.g. Causway Bay Station / IFC mall'}</FormControlHelperText>
                         </FormControlHelper>
                         
                         {!locationValid && <FormControlError>
@@ -472,10 +473,12 @@ export const ReportViewTab = (
 
                     {/* Reset and Submit Button */}
                     <Button variant="solid" size="lg" action="primary" onPress={resetForm}>
+                        <RotateCcw size={16} color="#FFFFFF" style={{marginRight: 5}}/>
                         <ButtonText>Reset</ButtonText>
                     </Button>
 
                     <Button variant="solid" size="lg" action="primary" onPress={submitReport}>
+                        <Send size={16} color="#FFFFFF" style={{marginRight: 5}} />
                         <ButtonText>Submit Report</ButtonText>
                     </Button>
 
