@@ -12,7 +12,7 @@ import { CloudRain } from 'lucide-react-native'
 import { Switch } from "../ui/switch"
 import { getMarkerVisibility, switchMarkersVisible } from "@/controller/map/homeMapMarkerController"
 
-const TAG = tag.mapControllPanelModal
+const TAG = tag.mapControlPanelModal
 
 export interface MapControlPanelModalHandle {
     open: () => void
@@ -109,7 +109,7 @@ export const MapControlPanelModal = forwardRef<MapControlPanelModalHandle, MapCo
             <Box style={styles.modalBackground}>
 
                 <Box style={styles.commonModalTitleContainer}>
-                    <Text style={styles.commonModalTitleLabel}>Map marker controll panel</Text>
+                    <Text style={styles.commonModalTitleLabel}>Map marker control panel</Text>
                 </Box>
 
                 <Box style={[styles.commonModalContainer, {height: 'auto', paddingVertical: 20}]}>

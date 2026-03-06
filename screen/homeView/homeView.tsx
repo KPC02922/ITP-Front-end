@@ -8,13 +8,16 @@ import { Header } from "@/components/main/header"
 import { HomeMapView } from "@/screen/homeView/homeMapView"
 import { Box } from "../../components/ui/box"
 import { HStack } from "@/components/ui/hstack"
-import { MapControlPanelModal, MapControlPanelModalHandle } from "@/components/modal/mapControllPanelModal"
+import { MapControlPanelModal, MapControlPanelModalHandle } from "@/components/modal/mapControlPanelModal"
 import { useRef, useState } from "react"
 import { HomeWeatherView } from "./homeWeatherView"
 
 const TAG = tag.homeView
 
-export const HomeView = ({onChangeView, webViewContent}: {onChangeView: any; webViewContent: string}) => {
+export const HomeView = (
+    {onChangeView, webViewContent}
+    :{onChangeView: any; webViewContent: string}
+) => {
     const mapControlPanelModalRef = useRef<MapControlPanelModalHandle>(null)
     const [rerender, setRerender] = useState<boolean>(false)
     const [expended, setExpanded] = useState<boolean>(false)

@@ -109,3 +109,4 @@ export const getLastZoom = () => {
 export const setLastZoom = (zoom: number) => {
     lastZoom = zoom
 }
+

@@ -1,11 +1,11 @@
-import { tag, region, district } from "@/components/tag"
+import { tag, region, district, reFetchTag } from "@/components/tag"
 import { styles } from "@/assets/styles/styles"
 import * as Common from "@/common"
 import { Box } from "@/components/ui/box"
 import { Text } from "@/components/ui/text"
 import { RefObject, use, useEffect, useRef, useState } from "react"
 import * as weatherApi from "@/controller/api/weatherApi"
-import { Pressable, ScrollView } from "react-native"
+import { Pressable, ScrollView, ToastAndroid } from "react-native"
 import { HStack } from "@/components/ui/hstack"
 import { VStack } from "@/components/ui/vstack"
 import { Div } from "@expo/html-elements"
@@ -13,7 +13,7 @@ import { Divider } from "@/components/ui/divider"
 import { Card } from "@/components/ui/card"
 import { rainfallJson } from "@/demoData/rainfallJson"
 import { floodingJson } from "@/demoData/floodingJson"
-import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff, Droplet, CloudRain, Waves, ChevronsDown, ChevronsRight } from 'lucide-react-native'
+import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff, Droplet, CloudRain, Waves, ChevronsDown, ChevronsRight, Clock } from 'lucide-react-native'
 import { Button, ButtonText } from "@/components/ui/button"
 
 const TAG = tag.homeWeatherView
@@ -114,6 +114,26 @@ export const HomeWeatherView = (
         }
     }
 
+    const refetchData = (mode: string, message: string) => {
+        Common.writeConsole(TAG, `Fetch ${mode} data`)
+
+        switch (mode) {
+            case reFetchTag.userReport:
+                
+                break
+            case reFetchTag.currentWeatherRepoert:
+                fetchCurrentWeatherReport()
+                break
+            case reFetchTag.automaticWeatherStation:
+                fetchAutomaticWeatherStation()
+                break
+            default:
+                
+        }
+
+        ToastAndroid.show(message, ToastAndroid.SHORT)
+    }
+
     useEffect(() => {
         Common.writeConsole(TAG, `Rerender triggered in HomeWeatherView`)
         triggerRerender('all')
@@ -127,10 +147,12 @@ export const HomeWeatherView = (
         <Box style={[styles.container]}>
             <Pressable onPress={expendHomeWeatherView} style={styles.homeExpendChevronContainer}>
                 {expended ?
-                    <ChevronDown size={20} color="black" />
-                    :<ChevronUp size={20} color="black" />
+                    <ChevronDown size={24} color="gray" />
+                    :<ChevronUp size={24} color="gray" />
                 }
+                
             </Pressable>
+            <Divider />
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <VStack space="md">
@@ -140,7 +162,7 @@ export const HomeWeatherView = (
                             <VStack space="lg">
                                 <HStack style={styles.center}>
                                     <Text size='lg' style={{flex: 99}}>User report</Text>
-                                    <RefreshCw size={16} color="black" onPress={() => {}} />
+                                    <RefreshCw size={16} color="gray" onPress={() => { refetchData(reFetchTag.userReport, 'Fetching user report data...') }} />
                                 </HStack>
 
                                 <Divider />
@@ -165,7 +187,7 @@ export const HomeWeatherView = (
 
                                 <Divider />
 
-                                <Button size="sm" variant="solid" style={{}} onPress={() => onPressHandler(tag.infoView, tag.infoViewRainRelatedTab, "Region", "District")}>
+                                <Button size="sm" variant="solid" style={{}} onPress={() => onPressHandler(tag.infoView, tag.infoViewRainfallTab, "Region", "District")}>
                                     <ButtonText>View Details</ButtonText>
                                 </Button>
                             </VStack>
@@ -190,7 +212,7 @@ export const HomeWeatherView = (
 
                     <HStack space="sm" style={styles.center}>
                         <ChevronsDown size={16} color="black" />
-                        <Text>Scroll Down for weather information</Text>
+                        <Text>Scroll down for weather information</Text>
                         <ChevronsDown size={16} color="black" />
                     </HStack>
                     
@@ -238,8 +260,8 @@ export const HomeWeatherView = (
                     <VStack space="sm" style={{padding: 10}}>
                         <HStack space="md" style={styles.hastckContainer}>
                             <Text size='md' style={{flex: 99}}>18 district 1 hour rainfall</Text>
-                            <Pressable onPress={() => triggerRerender(tag.currentWeatherReport)}>
-                                <RefreshCw size={16} color="black"/>
+                            <Pressable onPress={() => refetchData(reFetchTag.currentWeatherRepoert, 'Fetching current weather report data...')}>
+                                <RefreshCw size={16} color="gray"/>
                             </Pressable>
                         </HStack>
 
@@ -249,8 +271,8 @@ export const HomeWeatherView = (
                                 <Pressable onPress={() => expend1hourRainfallRegionHandler(item.id)}>
                                     <Text style={{width: '100%', borderBottomWidth: 1, borderBottomColor: '#E0E0E0'}}>{item.label}</Text>
                                     {getExpend1hourRainfallRegion(item.id) ?
-                                        <ChevronUp size={16} color="black" style={{position: 'absolute', right: 0, top: 5}} />
-                                        :<ChevronDown size={16} color="black" style={{position: 'absolute', right: 0, top: 5}} />
+                                        <ChevronUp size={16} color="gray" style={{position: 'absolute', right: 0, top: 5}} />
+                                        :<ChevronDown size={16} color="gray" style={{position: 'absolute', right: 0, top: 5}} />
                                     }
                                     
                                 </Pressable>                        
@@ -274,7 +296,15 @@ export const HomeWeatherView = (
                                                         </Box>
                                                         
                                                         <HStack>
-                                                            <Droplet size={16} color="#007AFF" style={{marginStart: 5}}/>
+                                                            <Droplet 
+                                                            size={16} 
+                                                            color={
+                                                                rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max > 0 
+                                                                || rainfallJson.filter((item: any) => (Common.districtCodeToLabel(item.districtCode)) == districtItem.label).length > 0
+                                                                ? "#007AFF" 
+                                                                : "gray"} 
+                                                            style={{marginStart: 5}}
+                                                            />
 
                                                             {rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label) ? (
                                                                 <HStack space="xs">
@@ -303,9 +333,9 @@ export const HomeWeatherView = (
                                                             </Text>
                                                         </HStack>
 
-                                                        <HStack>
+                                                        <HStack style={styles.center}>
                                                             <Text size="sm">View all report</Text>
-                                                            <ChevronRight size={16} color="black" />
+                                                            <ChevronsRight size={16} color="gray" />
                                                         </HStack>
                                                     </HStack>
                                                 </VStack>
@@ -321,7 +351,10 @@ export const HomeWeatherView = (
                         ))}
                         </VStack>
 
-                        <Text size="sm">Time period: {weatherReportRawData?.rainfall.startTime.match(/T(\d{2}:\d{2})/)?.[1]} to {weatherReportRawData?.rainfall.endTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
+                        <HStack space='xs'>
+                            <Clock size={16} color="gray" />
+                            <Text size="sm">Time period: {weatherReportRawData?.rainfall.startTime.match(/T(\d{2}:\d{2})/)?.[1]} to {weatherReportRawData?.rainfall.endTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
+                        </HStack>
                     </VStack>
                     }
 
@@ -331,8 +364,8 @@ export const HomeWeatherView = (
                         <VStack space="sm" style={{padding: 10}}>
                             <HStack space="md" style={styles.hastckContainer}>
                                 <Text size='md' style={{flex: 99}}>Automatic weather station data</Text>
-                                <Pressable onPress={() => triggerRerender(tag.currentWeatherReport)}>
-                                    <RefreshCw size={16} color="black"/>
+                                <Pressable onPress={() => refetchData(reFetchTag.automaticWeatherStation, 'Fetching automatic weather station data...')}>
+                                    <RefreshCw size={16} color="gray"/>
                                 </Pressable>
                             </HStack>
                             
@@ -364,7 +397,10 @@ export const HomeWeatherView = (
                                 <Text size='md'>No automatic weather station data available</Text>
                             </Card>
                             }
-                        <Text size="sm">Update time: {AutomaticWeatherStationRawData?.obsTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
+                            <HStack space='xs'>
+                                <Clock size={16} color="gray" />
+                                <Text size="sm">Update time: {AutomaticWeatherStationRawData?.obsTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
+                            </HStack>
                     </VStack>
                     }
                 </VStack>

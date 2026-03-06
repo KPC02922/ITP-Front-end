@@ -140,7 +140,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 5,
     borderTopWidth: 1,
-    borderBottomWidth: 1,
+ 
     borderColor: '#333',
   },
 

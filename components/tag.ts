@@ -41,6 +41,12 @@ export const mapMarkerTag = {
     otherStore: 'Other store',
 }
 
+export const reFetchTag = {
+    userReport: 'userReport',
+    currentWeatherRepoert: 'currentWeatherReport',
+    automaticWeatherStation: 'automaticWeatherStation',
+}
+
  export const tag = {
     // common & funtional view
     app: 'app',
@@ -73,7 +79,7 @@ export const mapMarkerTag = {
     selectRegionModal: 'selectRegionModal',
     selectDistrictModal: 'selectDistrictModal',
     selectStoreModal: 'selectStoreModal',
-    mapControllPanelModal: 'mapControllPanelModal',
+    mapControlPanelModal: 'mapControlPanelModal',
     mapSelectLatLngModal: 'mapSelectLatLngModal',
     messageModal: 'messageModal',
     mapMarkerModal: 'mapMarkerModal',
@@ -90,4 +96,4 @@ export const mapMarkerTag = {
     rainRelateListItem: 'rainRelateListItem',
     
     
-} as const
+}

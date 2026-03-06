@@ -12,14 +12,19 @@ import { use, useEffect, useState } from "react"
 
 const TAG = tag.navigator
 
-export const Navigator = ({onChangeView, view}: any) => {
-    const navbarHeight = 86
-    const narbarPaddingBottom = 36
+export const Navigator = ({onChangeView, resetInfoViewDefault, view}
+    : {onChangeView: (fromView: string, toView: string) => void, resetInfoViewDefault: () => void, view: string}
+) => {
+    const navbarHeight = 106
+    const narbarPaddingBottom = 50
     const [currentView, setCurrentView] = useState<string>(view)
     const selectedColor = "#000000"
     const defaultColor = "#FFFFFF"
     
     const onPressHandler = (view: string) => {
+        if (view === tag.infoView) {
+            resetInfoViewDefault()
+        }
         onChangeView(tag.navigator, view)
     }
 

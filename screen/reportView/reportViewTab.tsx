@@ -372,7 +372,7 @@ export const ReportViewTab = (
                             </Box>
 
                             <FormControlHelper>
-                                <FormControlHelperText>Click on an icon to select a rainfall rate</FormControlHelperText>
+                                <FormControlHelperText>{`Click on the icon to rate how heavy the rain is\n1 = Light Rain | 5 = Heavy Rain`}</FormControlHelperText>
                             </FormControlHelper>
                         </Box>
                     : null

@@ -55,6 +55,11 @@ const MainView = ({}) => {
         Common.writeConsole(TAG, `Change view from ${fromView} to ${toView}`)
     }
 
+    const resetInfoViewDefault = () => {
+        setInfoViewDefaultRegion('Region')
+        setInfoViewDefaultDistrict('District')
+    }
+
     useEffect(() => {
         Common.writeConsole(TAG, `init`)
         const initView = tag.homeView
@@ -124,7 +129,7 @@ const MainView = ({}) => {
                 <HomeView onChangeView={onChangeView} webViewContent={webViewContent} />
             }
 
-            {navigatorVisible && <Navigator onChangeView={onChangeView} view={view} />}
+            {navigatorVisible && <Navigator onChangeView={onChangeView} view={view} resetInfoViewDefault={resetInfoViewDefault} />}
         </>
     )
 }

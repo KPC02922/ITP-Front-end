@@ -109,7 +109,7 @@ export const MapSelectLatLngModal = forwardRef<MapSelectLatLngModalHandle, MapSe
                 <Box style={[styles.commonModalContainer, {height: '80%', paddingVertical: 20, width: '90%'}]}>
                     <Fab
                         size="lg"
-                        placement="bottom right"
+                        placement="bottom left"
                         onPress={onLocateFabPress}
                     >
                         <FabIcon as={Locate} />
@@ -118,7 +118,7 @@ export const MapSelectLatLngModal = forwardRef<MapSelectLatLngModalHandle, MapSe
                         source={{ html: webViewContent }}
                         mapCenterPosition={mapCenterPosition}
                         zoom={17}
-                        zoomControl={true}
+                        zoomControl={false}
                         onMessageReceived={message => mapReceivedMsgHandler(message)}
                         mapMarkers={markerList}
                     />

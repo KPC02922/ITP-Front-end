@@ -141,7 +141,7 @@ export const HomeMapView = (
         <Box style={expended ? {flex: 10, height: '100%'} : {flex: 62, height: '100%'}}>
             {!expended && <Fab
                 size="lg"
-                placement="top right"
+                placement="top left"
                 onPress={onSettingFabPress}
                 style={{marginTop: 24}}
             >
@@ -150,7 +150,7 @@ export const HomeMapView = (
 
              {!expended && <Fab
                 size="lg"
-                placement="bottom right"
+                placement="bottom left"
                 onPress={onLocateFabPress}
             >
                 <FabIcon as={Locate} />
@@ -161,7 +161,8 @@ export const HomeMapView = (
                 source={{ html: webViewContent }}
                 mapCenterPosition={mapCenterPosition}
                 zoom={zoom}
-                zoomControl={true}
+                zoomControl={false}
+                attributionControl={true}
                 onMessageReceived={message => mapReceivedMsgHandler(message)}
                 ownPositionMarker={{
                     title: "You are here",
@@ -176,7 +177,7 @@ export const HomeMapView = (
                         iterationCount: INFINITE_ANIMATION_ITERATIONS
                     }
                 }}
-                mapMarkers={mapMarkerList}
+                mapMarkers={mapMarkerList}  
             />
         </Box>
     )
