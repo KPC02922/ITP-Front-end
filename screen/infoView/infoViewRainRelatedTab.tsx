@@ -62,7 +62,14 @@ export const InfoViewRainRelatedTab = (
         try {
             if (type == tag.infoViewRainfallTab) {
                 if (noFiltering) {
-                    setRainfallJsonData(rainfallJson)
+                    if (mode == defaultRegionLabel) {
+                        if (districtLabel == defaultDistrictLabel) {
+                            setRainfallJsonData(rainfallJson)
+                        }
+                        else {
+                            setRainfallJsonData(rainfallJson.filter(item => Common.districtCodeToLabel(item.districtCode) == districtLabel))
+                        }
+                    }
                 } 
                 else {
                     if (mode == defaultDistrictLabel) {
@@ -71,12 +78,18 @@ export const InfoViewRainRelatedTab = (
                     else if (mode == defaultRegionLabel && districtLabel == defaultDistrictLabel) {
                         setRainfallJsonData(rainfallJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
                     }
-                    
                 }
             }
             else if (type == tag.infoViewFloodingTab) {
                 if (noFiltering) {
-                    setFloodingJsonData(floodingJson)
+                    if (mode == defaultRegionLabel) {
+                        if (districtLabel == defaultDistrictLabel) {
+                            setFloodingJsonData(floodingJson)
+                        }
+                        else {
+                            setFloodingJsonData(floodingJson.filter(item => Common.districtCodeToLabel(item.districtCode) == districtLabel))
+                        }
+                    }
                 } 
                 else {
                     if (mode == defaultDistrictLabel) {
@@ -87,9 +100,18 @@ export const InfoViewRainRelatedTab = (
                     }
                 }
             }
+            // need to re-design the if statement logic
             else if (type == tag.infoViewUmbrellaRentalTab) {
                 if (noFiltering) {
-                    setUmbrellaRentalJson(DFumbrellaRentalJson)
+                    if (mode == defaultRegionLabel) {
+                        if (districtLabel == defaultDistrictLabel && storeLabel == defaultStoreLabel) {
+                            setUmbrellaRentalJson(DFumbrellaRentalJson)
+                        }
+                        else{
+                            
+                        }
+                    }
+                    
                 }
                 else {               
                     if (mode == defaultStoreLabel && storeLabel != defaultStoreLabel) {
@@ -233,7 +255,7 @@ export const InfoViewRainRelatedTab = (
                 <HStack space="md" style={{paddingHorizontal: 10}}>
                     <Input variant="outline" size="md" style={{flex: 80}}>
                     <InputSlot style={{marginLeft: 10}}>
-                        <InputIcon as={Search} />
+                        <InputIcon as={Search} style={{color: "#32b4f4"}}/>
                     </InputSlot>
                         <InputField placeholder="Search by location" value={searchInput} onChange={(e) => setSearchInput(e.nativeEvent.text)} />
                     </Input>

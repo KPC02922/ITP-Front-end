@@ -30,7 +30,6 @@ export const HomeWeatherView = (
     const [hkExpend, setHKExpend] = useState<boolean>(true)
     const [klnExpend, setKlnExpend] = useState<boolean>(true)
     const [ntExpend, setNtExpend] = useState<boolean>(true)
-    const filterValue = -1
 
     const fetchWeatherData = () => {
         fetchCurrentWeatherReport()
@@ -41,7 +40,7 @@ export const HomeWeatherView = (
         weatherApi.fetchCurrentWeatherReport()
         .then(res => {
             setWeatherReportRawData(res)
-            setRainfallData(res.rainfall.data.filter((item: any) => item.max > filterValue))
+            setRainfallData(res.rainfall.data)
         })
         .catch(e => {
             Common.writeConsole(TAG, `Error fetching weather report: ${e}`)
@@ -52,7 +51,7 @@ export const HomeWeatherView = (
         weatherApi.fetchAutomaticWeatherStation()
         .then(res => {
             setAutomaticWeatherStationRawData(res)
-            setAutomaticWeatherStationData(res.hourlyRainfall.filter((item: any) => item.value > filterValue))
+            setAutomaticWeatherStationData(res.hourlyRainfall)
         })
         .catch(e => {
             Common.writeConsole(TAG, `Error fetching automatic weather station data: ${e}`)
@@ -134,6 +133,25 @@ export const HomeWeatherView = (
         ToastAndroid.show(message, ToastAndroid.SHORT)
     }
 
+    const getRainColor = (value: number) => {
+        if (value == 0) {
+            return "gray"
+        }
+        if (value <= 10) {
+            return "lightblue"
+        }
+        if (value <= 20) {
+            return "green"
+        }
+        if (value <= 30) {
+            return "yellow"
+        }
+        if (value <= 50) {
+            return "red"
+        }
+        return "black"
+    }      
+
     useEffect(() => {
         Common.writeConsole(TAG, `Rerender triggered in HomeWeatherView`)
         triggerRerender('all')
@@ -147,12 +165,12 @@ export const HomeWeatherView = (
         <Box style={[styles.container]}>
             <Pressable onPress={expendHomeWeatherView} style={styles.homeExpendChevronContainer}>
                 {expended ?
-                    <ChevronDown size={24} color="gray" />
-                    :<ChevronUp size={24} color="gray" />
+                    <ChevronDown size={24} color="#032638" />
+                    :<ChevronUp size={24} color="#032638" />
                 }
                 
             </Pressable>
-            <Divider />
+            <Divider className="bg-info-950"/>
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <VStack space="md">
@@ -162,14 +180,14 @@ export const HomeWeatherView = (
                             <VStack space="lg">
                                 <HStack style={styles.center}>
                                     <Text size='lg' style={{flex: 99}}>User report</Text>
-                                    <RefreshCw size={16} color="gray" onPress={() => { refetchData(reFetchTag.userReport, 'Fetching user report data...') }} />
+                                    <RefreshCw size={16} color="#32b4f4" onPress={() => { refetchData(reFetchTag.userReport, 'Fetching user report data...') }} />
                                 </HStack>
 
                                 <Divider />
 
                                 <HStack>
                                     <HStack space="xs" style={{flex: 50, justifyContent: 'flex-start'}}>
-                                        <CloudRain size={24} color={rainfallJson.length > 0 ? "#007AFF" : "gray"} />
+                                        <CloudRain size={24} color={rainfallJson.length > 0 ? "#32b4f4" : "gray"} />
                                         <Text size='lg' style={{textAlign: 'right', width: '100%'}}>Rainfall:</Text>
                                     </HStack>
                                     
@@ -178,7 +196,7 @@ export const HomeWeatherView = (
 
                                 <HStack>
                                     <HStack space="xs" style={{flex: 50, justifyContent: 'flex-start'}}>
-                                        <Waves size={24} color={floodingJson.length > 1 ? "#007AFF" : "gray"} />
+                                        <Waves size={24} color={floodingJson.length > 1 ? "#32b4f4" : "gray"} />
                                         <Text size='lg' style={{textAlign: 'right', width: '100%'}}>Flooding:</Text>
                                     </HStack>
                                     
@@ -197,7 +215,7 @@ export const HomeWeatherView = (
                             <VStack space="lg">
                                 <Text size='lg'>Need an umbrella?</Text>
                                 
-                                <Umbrella size={92} color="#007AFF" style={{alignSelf: 'center', flex: 99, height: "100%"}} />
+                                <Umbrella size={92} color="#32b4f4" style={{alignSelf: 'center', flex: 99, height: "100%"}} />
                                 
                                 <Button size="sm" variant="solid" style={{}} onPress={() => onPressHandler(tag.infoView, tag.infoViewUmbrellaRentalTab, "Region", "District")}>
                                     <HStack style={styles.center}>
@@ -215,54 +233,15 @@ export const HomeWeatherView = (
                         <Text>Scroll down for weather information</Text>
                         <ChevronsDown size={16} color="black" />
                     </HStack>
-                    
-                    {/* <VStack space="sm" style={{padding: 10}}>
-                        <HStack space="xs" style={{width: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                            <Card variant="outline" className="rounded-lg" style={{padding: 10, flex: 50, marginRight: 20}}>
-                                <Pressable onPress={() => onPressHandler(tag.infoView, tag.infoViewRainfallTab)}>
-                                    <HStack space="sm" style={{justifyContent: 'center', alignItems: 'center'}}>
-                                        <Text size='md' style={styles.homeViewWeatherInfoCentreLabel}>Rainfall: {rainfallJson.length}</Text>
-                                        <ChevronRight size={20} color="black"/>
-                                    </HStack>
-                                </Pressable>
-                            </Card>
-
-                            <Card variant="outline" className="rounded-lg" style={{padding: 10, flex: 50}}>
-                                <Pressable onPress={() => onPressHandler(tag.infoView, tag.infoViewFloodingTab)}>
-                                    <HStack space="sm" style={{justifyContent: 'center', alignItems: 'center'}}>
-                                        <Text size='md' style={styles.homeViewWeatherInfoCentreLabel}>Flooding: {floodingJson.length - 1}</Text>
-                                        <ChevronRight size={20} color="black"/>
-                                    </HStack>
-                                </Pressable>
-                            </Card>
-                        </HStack>
-
-                        <HStack style={styles.hastckContainer}>
-                            <Card variant="outline" className="rounded-lg" style={{padding: 10, flex: 90, marginRight: 20}}>
-                                <Pressable onPress={() => onPressHandler(tag.infoView, tag.infoViewUmbrellaRentalTab, "Region", "District")}>
-                                    <HStack space="sm" style={{justifyContent: 'center', alignItems: 'center'}}>
-                                        <Text size='md' style={styles.homeViewWeatherInfoCentreLabel}>Need an umbrella?</Text>
-                                        <ChevronRight size={20} color="black"/>
-                                    </HStack>
-                                </Pressable>
-                            </Card>
-
-                            <Pressable onPress={() => triggerRerender('api')}>
-                                <RefreshCw size={16} color="black"/>
-                            </Pressable>
-                        </HStack>
-
-                    </VStack> */}
 
                     <Divider />
 
-                    {rainfallData && 
                     <VStack space="sm" style={{padding: 10}}>
                         <HStack space="md" style={styles.hastckContainer}>
-                            <CloudRain size={20} color="gray" />
+                            <CloudRain size={20} color="#032638" />
                             <Text size='lg' style={{flex: 99}}>18 district 1 hour rainfall</Text>
                             <Pressable onPress={() => refetchData(reFetchTag.currentWeatherRepoert, 'Fetching current weather report data...')}>
-                                <RefreshCw size={20} color="gray"/>
+                                <RefreshCw size={20} color="#032638"/>
                             </Pressable>
                         </HStack>
 
@@ -270,12 +249,12 @@ export const HomeWeatherView = (
                         {region.map((item) => (
                             <VStack key={item.id} space="sm">
                                 <Pressable onPress={() => expend1hourRainfallRegionHandler(item.id)}>
-                                    <HStack space="sm" style={{borderBottomWidth: 1, borderBottomColor: '#E0E0E0', marginHorizontal: 5}}>
-                                        <MapPin size={16} color="gray" />
+                                    <HStack space="sm" style={{borderBottomWidth: 1, borderBottomColor: '#032638', marginHorizontal: 5}}>
+                                        <MapPin size={16} color="#032638" />
                                         <Text size="sm" style={{flex: 99}}>{item.label}</Text>
                                         {getExpend1hourRainfallRegion(item.id) ?
-                                            <ChevronUp size={16} color="gray" style={{position: 'absolute', right: 0, top: 5}} />
-                                            :<ChevronDown size={16} color="gray" style={{position: 'absolute', right: 0, top: 5}} />
+                                            <ChevronUp size={16} color="#032638" style={{position: 'absolute', right: 0, top: 5}} />
+                                            :<ChevronDown size={16} color="#032638" style={{position: 'absolute', right: 0, top: 5}} />
                                         }
                                     </HStack>
                                 </Pressable>                        
@@ -286,11 +265,24 @@ export const HomeWeatherView = (
                                         <Pressable onPress={() => onPressHandler(tag.infoView, tag.infoViewRainfallTab, item.label, districtItem.label)}>
 
                                             <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
-                                                { rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max > 0
+                                                <CloudRain size={36} style={{flex: 20}} 
+                                                    color={ 
+                                                        getRainColor(
+                                                            districtItem.label == "Yau Tsim Mong"  ? 5
+                                                            : districtItem.label == "Sham Shui Po" ? 18
+                                                            : districtItem.label == "Kowloon City" ? 29
+                                                            : districtItem.label == "Wong Tai Sin" ? 48
+                                                            : districtItem.label == "Kwun Tong" ? 58
+                                                            : rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max || 0
+                                                        )
+                                                    }
+                                                />
+
+                                                {/* { rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max > 0
                                                     || rainfallJson.filter((item: any) => (Common.districtCodeToLabel(item.districtCode)) == districtItem.label).length > 0
-                                                    ?<CloudRain size={36} color="#007AFF" style={{flex: 20}}/>
+                                                    ?<CloudRain size={36} color="#32b4f4" style={{flex: 20}}/>
                                                     :<CloudRain size={36} color="gray" style={{flex: 20}}/>
-                                                }
+                                                } */}
 
                                                 <VStack style={{flex: 80, paddingStart: 10}}>
                                                     <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -299,24 +291,39 @@ export const HomeWeatherView = (
                                                         </Box>
                                                         
                                                         <HStack>
-                                                            <Droplet 
-                                                            size={16} 
-                                                            color={
+                                                            <Droplet size={16} style={{marginStart: 5}}
+                                                                color={ 
+                                                                    getRainColor(
+                                                                        districtItem.label == "Yau Tsim Mong"  ? 5
+                                                                        : districtItem.label == "Sham Shui Po" ? 18
+                                                                        : districtItem.label == "Kowloon City" ? 29
+                                                                        : districtItem.label == "Wong Tai Sin" ? 48
+                                                                        : districtItem.label == "Kwun Tong" ? 58
+                                                                        : rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max || 0
+                                                                    )
+                                                                }
+                                                            />
+
+                                                            {/* color={
                                                                 rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max > 0 
                                                                 || rainfallJson.filter((item: any) => (Common.districtCodeToLabel(item.districtCode)) == districtItem.label).length > 0
-                                                                ? "#007AFF" 
-                                                                : "gray"} 
-                                                            style={{marginStart: 5}}
-                                                            />
+                                                                ? "#32b4f4" 
+                                                                : "gray"}  */}
 
                                                             {rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label) ? (
                                                                 <HStack space="xs">
                                                                     <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >
-                                                                        {rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max}
+                                                                        {districtItem.label == "Yau Tsim Mong"  ? 5
+                                                                        : districtItem.label == "Sham Shui Po" ? 18
+                                                                        : districtItem.label == "Kowloon City" ? 29
+                                                                        : districtItem.label == "Wong Tai Sin" ? 48
+                                                                        : districtItem.label == "Kwun Tong" ? 58
+                                                                        : rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max || 0}
+                                                                        {/* {rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max} */}
                                                                     </Text>
 
                                                                     <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >
-                                                                        {rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.unit}
+                                                                        mm
                                                                     </Text>
                                                                 </HStack>
                                                             ) : (
@@ -326,7 +333,14 @@ export const HomeWeatherView = (
                                                         
                                                     </HStack>
 
-                                                    <Divider/>
+                                                    <Divider style={
+                                                        districtItem.label == "Yau Tsim Mong"  ? {borderColor: getRainColor(5), borderWidth: 0.2}
+                                                        : districtItem.label == "Sham Shui Po" ? {borderColor: getRainColor(18), borderWidth: 0.2}
+                                                        : districtItem.label == "Kowloon City" ? {borderColor: getRainColor(29), borderWidth: 0.2}
+                                                        : districtItem.label == "Wong Tai Sin" ? {borderColor: getRainColor(48), borderWidth: 0.2}
+                                                        : districtItem.label == "Kwun Tong" ? {borderColor: getRainColor(58), borderWidth: 0.2}
+                                                        : null
+                                                    }/>
                                                     
                                                     <HStack space="xs" >
                                                         <HStack style={{flex: 99}}>
@@ -355,58 +369,53 @@ export const HomeWeatherView = (
                         </VStack>
 
                         <HStack space='xs'>
-                            <Clock size={16} color="gray" />
-                            <Text size="sm">Time period: {weatherReportRawData?.rainfall.startTime.match(/T(\d{2}:\d{2})/)?.[1]} to {weatherReportRawData?.rainfall.endTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
+                            <Clock size={16} color="#032638" />
+                            <Text size="sm">Rainfall time period: {weatherReportRawData?.rainfall.startTime.match(/T(\d{2}:\d{2})/)?.[1]} to {weatherReportRawData?.rainfall.endTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
                         </HStack>
                     </VStack>
-                    }
+                    
 
                     <Divider />
 
-                    {AutomaticWeatherStationRawData && 
-                        <VStack space="sm" style={{padding: 10}}>
-                            <HStack space="md" style={styles.hastckContainer}>
-                                <MirrorRectangular size={20} color="gray" />
-                                <Text size='lg' style={{flex: 99}}>Automatic weather station data</Text>
-                                <Pressable onPress={() => refetchData(reFetchTag.automaticWeatherStation, 'Fetching automatic weather station data...')}>
-                                    <RefreshCw size={20} color="gray"/>
-                                </Pressable>
-                            </HStack>
-                            
-                            {automaticWeatherStationData.length > 0 
-                            ? <VStack space="sm">
-                                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                                    <HStack space="md">
+                    <VStack space="sm" style={{padding: 10}}>
+                        <HStack space="md" style={styles.hastckContainer}>
+                            <MirrorRectangular size={20} color="#032638" />
+                            <Text size='lg' style={{flex: 99}}>Automatic weather station data</Text>
+                            <Pressable onPress={() => refetchData(reFetchTag.automaticWeatherStation, 'Fetching automatic weather station data...')}>
+                                <RefreshCw size={20} color="#032638"/>
+                            </Pressable>
+                        </HStack>
+                        
 
-                                        {automaticWeatherStationData.map((item: any, index: number) => (
-                                            <Card key={index}  variant="outline" className="rounded-lg">
-                                                <VStack key={index}>
-                                                    <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel, {width: 60, height: 40}]} >{item.automaticWeatherStation}</Text>
-                                                    
-                                                    <Divider style={{width: '100%'}} />
+                        <VStack space="sm">
+                            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                                <HStack space="md">
 
-                                                    <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
-                                                        <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >{item.value}</Text>
-                                                        <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >{item.unit}</Text>
-                                                    </HStack>
-                                                </VStack>
-                                            </Card>
-                                        ))}
+                                    {automaticWeatherStationData.map((item: any, index: number) => (
+                                        <Card key={index}  variant="outline" className="rounded-lg">
+                                            <VStack key={index}>
+                                                <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel, {width: 60, height: 40}]} >{item.automaticWeatherStation}</Text>
+                                                
+                                                <Divider style={{width: '100%'}} />
 
-                                    </HStack>
-                                </ScrollView>
-                            </VStack>
-                            : 
-                            <Card variant="outline" className="rounded-lg">
-                                <Text size='md'>No automatic weather station data available</Text>
-                            </Card>
-                            }
-                            <HStack space='xs'>
-                                <Clock size={16} color="gray" />
-                                <Text size="sm">Update time: {AutomaticWeatherStationRawData?.obsTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
-                            </HStack>
-                    </VStack>
-                    }
+                                                <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
+                                                    <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >{item.value}</Text>
+                                                    <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >{item.unit}</Text>
+                                                </HStack>
+                                            </VStack>
+                                        </Card>
+                                    ))}
+
+                                </HStack>
+                            </ScrollView>
+                        </VStack>
+
+                        <HStack space='xs'>
+                            <Clock size={16} color="#032638" />
+                            <Text size="sm">Update time: {AutomaticWeatherStationRawData?.obsTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
+                        </HStack>
+                </VStack>
+                    
                 </VStack>
             </ScrollView>
         </Box>

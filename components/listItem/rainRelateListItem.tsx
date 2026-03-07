@@ -23,6 +23,7 @@ export const RainRelateListItem = (
     const displayRateTag: string[] = [tag.infoViewRainfallTab]
     const displayOfficeHourTag: string[] = [tag.infoViewUmbrellaRentalTab]
     const rateList = [1, 2, 3, 4, 5]
+    const iconColor = "#32b4f4"
 
     return (
         <Card size="md" variant="outline" className="rounded-lg" style={{padding: 10}}>
@@ -36,7 +37,7 @@ export const RainRelateListItem = (
                     </HStack>
                     
                     { districtTimeHeader.includes(type) && <HStack space="sm" style={styles.center}>
-                        <Clock size={20} color="gray" />
+                        <Clock size={20} color={iconColor} />
                         <Text size="xl">{item.updateTime}</Text>
                     </HStack> }
 
@@ -45,34 +46,34 @@ export const RainRelateListItem = (
                 <Divider />
 
                 { displaytStoreName.includes(type) && <HStack space="md" style={[styles.fullWidth, {paddingEnd: 25}]}>
-                    <Store size={20} color="gray" />
+                    <Store size={20} color={iconColor} />
                     <Text size="md">{item.storeName}</Text>
                 </HStack> }
 
                 <HStack space="md" style={[styles.fullWidth, {paddingEnd: 25}]}>
-                    <MapPin size={20} color="gray" />
+                    <MapPin size={20} color={iconColor} />
                     <Text size="md">{item.location}</Text>
                 </HStack>
 
                 { displayOfficeHourTag.includes(type) && <HStack space="md" style={[styles.fullWidth, {paddingEnd: 25}]} >
-                    <Clock size={20} color="gray" />
+                    <Clock size={20} color={iconColor} />
                     <Text size="md">{item.officeHours}</Text>
                 </HStack> }
 
                 { displayRateTag.includes(type) && <HStack space="md" style={[styles.fullWidth, {paddingEnd: 25}]}>
-                    <CloudRain size={20} color="gray" />
+                    <CloudRain size={20} color={iconColor} />
                     <HStack space="xs">
                         {rateList.map((_, i) => (
-                            <Droplet key={i} color={i < item.rate! ? "#007AFF" : "#838383"} size={16} />
+                            <Droplet key={i} color={i < item.rate! ? "#32b4f4" : "#838383"} size={16} />
                         ))}
                     </HStack>
                 </HStack>}
             </VStack>
 
-            <Button variant="outline" size="sm" action="primary" onPress={() => openMapMarkerModal(item.latitude, item.longitude)}>
+            <Button variant="solid" size="sm" action="primary" onPress={() => openMapMarkerModal(item.latitude, item.longitude)}>
                 <HStack space="sm" style={[styles.hastckContainer, {justifyContent: 'center', alignItems: 'center'}]}>
-                    <MapPinned color="#000000" size={16} />
-                    <Text>View location on Map</Text>
+                    <MapPinned color="#ffffff" size={16} />
+                    <Text style={{color: '#ffffff'}}>View location on Map</Text>
                 </HStack>
             </Button>
 

@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
   },
 
   headerBar: {
-    backgroundColor: '#333',
+    backgroundColor: '#032638',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
 
   navigatorBar: {
     height: 50,
-    backgroundColor: '#333',
+    backgroundColor: '#032638',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
       backgroundColor: 'rgba(0, 0, 0, 0.2)', 
   },
   commonModalTitleContainer: {
-      backgroundColor: '#4A4A4A',
+      backgroundColor: '#032638',
       paddingVertical: 5,
       width: '80%',
       borderTopStartRadius: 5,
@@ -92,7 +92,7 @@ export const styles = StyleSheet.create({
       textAlign: 'center',
   },
   twoBtnRowContainer: {
-      backgroundColor: '#4A4A4A',
+      backgroundColor: '#032638',
       flexDirection: 'row',
       width: '80%',
       borderBottomStartRadius: 5,
@@ -111,7 +111,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   closeBtnRowContainer: {
-      backgroundColor: '#4A4A4A',
+      backgroundColor: '#032638',
       flexDirection: 'row',
       width: '80%',
       borderBottomStartRadius: 5,
@@ -141,7 +141,7 @@ export const styles = StyleSheet.create({
     padding: 5,
     borderTopWidth: 1,
  
-    borderColor: '#333',
+    borderColor: '#032638',
   },
 
   infoPageSubNavContainer: {

@@ -217,8 +217,8 @@ export const ReportViewTab = (
                                     value={region} 
                                     editable={false} 
                                 />
-                                <InputSlot onPress={pressRegionBtn} style={{padding: 10, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 4}}>
-                                    <ChevronDown size={20}/>
+                                <InputSlot onPress={pressRegionBtn} style={{padding: 10, backgroundColor: '#32b4f4', borderRadius: 4}}>
+                                    <ChevronDown size={20} color="#ffffff"/>
                                 </InputSlot>
                             </Input>
                             
@@ -244,10 +244,9 @@ export const ReportViewTab = (
                                     editable={false} 
                                 />
                                 <InputSlot 
-                                    onPress={districtPressHandler} 
-                                    style={{padding: 10, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 4}}
+                                    onPress={districtPressHandler} style={{padding: 10, backgroundColor: '#32b4f4', borderRadius: 4}}
                                 >
-                                    <ChevronDown size={20}/>
+                                    <ChevronDown size={20} color="#ffffff"/>
                                 </InputSlot>
                             </Input>
                             
@@ -364,7 +363,7 @@ export const ReportViewTab = (
 
                                     {rateList.map((_, i) => (
                                         <Pressable key={i} onPress={() => ratePressHandler(i+1)}>
-                                            <Droplet key={i} color={i < rate ? "#007AFF" : "#838383"} size={30} />
+                                            <Droplet key={i} color={i < rate ? "#32b4f4" : "#838383"} fill={i < rate ? "#32b4f4" : "#ffffffff"} size={30} />
                                         </Pressable>
                                     ))}
 
@@ -420,8 +419,8 @@ export const ReportViewTab = (
                                     value={officeOpenHours ? officeOpenHours.toLocaleTimeString([], {hour12: false, hour: '2-digit', minute:'2-digit'}) : ''}
                                     editable={false} 
                                 />
-                                <InputSlot onPress={() => setStartTimeTimepickerVisible(true)} style={{padding: 10, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 4}}>
-                                    <ChevronDown size={20}/>
+                                <InputSlot onPress={() => setStartTimeTimepickerVisible(true)} style={{padding: 10, backgroundColor: '#32b4f4', borderRadius: 4}}>
+                                    <ChevronDown size={20} color="#ffffff"/>
                                 </InputSlot>
                             </Input>
 
@@ -448,8 +447,8 @@ export const ReportViewTab = (
                                     value={officeCloseHours ? officeCloseHours.toLocaleTimeString([], {hour12: false, hour: '2-digit', minute:'2-digit'}) : ''}
                                     editable={false} 
                                 />
-                                <InputSlot onPress={() => setEndTimeTimepickerVisible(true)} style={{padding: 10, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 4}}>
-                                    <ChevronDown size={20}/>
+                                <InputSlot onPress={() => setEndTimeTimepickerVisible(true)} style={{padding: 10, backgroundColor: '#32b4f4', borderRadius: 4}}>
+                                    <ChevronDown size={20} color="#ffffff"/>
                                 </InputSlot>
                             </Input>
 

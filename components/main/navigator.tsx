@@ -18,7 +18,7 @@ export const Navigator = ({onChangeView, resetInfoViewDefault, view}
     const navbarHeight = 106
     const narbarPaddingBottom = 50
     const [currentView, setCurrentView] = useState<string>(view)
-    const selectedColor = "#000000"
+    const selectedColor = "#032638"
     const defaultColor = "#FFFFFF"
     
     const onPressHandler = (view: string) => {
@@ -43,7 +43,7 @@ export const Navigator = ({onChangeView, resetInfoViewDefault, view}
                     </VStack>
                 </Pressable>
 
-                <Divider orientation="vertical" />
+                <Divider orientation="vertical" style={{ backgroundColor: '#ffffff' }} />
 
                 <Pressable onPress={() => onPressHandler(tag.homeView)} style={styles.navigatorBtnContainer}>
                     <VStack style={[currentView === tag.homeView ? styles.navigatorBtnContainerSelected : {}, {justifyContent: 'center', alignItems: 'center'}]}>
@@ -52,8 +52,7 @@ export const Navigator = ({onChangeView, resetInfoViewDefault, view}
                     </VStack>
                 </Pressable>
 
-                <Divider orientation="vertical" />
-
+                <Divider orientation="vertical" style={{ backgroundColor: '#ffffff' }} />
                 <Pressable onPress={() => onPressHandler(tag.reportView)} style={styles.navigatorBtnContainer}>
                     <VStack style={[currentView === tag.reportView ? styles.navigatorBtnContainerSelected : {}, {justifyContent: 'center', alignItems: 'center'}]}>
                         <Plus color={currentView === tag.reportView ? selectedColor : defaultColor} size={16} style={{marginRight: 5, marginTop: 5}} />
