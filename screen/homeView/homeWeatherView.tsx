@@ -188,7 +188,7 @@ export const HomeWeatherView = (
                                 <Divider />
 
                                 <Button size="sm" variant="solid" style={{}} onPress={() => onPressHandler(tag.infoView, tag.infoViewRainfallTab, "Region", "District")}>
-                                    <ButtonText>View Details</ButtonText>
+                                    <ButtonText>View details</ButtonText>
                                 </Button>
                             </VStack>
                         </Card>

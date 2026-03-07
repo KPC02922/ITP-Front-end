@@ -56,9 +56,9 @@ export const InfoViewRainRelatedTab = (
         }
     }
 
-    const setDataHandler = async (mode: string, noFiltering: boolean)=> {
+    const setDataHandler = (mode: string, noFiltering: boolean)=> {
         Common.writeConsole(TAG, `set data handler - type: ${type}, mode: ${mode}, noFiltering: ${noFiltering}`)
-        setLoading(true)
+        //setLoading(true)
         try {
             if (type == tag.infoViewRainfallTab) {
                 if (noFiltering) {
@@ -66,9 +66,9 @@ export const InfoViewRainRelatedTab = (
                 } 
                 else {
                     if (mode == defaultDistrictLabel) {
-                        setRainfallJsonData(rainfallJson.filter(item => Common.districtCodeToLabel(Common.districtCodeToLabel(item.districtCode)) == districtLabel))
+                        setRainfallJsonData(rainfallJson.filter(item => Common.districtCodeToLabel(item.districtCode) == districtLabel))
                     }
-                    else if (mode == defaultRegionLabel && regionLabel == defaultRegionLabel) {
+                    else if (mode == defaultRegionLabel && districtLabel == defaultDistrictLabel) {
                         setRainfallJsonData(rainfallJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
                     }
                     
@@ -80,9 +80,9 @@ export const InfoViewRainRelatedTab = (
                 } 
                 else {
                     if (mode == defaultDistrictLabel) {
-                        setFloodingJsonData(floodingJson.filter(item => Common.districtCodeToLabel(Common.districtCodeToLabel(item.districtCode)) == districtLabel))
+                        setFloodingJsonData(floodingJson.filter(item => Common.districtCodeToLabel(item.districtCode) == districtLabel))
                     }
-                    else if (mode == defaultRegionLabel && regionLabel == defaultRegionLabel) {
+                    else if (mode == defaultRegionLabel && districtLabel == defaultDistrictLabel) {
                         setFloodingJsonData(floodingJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
                     }
                 }
@@ -96,7 +96,7 @@ export const InfoViewRainRelatedTab = (
                         setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => item.storeName?.includes(storeLabel)))
                     }
                     else if (mode == defaultDistrictLabel || (mode == defaultStoreLabel && storeLabel == defaultStoreLabel)) {
-                        setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => Common.districtCodeToLabel(Common.districtCodeToLabel(item.districtCode)) == districtLabel))
+                        setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => Common.districtCodeToLabel(item.districtCode) == districtLabel))
                     }
                     else if (mode == defaultRegionLabel && regionLabel == defaultRegionLabel) {
                         setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
@@ -129,27 +129,11 @@ export const InfoViewRainRelatedTab = (
         }, 50)
     }
 
-    const backToTop = () => {
-        Common.writeConsole(TAG, `back to top`)
-        if (type == tag.infoViewRainfallTab) {
-            Common.writeConsole(TAG, `scroll to top | ${rainfallScrollRef.current}`)
-            rainfallScrollRef.current?.scrollTo({x: 0, y: 0, animated: true})
-        }
-        else if (type == tag.infoViewFloodingTab) {
-            Common.writeConsole(TAG, `scroll to top | ${floodingScrollRef.current}`)
-            floodingScrollRef.current?.scrollTo({x: 0, y: 0, animated: true})
-        }
-        else if (type == tag.infoViewUmbrellaRentalTab) {
-            Common.writeConsole(TAG, `scroll to top | ${umbrellaRentalScrollRef.current}`)
-            umbrellaRentalScrollRef.current?.scrollTo({x: 0, y: 0, animated: true})
-        }
-    }
-
     useEffect(() => {
+        Common.writeConsole(TAG, `init - set data`)
+        setRainfallJsonData(rainfallJson)
+        setFloodingJsonData(floodingJson)
         setTimeout(() => {
-            Common.writeConsole(TAG, `init - set data`)
-            setRainfallJsonData(rainfallJson)
-            setFloodingJsonData(floodingJson)
             jockeyClubJson.forEach((item) => {
                 const jcData: RainRelateType = {
                     id: Math.random(),
@@ -188,20 +172,20 @@ export const InfoViewRainRelatedTab = (
 
     useEffect(() => {
         Common.writeConsole(TAG, `regionLabel: ${regionLabel} | reredner`)
-        setLoading(true)
-        setDataHandler(defaultRegionLabel, regionLabel == defaultRegionLabel).then(() => {fakeLoading()})
+        //setLoading(true)
+        setDataHandler(defaultRegionLabel, regionLabel == defaultRegionLabel)
     }, [regionLabel])
 
     useEffect(() => {
         Common.writeConsole(TAG, `districtLabel: ${districtLabel} | reredner`)
-        setLoading(true)
-        setDataHandler(defaultDistrictLabel, districtLabel == defaultDistrictLabel).then(() => {fakeLoading()})
+        //setLoading(true)
+        setDataHandler(defaultDistrictLabel, districtLabel == defaultDistrictLabel)
     }, [districtLabel])
 
     useEffect(() => {
         Common.writeConsole(TAG, `storeLabel: ${storeLabel} | reredner`)
-        setLoading(true)
-        setDataHandler(defaultStoreLabel, (storeLabel == defaultStoreLabel && regionLabel == defaultRegionLabel && districtLabel == defaultDistrictLabel)).then(() => {fakeLoading()})
+        //setLoading(true)
+        setDataHandler(defaultStoreLabel, (storeLabel == defaultStoreLabel && regionLabel == defaultRegionLabel && districtLabel == defaultDistrictLabel))
     }, [storeLabel])
 
     useEffect(() => {

@@ -8,7 +8,7 @@ import { Box } from "../ui/box"
 import { Modal, Pressable, TouchableOpacity, View } from "react-native"
 import { Divider } from "../ui/divider"
 import { VStack } from "../ui/vstack"
-import { CloudRain } from 'lucide-react-native'
+import { CloudRain, Umbrella, Waves, Package, ChessKnight, Store } from 'lucide-react-native'
 import { Switch } from "../ui/switch"
 import { getMarkerVisibility, switchMarkersVisible } from "@/controller/map/homeMapMarkerController"
 
@@ -134,7 +134,7 @@ export const MapControlPanelModal = forwardRef<MapControlPanelModalHandle, MapCo
                         <VStack>
                             <Text style={styles.bottomBorderContainer}>Flooding related markers</Text>
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <CloudRain size={20} color={'#000000'} style={{ flex: 10}} />
+                                <Waves size={20} color={'#000000'} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.flooding}</Text>
                                 <Switch 
                                     size="md" 
@@ -149,7 +149,7 @@ export const MapControlPanelModal = forwardRef<MapControlPanelModalHandle, MapCo
                         <VStack>
                             <Text style={styles.bottomBorderContainer}>Umbrella rental related markers</Text>
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <CloudRain size={20} color={'#000000'} style={{ flex: 10}} />
+                                <Umbrella size={20} color={'#000000'} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.umbrellaRental}</Text>
                                 <Switch 
                                     size="md" 
@@ -160,7 +160,7 @@ export const MapControlPanelModal = forwardRef<MapControlPanelModalHandle, MapCo
                             </HStack>
 
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <CloudRain size={20} color={'#000000'} style={{ flex: 10}} />
+                                <Package size={20} color={'#000000'} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.sfExpress}</Text>
                                 <Switch 
                                     size="md" 
@@ -171,7 +171,7 @@ export const MapControlPanelModal = forwardRef<MapControlPanelModalHandle, MapCo
                             </HStack>
 
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <CloudRain size={20} color={'#000000'} style={{ flex: 10}} />
+                                <ChessKnight size={20} color={'#000000'} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.jockeyClub}</Text>
                                 <Switch 
                                     size="md" 
@@ -182,7 +182,7 @@ export const MapControlPanelModal = forwardRef<MapControlPanelModalHandle, MapCo
                             </HStack>
 
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <CloudRain size={20} color={'#000000'} style={{ flex: 10}} />
+                                <Store size={20} color={'#000000'} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.otherStore}</Text>
                                 <Switch 
                                     size="md" 

@@ -72,7 +72,7 @@ export const HomeMapView = (
                 id: `rainfall-${item.id}`,
                 title: `Rainfall rate: ${item.rate}`,
                 position: { lat: item.latitude, lng: item.longitude },
-                icon: "☔",
+                icon: "🌧️",
             }))
             tempMapMarkerList.push(...rainfallMarkers)
         }
