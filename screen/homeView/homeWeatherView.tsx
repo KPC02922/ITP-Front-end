@@ -62,8 +62,8 @@ export const HomeWeatherView = (
 
 
     const onPressHandler = (view: string, subView?: string, region?: string, district?: string) => {
-        // onChangeView(TAG, view, subView, region, district)
-        testApi()
+        onChangeView(TAG, view, subView, region, district)
+        // testApi()
     }
 
     const triggerRerender = (mode: string) => {
@@ -84,7 +84,7 @@ export const HomeWeatherView = (
     const currentWeatherReportPlaceFix = (place: string) => {
         let tempPlace = place.replaceAll(' District', '')
         tempPlace = tempPlace.replaceAll('&', 'and')
-        Common.writeConsole(TAG, `Fixed place name from ${place} to ${tempPlace}`)
+        // Common.writeConsole(TAG, `Fixed place name from ${place} to ${tempPlace}`)
         return tempPlace
     }
 

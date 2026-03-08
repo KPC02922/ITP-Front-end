@@ -6,6 +6,7 @@ import { use, useEffect, useState } from 'react'
 import * as Common from "@/common"
 import { tag } from './components/tag'
 import * as Location from 'expo-location'
+import { initDb } from './db/sqliteHelper'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -32,6 +33,7 @@ export default function App() {
       
       try {
         Common.writeConsole(tag.app, "App is preparing")
+        await initDb()
         await requestPermission()
       } catch (e) {
         console.warn(e)

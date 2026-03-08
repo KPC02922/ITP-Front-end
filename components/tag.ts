@@ -47,6 +47,10 @@ export const reFetchTag = {
     automaticWeatherStation: 'automaticWeatherStation',
 }
 
+export const table = {
+    sfExpress: 'umbrella_rental_sf_express',
+}
+
  export const tag = {
     // common & funtional view
     app: 'app',
@@ -96,5 +100,6 @@ export const reFetchTag = {
     // other
     rainRelateListItem: 'rainRelateListItem',
     
-    
+    // db
+    sqliteHelper: 'sqliteHelper',
 }
