@@ -19,10 +19,64 @@ export const initDb = async () => {
     }
 }
 
+export const createTableAsync = async (createTableQuery: string, table?: string) => {
+    try {
+        await db!.execAsync(createTableQuery)
+        Common.writeConsole(TAG, `Table [${table}] created successfully`)
+    } catch (error) {
+        Common.writeConsole(TAG, `Error creating table [${table}]: ${error}`)
+    }
+}
+
+export const getAllTableRecords = async (tableName: string, asc: boolean, extra?: string) => {
+    try {
+        let sql
+        if (extra) {
+            sql = `SELECT * FROM ${tableName} ${extra}`
+        } else {
+            sql = `SELECT * FROM ${tableName} ORDER BY id ${asc ? 'ASC' : 'DESC'}`
+        }
+
+        const result = await db!.getAllAsync(sql)
+        Common.writeConsole(TAG, `Get all records from table ${tableName}`)
+        return result
+    } catch (error) {
+        Common.writeConsole(TAG, `Error getting records from table ${tableName}: ${error}`)
+        return []
+    }
+}
+
+export const getTableRecords = async (tableName: string, condition: string, params: any) => {
+    try {
+        const sql = `SELECT * FROM ${tableName} WHERE ${condition}`
+        const result = await db!.getAllAsync(sql, params)
+        Common.writeConsole(TAG, `Get records from table ${tableName} with condition: ${condition}`)
+        return result
+    } catch (error) {
+        Common.writeConsole(TAG, `Error getting records from table ${tableName}: ${error}`)
+        return []
+    }
+}
+
+export const insertRecord = async (tableName: string, columns: string[], values: any[]) => {
+    try {
+        const placeholders = columns.map(() => '?').join(', ')
+        await db!.runAsync(`INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${placeholders})`, values)
+        Common.writeConsole(TAG, `Inserted record into table ${tableName} successfully`)
+    } catch (error) {
+        Common.writeConsole(TAG, `Error inserting record into table ${tableName}: ${error}`)
+    }
+}
+
 const initTable = async () => {
     try {
         Common.writeConsole(TAG, `Initializing tables...`)
-        
+        if (false) {
+            await db!.execAsync(`DROP TABLE IF EXISTS ${table.sfExpress}`)
+            await db!.execAsync(`DROP TABLE IF EXISTS ${table.jockeyClub}`)
+            return
+        }
+
         // SF Express table
         await db!.execAsync(createTable.createSfExpressTable)
         const SfExpressResult = await db!.getFirstAsync(`SELECT * FROM ${table.sfExpress} LIMIT 1`)
@@ -37,16 +91,15 @@ const initTable = async () => {
                     const districtCode = item.districtCode
                     const code = item.code
                     const location = item.location
-                    const weekDayOfficeHours = item.weekDayOfficeHours
-                    const satOfficeHours = item.satOfficeHours
-                    const sunHolidayOfficeHours = item.sunHolidayOfficeHours
+                    const storeName = `SF Express (${item.code})`
+                    const officeHours = `${item.weekDayOfficeHours}, ${item.satOfficeHours}, ${item.sunHolidayOfficeHours}`
                     const latitude = item.latitude
                     const longitude = item.longitude
                     const status = item.status
                     const lastUpdateTime = item.lastUpdateTime
 
-                    db!.runAsync(`INSERT INTO ${table.sfExpress} (id, regionCode, districtCode, code, location, weekDayOfficeHours, satOfficeHours, sunHolidayOfficeHours, latitude, longitude, status, lastUpdateTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
-                    [id, regionCode, districtCode, code, location, weekDayOfficeHours, satOfficeHours, sunHolidayOfficeHours, latitude, longitude, status, lastUpdateTime])
+                    db!.runAsync(`INSERT INTO ${table.sfExpress} (id, regionCode, districtCode, code, location, officeHours, storeName, latitude, longitude, status, lastUpdateTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
+                    [id, regionCode, districtCode, code, location, officeHours, storeName, latitude, longitude, status, lastUpdateTime])
                     .then(() => {
                         Common.writeConsole(TAG, `Inserted SF Express record id: ${id} successfully`)
                     })
@@ -69,15 +122,17 @@ const initTable = async () => {
                     const id = item.id
                     const regionCode = item.regionCode
                     const districtCode = item.districtCode
+                    const code = item.code || ''
                     const location = item.location
+                    const storeName = `Jockey Club`
                     const officeHours = item.officeHours
                     const latitude = item.latitude
                     const longitude = item.longitude
                     const status = item.status
                     const lastUpdateTime = item.lastUpdateTime
 
-                    db!.runAsync(`INSERT INTO ${table.jockeyClub} (id, regionCode, districtCode, location, officeHours, latitude, longitude, status, lastUpdateTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
-                    [id, regionCode, districtCode, location, officeHours, latitude, longitude, status, lastUpdateTime])
+                    db!.runAsync(`INSERT INTO ${table.jockeyClub} (id, regionCode, districtCode, code, location, officeHours, storeName, latitude, longitude, status, lastUpdateTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
+                    [id, regionCode, districtCode, code, location, officeHours, storeName, latitude, longitude, status, lastUpdateTime])
                     .then(() => {
                         Common.writeConsole(TAG, `Inserted Jockey Club record id: ${id} successfully`)
                     })
@@ -87,6 +142,11 @@ const initTable = async () => {
                 })
             })
         }
+
+        // Umbrella Rental Temp table
+        await createTableAsync(createTable.createUmbrellaRentalTempTable, table.umbrellaRentalTemp)
+        const umbrellaRentalTempRecord = await getAllTableRecords(table.umbrellaRentalTemp, true)
+        Common.writeConsole(TAG, `Umbrella Rental Temp records from DB: ${JSON.stringify(umbrellaRentalTempRecord)}`)
 
         Common.writeConsole(TAG, 'Tables initialized successfully')
     } catch (error) {

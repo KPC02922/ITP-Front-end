@@ -1,5 +1,5 @@
 export default interface RainRelateType {
-    id: number,
+    id: string | number,
     regionCode: string,
     districtCode: string,
     location: string,
@@ -10,5 +10,6 @@ export default interface RainRelateType {
     officeHours?: string,
     latitude: number,
     longitude: number,
-    status: string
+    status: string,
+    lastUpdateTime?: string,
 }

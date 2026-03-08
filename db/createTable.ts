@@ -12,9 +12,8 @@ export const createTable = {
         + `districtCode TEXT, `
         + `code TEXT, `
         + `location TEXT, `
-        + `weekDayOfficeHours TEXT, `
-        + `satOfficeHours TEXT, `
-        + `sunHolidayOfficeHours TEXT, `
+        + `storeName TEXT, `
+        + `officeHours TEXT, `
         + `latitude REAL, `
         + `longitude REAL, `
         + `status TEXT, `
@@ -27,11 +26,17 @@ export const createTable = {
         + `id INTEGER, `
         + `regionCode TEXT, `
         + `districtCode TEXT, `
+        + `code TEXT, `
         + `location TEXT, `
+        + `storeName TEXT, `
         + `officeHours TEXT, `
         + `latitude REAL, `
         + `longitude REAL, `
         + `status TEXT, `
         + `lastUpdateTime TEXT`
         + `);`,
+
+    createUmbrellaRentalTempTable:
+    `CREATE TEMPORARY TABLE IF NOT EXISTS ${table.umbrellaRentalTemp} AS SELECT * FROM ${table.jockeyClub};`
+    + `INSERT INTO ${table.umbrellaRentalTemp} SELECT * FROM ${table.sfExpress};`
 }

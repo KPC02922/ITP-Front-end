@@ -65,6 +65,15 @@ export const regionCodeToFullLabel = (code: string) => {
     return map[code] || code
 }
 
+export const regionLabelToCode = (label: string) => {
+    const map: Record<string, string> = {
+        "Hong Kong Island": "1",
+        "Kowloon": "2",
+        "New Territories": "3",
+    }
+    return map[label] || label
+}
+
 export const districtCodeToLabel = (code: string) => {
     const map: Record<string, string> = {
         "1": "Central and Western",
@@ -87,6 +96,30 @@ export const districtCodeToLabel = (code: string) => {
         "18": "Islands",
     }
     return map[code] || code
+}
+
+export const districtLabelToCode = (label: string) => {
+    const map: Record<string, string> = {
+        "Central and Western": "1",
+        "Wan Chai": "2",
+        "Eastern": "3",
+        "Southern": "4",
+        "Yau Tsim Mong": "5",
+        "Sham Shui Po": "6",
+        "Kowloon City": "7",
+        "Wong Tai Sin": "8",
+        "Kwun Tong": "9",
+        "Kwai Tsing": "10",
+        "Tsuen Wan": "11",
+        "Tuen Mun": "12",
+        "Yuen Long": "13",
+        "North": "14",
+        "Tai Po": "15",
+        "Sha Tin": "16",
+        "Sai Kung": "17",
+        "Islands": "18",
+    }
+    return map[label] || label
 }
 
 export const getCurrentPosition = () => {

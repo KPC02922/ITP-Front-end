@@ -50,6 +50,10 @@ export const reFetchTag = {
 export const table = {
     sfExpress: 'umbrella_rental_sf_express',
     jockeyClub: 'umbrella_rental_hk_jockey_club',
+    otherStore: 'umbrella_rental_other',
+    umbrellaRentalTemp: 'umbrella_rental_temp',
+    rainfall_report: 'rainfall_report',
+    flooding_report: 'flooding_report',
 }
 
  export const tag = {

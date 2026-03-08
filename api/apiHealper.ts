@@ -28,7 +28,7 @@ export const getSfExpressLocation = async () => {
 export const getJockeyClubLocation = async () => {
     try {
         const response = await axios.get(`${baseUrl}/umbrellaRental/hkJockeyClub/getLocation`)
-        Common.writeConsole(TAG, `Get Jockey Club Location response: ${JSON.stringify(response.data)}`)
+        // Common.writeConsole(TAG, `Get Jockey Club Location response: ${JSON.stringify(response.data)}`)
         return response.data
     } catch (error) {
         Common.writeConsole(TAG, `Get Jockey Club Location error: ${error}`)

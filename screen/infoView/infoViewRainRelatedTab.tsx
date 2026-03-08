@@ -1,4 +1,4 @@
-import { tag } from "@/components/tag"
+import { table, tag } from "@/components/tag"
 import { styles } from "@/assets/styles/styles"
 import * as Common from "@/common"
 import { Text } from "@/components/ui/text"
@@ -21,6 +21,8 @@ import { Spinner } from "@/components/ui/spinner"
 import { SendHorizonal } from "lucide-react-native"
 import { Toast } from "@/components/ui/toast"
 import { Fab, FabIcon } from "@/components/ui/fab"
+import { createTableAsync, getAllTableRecords, getTableRecords, insertRecord } from "@/db/sqliteHelper"
+import { createTable } from "@/db/createTable"
 
 const TAG = tag.infoViewRainRelatedTab
 
@@ -38,7 +40,7 @@ export const InfoViewRainRelatedTab = (
     const [showAllItem, setShowAllItem] = useState<boolean>(false)
     const [listIndex, setListIndex] = useState<number>(50)
     const [showBtnLabel, setShowBtnLabel] = useState<string>("Show More")
-    const [loading, setLoading] = useState<boolean>(true)
+    const [loading, setLoading] = useState<boolean>(false)
     const [searchInput, setSearchInput] = useState<string>("")
     const rainfallScrollRef = useRef<ScrollView>(null)
     const floodingScrollRef = useRef<ScrollView>(null)
@@ -56,7 +58,7 @@ export const InfoViewRainRelatedTab = (
         }
     }
 
-    const setDataHandler = (mode: string, noFiltering: boolean)=> {
+    const setDataHandler = async (mode?: string, noFiltering?: boolean)=> {
         Common.writeConsole(TAG, `set data handler - type: ${type}, mode: ${mode}, noFiltering: ${noFiltering}`)
         //setLoading(true)
         try {
@@ -101,29 +103,79 @@ export const InfoViewRainRelatedTab = (
                 }
             }
             // need to re-design the if statement logic
-            else if (type == tag.infoViewUmbrellaRentalTab) {
-                if (noFiltering) {
-                    if (mode == defaultRegionLabel) {
-                        if (districtLabel == defaultDistrictLabel && storeLabel == defaultStoreLabel) {
-                            setUmbrellaRentalJson(DFumbrellaRentalJson)
-                        }
-                        else{
-                            
-                        }
+            else if (type == tag.infoViewUmbrellaRentalTab) { 
+                const filteringRegion = regionLabel != defaultRegionLabel
+                const filteringDistrict = districtLabel != defaultDistrictLabel
+                const filteringStore = storeLabel != defaultStoreLabel
+                const filteringSearchInput = searchInput.trim() != ""
+
+                if (!filteringRegion && !filteringDistrict && !filteringStore && !filteringSearchInput) {
+                    setUmbrellaRentalJson(DFumbrellaRentalJson)
+                    return
+                }
+
+                let umbrellaRentalSqlExtra = ``
+                let sqlParams: any[] = []
+                let urCount = 0
+
+                if (filteringRegion) {
+                    umbrellaRentalSqlExtra += `regionCode = ?`
+                    sqlParams.push(Common.regionLabelToCode(regionLabel))
+                    urCount++
+                }
+
+                if (filteringDistrict) {
+                    if (urCount > 0) {
+                        umbrellaRentalSqlExtra += ` AND `
+                    }
+                    umbrellaRentalSqlExtra += `districtCode = ?`
+                    sqlParams.push(Common.districtLabelToCode(districtLabel))
+                    urCount++
+                }
+
+                if (filteringStore) {
+                    if (urCount > 0) {
+                        umbrellaRentalSqlExtra += ` AND `
+                    }
+                    if (storeLabel == 'Others') {
+                        umbrellaRentalSqlExtra += `storeName NOT LIKE ? AND storeName NOT LIKE ?`
+                        sqlParams.push(`%SF Express%`)
+                        sqlParams.push(`%Jockey Club%`)
+                    }
+                    else {
+                        umbrellaRentalSqlExtra += `storeName LIKE ?`
+                        sqlParams.push(`%${storeLabel}%`)
                     }
                     
+                    urCount++
                 }
-                else {               
-                    if (mode == defaultStoreLabel && storeLabel != defaultStoreLabel) {
-                        setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => item.storeName?.includes(storeLabel)))
+
+                if (filteringSearchInput) {
+                    if (urCount > 0) {
+                        umbrellaRentalSqlExtra += ` AND `
                     }
-                    else if (mode == defaultDistrictLabel || (mode == defaultStoreLabel && storeLabel == defaultStoreLabel)) {
-                        setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => Common.districtCodeToLabel(item.districtCode) == districtLabel))
-                    }
-                    else if (mode == defaultRegionLabel && regionLabel == defaultRegionLabel) {
-                        setUmbrellaRentalJson(DFumbrellaRentalJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
-                    }
+                    umbrellaRentalSqlExtra += `(location LIKE ? OR storeName LIKE ?)`
+                    sqlParams.push(`%${searchInput}%`)
+                    sqlParams.push(`%${searchInput}%`)
                 }
+
+                Common.writeConsole(TAG, `setDataHandler sql extra: ${umbrellaRentalSqlExtra} | params: ${JSON.stringify(sqlParams)}`)
+                const umbrellaRentalDRecord = await getTableRecords(table.umbrellaRentalTemp, umbrellaRentalSqlExtra, sqlParams)
+                Common.writeConsole(TAG, `Umbrella Rental records from DB: ${JSON.stringify(umbrellaRentalDRecord)}`)
+                const umbrellaRentalData: RainRelateType[] = umbrellaRentalDRecord.map((item: any) => ({
+                    id: `umbrella-${item.id}-${item.sysid}-${Math.random()}`,
+                    regionCode: item.regionCode,
+                    districtCode: item.districtCode,
+                    location: item.location,
+                    latitude: parseFloat(item.latitude),
+                    longitude: parseFloat(item.longitude),
+                    status: item.status,
+                    storeName: item.storeName,
+                    officeHours: item.officeHours.replaceAll(', ', '\n'),
+                    lastUpdateTime: item.lastUpdateTime
+                }))
+                setUmbrellaRentalJson(umbrellaRentalData)
+                
             }
         } catch (error) {
             Common.writeConsole(TAG, `set data handler error: ${error}`)
@@ -141,7 +193,8 @@ export const InfoViewRainRelatedTab = (
 
     const searchHandler = (input: string) => {
         Common.writeConsole(TAG, `search handler: ${input}`)
-        ToastAndroid.show(`Search for ${input} (function not implemented)`, ToastAndroid.SHORT)
+        ToastAndroid.show(`Search for [${input}]`, ToastAndroid.SHORT)
+        setDataHandler()
         Keyboard.dismiss()
     }
 
@@ -153,41 +206,32 @@ export const InfoViewRainRelatedTab = (
 
     useEffect(() => {
         Common.writeConsole(TAG, `init - set data`)
+        // setSearchComfirmInput("")
         setRainfallJsonData(rainfallJson)
         setFloodingJsonData(floodingJson)
         setTimeout(() => {
-            jockeyClubJson.forEach((item) => {
-                const jcData: RainRelateType = {
-                    id: Math.random(),
+            const loadSqliteData = async () => {
+                const umbrellaRentalDRecord = await getAllTableRecords(table.umbrellaRentalTemp, true, `ORDER BY districtCode ASC, storeName ASC`)
+                // Common.writeConsole(TAG, `Umbrella Rental records from DB: ${JSON.stringify(umbrellaRentalDRecord)}`)
+                const umbrellaRentalData: RainRelateType[] = umbrellaRentalDRecord.map((item: any) => ({
+                    id: `umbrella-${item.id}-${item.sysid}-${Math.random()}`,
                     regionCode: item.regionCode,
                     districtCode: item.districtCode,
                     location: item.location,
                     latitude: parseFloat(item.latitude),
                     longitude: parseFloat(item.longitude),
-                    status: 'N',
-                    storeName: 'Jockey Club',
-                    officeHours: item.officeHours.replaceAll(', ', '\n')
-                }
-                setUmbrellaRentalJson(prev => [...prev, jcData])
-                setDFUmbrellaRentalJson(prev => [...prev, jcData])
+                    status: item.status,
+                    storeName: item.storeName,
+                    officeHours: item.officeHours.replaceAll(', ', '\n'),
+                    lastUpdateTime: item.lastUpdateTime
+                }))
+                setUmbrellaRentalJson(umbrellaRentalData)
+                setDFUmbrellaRentalJson(umbrellaRentalData)
+            }
+
+            loadSqliteData().then(() => {
+                fakeLoading()
             })
-            
-            sfExpressJson.forEach((item) => {
-                const sfData: RainRelateType = {
-                    id: Math.random(),
-                    regionCode: item.regionCode,
-                    districtCode: item.districtCode,
-                    location: item.location,
-                    latitude: parseFloat(item.latitude),
-                    longitude: parseFloat(item.longitude),
-                    status: 'N',
-                    storeName: `SF Express (${item.code})`,
-                    officeHours: item.weekDayOfficeHours.replaceAll(', ', '\n')
-                }
-                setUmbrellaRentalJson(prev => [...prev, sfData])
-                setDFUmbrellaRentalJson(prev => [...prev, sfData])
-            })
-            fakeLoading()
         }, 50)
 
     }, [])
@@ -257,7 +301,7 @@ export const InfoViewRainRelatedTab = (
                     <InputSlot style={{marginLeft: 10}}>
                         <InputIcon as={Search} style={{color: "#32b4f4"}}/>
                     </InputSlot>
-                        <InputField placeholder="Search by location" value={searchInput} onChange={(e) => setSearchInput(e.nativeEvent.text)} />
+                        <InputField placeholder={type == tag.infoViewUmbrellaRentalTab ? "Search by location or store name" : "Search by location"} value={searchInput} onChange={(e) => setSearchInput(e.nativeEvent.text)} />
                     </Input>
 
                     <Button variant="solid" size="md" onPress={() => {searchHandler(searchInput)}}>
@@ -335,11 +379,11 @@ export const InfoViewRainRelatedTab = (
                             ))
                         }
 
-                        {umbrellaRentalJson.length > 0 &&
+                        {/* {umbrellaRentalJson.length > 0 &&
                             <Button variant="outline" size="md" action="primary" onPress={() => listStatusHandler()} style={{alignSelf: 'center'}}>
                                 <ButtonText style={styles.infoPageSubNavText}>{showBtnLabel}</ButtonText>
                             </Button>
-                        }
+                        } */}
                         </VStack>
                     </ScrollView>
                 </Box>

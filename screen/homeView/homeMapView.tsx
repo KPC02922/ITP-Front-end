@@ -1,4 +1,4 @@
-import { tag, mapMarkerTag } from "@/components/tag"
+import { tag, mapMarkerTag, table } from "@/components/tag"
 import { styles } from "@/assets/styles/styles"
 import * as Common from "@/common"
 import { Text } from "@/components/ui/text"
@@ -15,6 +15,7 @@ import { rainfallJson } from "@/demoData/rainfallJson"
 import { sfExpressJson } from "@/demoData/sfExpressJson"
 import { jockeyClubJson } from "@/demoData/jockeyClubJson"
 import { getMarkerVisibility } from "@/controller/map/homeMapMarkerController"
+import { getAllTableRecords } from "@/db/sqliteHelper"
 
 const TAG = tag.homeMapView
 
@@ -65,46 +66,58 @@ export const HomeMapView = (
     }
 
     useEffect(() => {
-        const tempMapMarkerList: MapMarker[] = []
-        
-        if (getMarkerVisibility(mapMarkerTag.rainfall)) {
-            const rainfallMarkers = rainfallJson.map((item) => ({
-                id: `rainfall-${item.id}`,
-                title: `Rainfall rate: ${item.rate}`,
-                position: { lat: item.latitude, lng: item.longitude },
-                icon: "🌧️",
-            }))
-            tempMapMarkerList.push(...rainfallMarkers)
+        const loadMapMarkers = async () => {
+            const tempMapMarkerList: MapMarker[] = []
+            
+            if (getMarkerVisibility(mapMarkerTag.rainfall)) {
+                const rainfallMarkers = rainfallJson.map((item) => ({
+                    id: `rainfall-${item.id}`,
+                    title: `Rainfall rate: ${item.rate}`,
+                    position: { lat: item.latitude, lng: item.longitude },
+                    icon: "🌧️",
+                }))
+                tempMapMarkerList.push(...rainfallMarkers)
+            }
+            
+            // TODO: flooding markers
+
+            if (getMarkerVisibility(mapMarkerTag.sfExpress)) {
+                const sfExpressRecord = await getAllTableRecords(table.sfExpress, true)
+                // Common.writeConsole(TAG, `SF Express records from DB: ${JSON.stringify(sfExpressRecord)}`)
+
+                sfExpressRecord.forEach((item: any) => {
+                    const marker: MapMarker = {
+                        id: `sf-${item.code}`,
+                        title: `SF Express: ${item.code}`,
+                        position: { lat: item.latitude, lng: item.longitude },
+                        icon: "📦",
+                    }
+                    tempMapMarkerList.push(marker)
+                })    
+            }
+
+            if (getMarkerVisibility(mapMarkerTag.jockeyClub)) {
+                const jockeyClubRecord = await getAllTableRecords(table.jockeyClub, true)
+                // Common.writeConsole(TAG, `Jockey Club records from DB: ${JSON.stringify(jockeyClubRecord)}`)
+
+                jockeyClubRecord.forEach((item: any) => {
+                    const marker: MapMarker = {
+                        id: `jockey-${item.id}`,
+                        title: `Jockey Club`,
+                        position: { lat: item.latitude, lng: item.longitude },
+                        icon: "🏇",
+                    }
+                    tempMapMarkerList.push(marker)
+                })
+            }
+
+            // TODO: other store markers
+
+            setMapMarkerList([...tempMapMarkerList])
+            Common.writeConsole(TAG, `Map markers: ${JSON.stringify(tempMapMarkerList)}`)
         }
         
-        // flooding markers
-
-        if (getMarkerVisibility(mapMarkerTag.sfExpress)) {
-            const sfMarkers = sfExpressJson.map((item) => ({
-                id: `sf-${item.code}`,
-                title: `SF Express: ${item.code}`,
-                position: { lat: item.latitude, lng: item.longitude },
-                icon: "📦",
-            }))
-            tempMapMarkerList.push(...sfMarkers)          
-        }
-
-        if (getMarkerVisibility(mapMarkerTag.jockeyClub)) {
-            const jockeyClubMarkers = jockeyClubJson.map((item, index) => ({
-                id: `jockey-${index}`,
-                title: `Jockey Club`,
-                position: { lat: item.latitude, lng: item.longitude },
-                icon: "🏇",
-            }))
-            tempMapMarkerList.push(...jockeyClubMarkers)
-        }
-
-
-        // other store markers
-        setMapMarkerList([...tempMapMarkerList])
-
-         // For testing: log the markers
-        Common.writeConsole(TAG, `Map markers: ${JSON.stringify(tempMapMarkerList)}`)
+        loadMapMarkers()
     }, [rerender])
 
     useEffect(() => {
