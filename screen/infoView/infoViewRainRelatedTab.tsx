@@ -39,8 +39,7 @@ export const InfoViewRainRelatedTab = (
     const [DFumbrellaRentalJson, setDFUmbrellaRentalJson] = useState<RainRelateType[]>([])
     const [showAllItem, setShowAllItem] = useState<boolean>(false)
     const [listIndex, setListIndex] = useState<number>(50)
-    const [showBtnLabel, setShowBtnLabel] = useState<string>("Show More")
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(true)
     const [searchInput, setSearchInput] = useState<string>("")
     const rainfallScrollRef = useRef<ScrollView>(null)
     const floodingScrollRef = useRef<ScrollView>(null)
@@ -175,7 +174,7 @@ export const InfoViewRainRelatedTab = (
                     lastUpdateTime: item.lastUpdateTime
                 }))
                 setUmbrellaRentalJson(umbrellaRentalData)
-                
+                fakeLoading()
             }
         } catch (error) {
             Common.writeConsole(TAG, `set data handler error: ${error}`)
@@ -184,10 +183,9 @@ export const InfoViewRainRelatedTab = (
     }
 
     const listStatusHandler = () => {
-        return
-        setListIndex(showAllItem ? 20 : 20)
-        setShowBtnLabel(showAllItem ? "Show Less" : "Show More")
-        setShowAllItem(prev => !prev)
+        ToastAndroid.show(`Loading all items...`, ToastAndroid.SHORT)
+        setListIndex(500)
+        setShowAllItem(true)
         Common.writeConsole(TAG, `list index changed to: ${listIndex}`)
     }
 
@@ -199,6 +197,7 @@ export const InfoViewRainRelatedTab = (
     }
 
     const fakeLoading = () => {
+        setLoading(true)
         setTimeout(() => {
             setLoading(false)
         }, 50)
@@ -207,7 +206,7 @@ export const InfoViewRainRelatedTab = (
     useEffect(() => {
         Common.writeConsole(TAG, `init - set data`)
         // setSearchComfirmInput("")
-        setRainfallJsonData(rainfallJson)
+        // setRainfallJsonData(rainfallJson)
         setFloodingJsonData(floodingJson)
         setTimeout(() => {
             const loadSqliteData = async () => {
@@ -257,20 +256,14 @@ export const InfoViewRainRelatedTab = (
     useEffect(() => {
         resetSelected()
         setSearchInput("")
+        setListIndex(50)
+        setShowAllItem(false)
+        Common.writeConsole(TAG, `type: ${type} | reredner`)
         Keyboard.dismiss()
     }, [type])
 
     return (
         <Box style={styles.container}>
-            {/* <Fab
-                size="lg"
-                placement="bottom right"
-                onPress={() => backToTop()}
-                style={{}}
-            >
-                <FabIcon as={MoveUp} color="white" />
-            </Fab> */}
-
             <VStack space="sm">
                 <HStack space="md" style={{paddingHorizontal: 10, paddingTop: 10}}>
                     <Box style={styles.common2BtnHStackContainer}>
@@ -379,11 +372,11 @@ export const InfoViewRainRelatedTab = (
                             ))
                         }
 
-                        {/* {umbrellaRentalJson.length > 0 &&
+                        {!showAllItem &&
                             <Button variant="outline" size="md" action="primary" onPress={() => listStatusHandler()} style={{alignSelf: 'center'}}>
-                                <ButtonText style={styles.infoPageSubNavText}>{showBtnLabel}</ButtonText>
+                                <ButtonText style={styles.infoPageSubNavText}>Show All</ButtonText>
                             </Button>
-                        } */}
+                        }
                         </VStack>
                     </ScrollView>
                 </Box>

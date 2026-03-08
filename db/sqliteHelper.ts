@@ -92,7 +92,7 @@ const initTable = async () => {
                     const code = item.code
                     const location = item.location
                     const storeName = `SF Express (${item.code})`
-                    const officeHours = `${item.weekDayOfficeHours}, ${item.satOfficeHours}, ${item.sunHolidayOfficeHours}`
+                    const officeHours = `Weekdays: ${item.weekDayOfficeHours}, Sat: ${item.satOfficeHours}, Sun/Holiday: ${item.sunHolidayOfficeHours}`
                     const latitude = item.latitude
                     const longitude = item.longitude
                     const status = item.status
