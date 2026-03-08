@@ -19,12 +19,14 @@ const TAG = tag.mapSelectLatLngModal
 export interface MapSelectLatLngModalHandle {
     open: () => void
     close: () => void
+    resetSelectedLatLng: () => void
 }
 
 interface MapSelectLatLngModalProps {
     webViewContent: any
     selectBtnFun?: (lat: number, lng: number) => void
     closeBtnFun?: () => void
+    selectedLatLng: {lat: number, lng: number}
 }
 
 export const MapSelectLatLngModal = forwardRef<MapSelectLatLngModalHandle, MapSelectLatLngModalProps>((props, ref) => {
@@ -43,11 +45,15 @@ export const MapSelectLatLngModal = forwardRef<MapSelectLatLngModalHandle, MapSe
 
     useImperativeHandle(ref, () => ({
         open: () => openHandler(),
-        close: () => closeHandler()
+        close: () => closeHandler(),
+        resetSelectedLatLng: () => setPinMarker({lat: 0, lng: 0}),
     }))
 
     const openHandler = () => {
         Common.writeConsole(TAG, `open modal`)
+        const tempLatLng = (props.selectedLatLng.lat > 0 && props.selectedLatLng.lng > 0) ? {lat: props.selectedLatLng.lat, lng: props.selectedLatLng.lng}
+        : (initPosition.lat > 0 && initPosition.lng > 0  ? {lat: initPosition.lat, lng: initPosition.lng} : {lat: VTCL_POSITION.lat, lng: VTCL_POSITION.lng})
+        setPinMarker(tempLatLng)
         setVisible(true)
     }
 

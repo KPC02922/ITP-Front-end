@@ -1,5 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { tag, region, district } from './components/tag'
+import * as turf from '@turf/turf'
+import {hk_18_districts} from './JsonData/hk_18_districts'
+
 
 const TAG = tag.common
 let currentPosition = {lat: 0, lng: 0}
@@ -108,4 +111,23 @@ export const getLastZoom = () => {
 
 export const setLastZoom = (zoom: number) => {
     lastZoom = zoom
+}
+
+export const regionTcToEn = (regionTc: string) => {
+    const map: Record<string, string> = {
+        "香港島": "Hong Kong Island",
+        "九龍": "Kowloon",
+        "新界": "New Territories",
+    }
+    return map[regionTc] || regionTc
+}
+
+export const findDistrict = (lat: number, lng: number) => {
+  const point = turf.point([lng, lat])
+  for (const feature of hk_18_districts.features) {
+    if (turf.booleanPointInPolygon(point, feature as any)) {
+      return feature.properties?.District || 'Unknown'
+    }
+  }
+  return 'Unknown'
 }

@@ -15,6 +15,8 @@ import { rainfallJson } from "@/demoData/rainfallJson"
 import { floodingJson } from "@/demoData/floodingJson"
 import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff, Droplet, CloudRain, Waves, ChevronsDown, ChevronsRight, Clock, MirrorRectangular, MapPin } from 'lucide-react-native'
 import { Button, ButtonText } from "@/components/ui/button"
+import { LinearGradient } from 'expo-linear-gradient'
+import { testApi } from "@/api/apiHealper"
 
 const TAG = tag.homeWeatherView
 
@@ -60,7 +62,8 @@ export const HomeWeatherView = (
 
 
     const onPressHandler = (view: string, subView?: string, region?: string, district?: string) => {
-        onChangeView(TAG, view, subView, region, district)
+        // onChangeView(TAG, view, subView, region, district)
+        testApi()
     }
 
     const triggerRerender = (mode: string) => {
@@ -134,6 +137,9 @@ export const HomeWeatherView = (
     }
 
     const getRainColor = (value: number) => {
+        if (value < 0) {
+            return "transparent"
+        }
         if (value == 0) {
             return "gray"
         }
@@ -141,7 +147,7 @@ export const HomeWeatherView = (
             return "lightblue"
         }
         if (value <= 20) {
-            return "green"
+            return "lightgreen"
         }
         if (value <= 30) {
             return "yellow"
@@ -176,14 +182,15 @@ export const HomeWeatherView = (
                 <VStack space="md">
 
                     <HStack space="md" style={[styles.hastckContainer, {paddingTop: 10, paddingHorizontal: 10}]}>
-                        <Card variant="filled" className="rounded-lg" style={{padding: 10, flex: 50, marginRight: 10, height: '100%'}}>
+                        
+                        <Card variant="filled" style={{padding: 10, flex: 50, marginRight: 10, height: '100%', borderColor: '#ffffffff'}}>
                             <VStack space="lg">
                                 <HStack style={styles.center}>
                                     <Text size='lg' style={{flex: 99}}>User report</Text>
                                     <RefreshCw size={16} color="#32b4f4" onPress={() => { refetchData(reFetchTag.userReport, 'Fetching user report data...') }} />
                                 </HStack>
 
-                                <Divider />
+                                <Divider className="bg-info-950" />
 
                                 <HStack>
                                     <HStack space="xs" style={{flex: 50, justifyContent: 'flex-start'}}>
@@ -203,7 +210,7 @@ export const HomeWeatherView = (
                                     <Text size="lg" style={{flex: 50, textAlign: 'right', right: 20}}>{floodingJson.length - 1}</Text>
                                 </HStack>
 
-                                <Divider />
+                                <Divider className="bg-info-950" />
 
                                 <Button size="sm" variant="solid" style={{}} onPress={() => onPressHandler(tag.infoView, tag.infoViewRainfallTab, "Region", "District")}>
                                     <ButtonText>View details</ButtonText>
@@ -234,7 +241,7 @@ export const HomeWeatherView = (
                         <ChevronsDown size={16} color="black" />
                     </HStack>
 
-                    <Divider />
+                    <Divider className="bg-info-950" />
 
                     <VStack space="sm" style={{padding: 10}}>
                         <HStack space="md" style={styles.hastckContainer}>
@@ -261,7 +268,30 @@ export const HomeWeatherView = (
 
                                 {getExpend1hourRainfallRegion(item.id) && <VStack space="md">
                                     {district.filter(district => district.region == item.label).map((districtItem) => (
-                                        <Card key={districtItem.id} variant="outline" className="rounded-lg">
+                                        <LinearGradient key={districtItem.id} style={{borderRadius: 8}} start={[0, 10]} end={[1, 0]}
+                                            colors={[
+                                                getRainColor(
+                                                    districtItem.label == "Yau Tsim Mong"  ? 5
+                                                    : districtItem.label == "Sham Shui Po" ? 18
+                                                    : districtItem.label == "Kowloon City" ? 29
+                                                    : districtItem.label == "Wong Tai Sin" ? 48
+                                                    : districtItem.label == "Kwun Tong" ? 58
+                                                    : (rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max || 0) - 1
+                                                )
+                                            , '#ffffffff']}
+                                        >
+                                        <Card key={districtItem.id} variant="outline" 
+                                        style={
+                                            rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max > 0
+                                            || districtItem.label == "Yau Tsim Mong"
+                                            || districtItem.label == "Sham Shui Po"
+                                            || districtItem.label == "Kowloon City"
+                                            || districtItem.label == "Wong Tai Sin"
+                                            || districtItem.label == "Kwun Tong"
+                                            ? {borderColor: '#ffffffff'}
+                                            : {borderRadius: 8, borderColor: '#032638'}
+                                        }
+                                        >
                                         <Pressable onPress={() => onPressHandler(tag.infoView, tag.infoViewRainfallTab, item.label, districtItem.label)}>
 
                                             <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -333,14 +363,7 @@ export const HomeWeatherView = (
                                                         
                                                     </HStack>
 
-                                                    <Divider style={
-                                                        districtItem.label == "Yau Tsim Mong"  ? {borderColor: getRainColor(5), borderWidth: 0.2}
-                                                        : districtItem.label == "Sham Shui Po" ? {borderColor: getRainColor(18), borderWidth: 0.2}
-                                                        : districtItem.label == "Kowloon City" ? {borderColor: getRainColor(29), borderWidth: 0.2}
-                                                        : districtItem.label == "Wong Tai Sin" ? {borderColor: getRainColor(48), borderWidth: 0.2}
-                                                        : districtItem.label == "Kwun Tong" ? {borderColor: getRainColor(58), borderWidth: 0.2}
-                                                        : null
-                                                    }/>
+                                                    <Divider className="bg-info-950" />
                                                     
                                                     <HStack space="xs" >
                                                         <HStack style={{flex: 99}}>
@@ -360,7 +383,9 @@ export const HomeWeatherView = (
                                             </HStack>
                                             
                                         </Pressable>
+                                        
                                         </Card>
+                                        </LinearGradient>
                                     ))}
                                 </VStack>}
 
@@ -375,7 +400,7 @@ export const HomeWeatherView = (
                     </VStack>
                     
 
-                    <Divider />
+                    <Divider className="bg-info-950" />
 
                     <VStack space="sm" style={{padding: 10}}>
                         <HStack space="md" style={styles.hastckContainer}>
@@ -396,7 +421,7 @@ export const HomeWeatherView = (
                                             <VStack key={index}>
                                                 <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel, {width: 60, height: 40}]} >{item.automaticWeatherStation}</Text>
                                                 
-                                                <Divider style={{width: '100%'}} />
+                                                <Divider />
 
                                                 <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
                                                     <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >{item.value}</Text>

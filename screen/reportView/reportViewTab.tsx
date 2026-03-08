@@ -14,12 +14,13 @@ import { HStack } from "@/components/ui/hstack"
 import { ScrollView } from "react-native"
 import { Divider } from "@/components/ui/divider"
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { reverseGeocodeAsync } from "expo-location"
 
 const TAG = tag.reportViewTab
 
 export const ReportViewTab = (
-    {type, pressRegionBtn, pressDistrictBtn, pressMapSelectBtn, showMessage, selectedRegion, selectedDistrict, selectedLatLng, reset}
-    : {type: string, pressRegionBtn: () => void, pressDistrictBtn: () => void, pressMapSelectBtn: () => void, showMessage: () => void,
+    {type, pressRegionBtn, pressDistrictBtn, pressMapSelectBtn, showMessage, autoFillHandler, selectedRegion, selectedDistrict, selectedLatLng, reset}
+    : {type: string, pressRegionBtn: () => void, pressDistrictBtn: () => void, pressMapSelectBtn: () => void, showMessage: () => void, autoFillHandler: (region: string) => void,
         selectedRegion: string, selectedDistrict: string, selectedLatLng: {lat: number, lng: number}, reset: boolean}
 ) => {
     const [region, setRegion] = useState<string>('')
@@ -35,7 +36,7 @@ export const ReportViewTab = (
     const [valid, setValid] = useState<boolean>(true)
     const [regionValid, setRegionValid] = useState<boolean>(true)
     const [districtValid, setDistrictValid] = useState<boolean>(true)
-    const [locationValid, setLocationValid] = useState<boolean>(true)
+    // const [locationValid, setLocationValid] = useState<boolean>(true)
     const [latLngValid, setLatLngValid] = useState<boolean>(true)
     const [storeNameValid, setStoreNameValid] = useState<boolean>(true)
     const [officeOpenHoursValid, setOfficeOpenHoursValid] = useState<boolean>(true)
@@ -44,7 +45,7 @@ export const ReportViewTab = (
     const rateList = [1, 2, 3, 4, 5]
     const [startTimeTimepickerVisible, setStartTimeTimepickerVisible] = useState<boolean>(false)
     const [endTimeTimepickerVisible, setEndTimeTimepickerVisible] = useState<boolean>(false)
-
+    const [autoFillloading, setAutoFillLoading] = useState<boolean>(false)
 
     const districtPressHandler = () => {
         if (region != '') {
@@ -70,6 +71,35 @@ export const ReportViewTab = (
         setEndTimeTimepickerVisible(false)
     }
 
+    const autoFill = () => {
+        setAutoFillLoading(true)
+        const tempLat = Common.getCurrentPosition().lat
+        const tempLng = Common.getCurrentPosition().lng
+        setLat(tempLat)
+        setLng(tempLng)
+        reverseGeocodeAsync({latitude: tempLat, longitude: tempLng}).then((res) => {
+            if (res.length > 0) {
+                const rs = res[0]
+                Common.writeConsole(TAG, `region : ${rs.region},location: ${rs.name} ${rs.street}`)
+
+                const tempRegion = Common.regionTcToEn(rs.region || '')
+                const tempDistrict = Common.findDistrict(tempLat, tempLng)
+                const tempLocation = `${rs.formattedAddress || ''}`.replace(`, ${rs.country}`, '').trim()
+
+                Common.writeConsole(TAG, `tempRegion: ${tempRegion}, tempDistrict: ${tempDistrict}, tempLocation: ${tempLocation}`)
+                
+                setRegion(tempRegion)
+                setTimeout(() => {
+                    setDistrict(tempDistrict)
+                }, 25)
+                setLocation(tempLocation)
+                autoFillHandler(tempRegion)
+                setAutoFillLoading(false)
+            }
+        })
+
+    }
+
     const resetForm = () => {
         setRegion('')
         setDistrict('')
@@ -82,12 +112,13 @@ export const ReportViewTab = (
         setOfficeCloseHours(null)
         setRegionValid(true)
         setDistrictValid(true)
-        setLocationValid(true)
+        // setLocationValid(true)
         setLatLngValid(true)
         setStoreNameValid(true)
         setOfficeOpenHoursValid(true)
         setOfficeCloseHoursValid(true)
         setValid(true)
+        autoFill()
         Keyboard.dismiss()
     }
 
@@ -95,14 +126,14 @@ export const ReportViewTab = (
         if (type == tag.reportViewRainfallTab || type == tag.reportViewFloodingTab) {
             setRegionValid(region != '')
             setDistrictValid(district != '')
-            setLocationValid(location != '')
+            // setLocationValid(location != '')
             setLatLngValid(lat != 0 && lng != 0)
             return region != '' && district != '' && location != '' && lat != 0 && lng != 0
         }
         else if (type == tag.reportViewUmbrellaRentalTab) {
             setRegionValid(region != '')
             setDistrictValid(district != '')
-            setLocationValid(location != '')
+            // setLocationValid(location != '')
             setLatLngValid(lat != 0 && lng != 0)
             setStoreNameValid(storeName != '')
             setOfficeOpenHoursValid(officeOpenHours != null)
@@ -111,6 +142,23 @@ export const ReportViewTab = (
         }
         else {
             return valid
+        }
+    }
+
+    const getRateColor = (index: number) => {
+        switch(index) {
+            case 1:
+                return "#c7ebfc"
+            case 2:
+                return "#7ccff8"
+            case 3:
+                return "#32b4f4"
+            case 4:
+                return "#0b8dcd"
+            case 5:
+                return "#075a83"
+            default:
+                return "#838383"
         }
     }
 
@@ -139,6 +187,7 @@ export const ReportViewTab = (
     }
 
     useEffect(() => {
+        if (autoFillloading) return
         if (selectedRegion == 'Region') {
             setRegion('')
             setDistrict('')
@@ -151,6 +200,7 @@ export const ReportViewTab = (
     }, [selectedRegion])
 
     useEffect(() => {
+        if (autoFillloading) return
         if (selectedDistrict == 'District') {
             setDistrict('')
         }
@@ -162,7 +212,7 @@ export const ReportViewTab = (
 
     useEffect(() => {
         if (location != '') {
-            setLocationValid(true)
+            // setLocationValid(true)
         }
     }, [location])
 
@@ -195,6 +245,8 @@ export const ReportViewTab = (
     useEffect(() => {
         resetForm()
     }, [type, reset])
+
+
 
     // region, district, location, lat, lng, rate (for rainfall report)
     // region, district, location, lat, lng (for flooding report)
@@ -266,10 +318,10 @@ export const ReportViewTab = (
 
                     <Box style={styles.fullWidth}>
                         <FormControlLabel>
-                            <FormControlLabelText>{type == tag.reportViewUmbrellaRentalTab ? 'Address' : 'Location'}</FormControlLabelText>
+                            <FormControlLabelText>{type == tag.reportViewUmbrellaRentalTab ? 'Address' : 'Location'} {`(optional)`}</FormControlLabelText>
                         </FormControlLabel>
                         
-                        <Input style={styles.hastckContainer} isInvalid={!locationValid}>
+                        <Input style={styles.hastckContainer}>
                             <InputField 
                                 placeholder={type == tag.reportViewUmbrellaRentalTab ? 'Enter address' : 'Enter location'} 
                                 value={location}
@@ -281,10 +333,10 @@ export const ReportViewTab = (
                             <FormControlHelperText >{type == tag.reportViewUmbrellaRentalTab ? 'Enter store full address' : 'Enter location e.g. Causway Bay Station / IFC mall'}</FormControlHelperText>
                         </FormControlHelper>
                         
-                        {!locationValid && <FormControlError>
+                        {/* {!locationValid && <FormControlError>
                             <FormControlErrorIcon as={CircleAlert} />
                             <FormControlErrorText >Location is required</FormControlErrorText>
-                        </FormControlError> }     
+                        </FormControlError> }      */}
                     </Box>
 
                     {/* lat and lng Inputs */}
@@ -363,7 +415,7 @@ export const ReportViewTab = (
 
                                     {rateList.map((_, i) => (
                                         <Pressable key={i} onPress={() => ratePressHandler(i+1)}>
-                                            <Droplet key={i} color={i < rate ? "#32b4f4" : "#838383"} fill={i < rate ? "#32b4f4" : "#ffffffff"} size={30} />
+                                            <Droplet color={getRateColor(i+1)} fill={i < rate ? getRateColor(i+1) : "#ffffffff"} size={30} />
                                         </Pressable>
                                     ))}
 

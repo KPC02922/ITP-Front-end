@@ -35,8 +35,10 @@ export const ReportView = ({webViewContent}: {webViewContent: string}) => {
     const changeTab = (tab: string) => {
         Common.writeConsole(TAG, `change tab: ${tab}`)
         setCurrentTab(tab)
+        setSelectedLatLng({lat: 0, lng: 0})
         selectRegionModalRef.current?.resetSelectedRegion()
         selectDistrictModalRef.current?.resetSelectedDistrict()
+        mapSelectLatLngModalRef.current?.resetSelectedLatLng()
     }
 
     const pressRegionBtn = () => {
@@ -67,6 +69,11 @@ export const ReportView = ({webViewContent}: {webViewContent: string}) => {
         setReset(!reset)
     }
 
+    const autoFillHandler = (region: string) => {
+        setSelectedRegion(region)
+        selectDistrictModalRef.current?.setSelectedRegion(region)
+    }
+
     return (
         <>
             <VStack style={styles.container}>
@@ -85,6 +92,7 @@ export const ReportView = ({webViewContent}: {webViewContent: string}) => {
                     ref={mapSelectLatLngModalRef}
                     webViewContent={webViewContent}
                     selectBtnFun={(lat, lng) => onSelectLocation(lat, lng)}
+                    selectedLatLng={selectedLatLng}
                 />
                 <MessageModal
                     ref={messageModalRef}
@@ -108,9 +116,9 @@ export const ReportView = ({webViewContent}: {webViewContent: string}) => {
 
                 <Divider />
 
-                {currentTab == tag.reportViewRainfallTab ? <ReportViewTab type={tag.reportViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressMapSelectBtn={pressMapSelectBtn} showMessage={showMessage} selectedRegion={selectedRegion} selectedDistrict={selectedDistrict} selectedLatLng={selectedLatLng} reset={reset} /> : 
-                currentTab == tag.reportViewFloodingTab ? <ReportViewTab type={tag.reportViewFloodingTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressMapSelectBtn={pressMapSelectBtn} showMessage={showMessage} selectedRegion={selectedRegion} selectedDistrict={selectedDistrict} selectedLatLng={selectedLatLng} reset={reset}/> :
-                currentTab == tag.reportViewUmbrellaRentalTab ? <ReportViewTab type={tag.reportViewUmbrellaRentalTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressMapSelectBtn={pressMapSelectBtn} showMessage={showMessage} selectedRegion={selectedRegion} selectedDistrict={selectedDistrict} selectedLatLng={selectedLatLng} reset={reset}/> :
+                {currentTab == tag.reportViewRainfallTab ? <ReportViewTab type={tag.reportViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressMapSelectBtn={pressMapSelectBtn} showMessage={showMessage} selectedRegion={selectedRegion} selectedDistrict={selectedDistrict} selectedLatLng={selectedLatLng} reset={reset} autoFillHandler={autoFillHandler}/> : 
+                currentTab == tag.reportViewFloodingTab ? <ReportViewTab type={tag.reportViewFloodingTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressMapSelectBtn={pressMapSelectBtn} showMessage={showMessage} selectedRegion={selectedRegion} selectedDistrict={selectedDistrict} selectedLatLng={selectedLatLng} reset={reset} autoFillHandler={autoFillHandler}/> :
+                currentTab == tag.reportViewUmbrellaRentalTab ? <ReportViewTab type={tag.reportViewUmbrellaRentalTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressMapSelectBtn={pressMapSelectBtn} showMessage={showMessage} selectedRegion={selectedRegion} selectedDistrict={selectedDistrict} selectedLatLng={selectedLatLng} reset={reset} autoFillHandler={autoFillHandler}/> :
                 <></>
                 }
             </VStack>

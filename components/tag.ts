@@ -88,6 +88,7 @@ export const reFetchTag = {
     weatherApi: 'weatherApi',
     currentWeatherReport: 'currentWeatherReport',
     automaticWeatherStation: 'automaticWeatherStation',
+    apiHelper: 'apiHelper',
 
     // controller
     homeMapMarkerController: 'homeMapMarkerController',
