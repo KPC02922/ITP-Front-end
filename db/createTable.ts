@@ -21,5 +21,17 @@ export const createTable = {
         + `lastUpdateTime TEXT`
         + `);`,
     
-
+    createJockeyClubTable: 
+        `CREATE TABLE IF NOT EXISTS ${table.jockeyClub} (`
+        + `sysId INTEGER PRIMARY KEY AUTOINCREMENT, `
+        + `id INTEGER, `
+        + `regionCode TEXT, `
+        + `districtCode TEXT, `
+        + `location TEXT, `
+        + `officeHours TEXT, `
+        + `latitude REAL, `
+        + `longitude REAL, `
+        + `status TEXT, `
+        + `lastUpdateTime TEXT`
+        + `);`,
 }

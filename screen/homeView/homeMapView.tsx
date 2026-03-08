@@ -8,7 +8,7 @@ import { Box } from "../../components/ui/box"
 import { use, useEffect, useRef, useState } from "react"
 import { ActivityIndicator, Dimensions } from "react-native"
 import { Fab, FabIcon, FabLabel } from "../../components/ui/fab"
-import { Settings, Locate, CloudRain } from 'lucide-react-native'
+import { Settings, Locate, CloudRain, FlagTriangleRight } from 'lucide-react-native'
 import * as Location from 'expo-location'
 import { AnimationType, INFINITE_ANIMATION_ITERATIONS, LatLng, LeafletView, MapMarker, WebviewLeafletMessage, WebviewLeafletMessagePayload } from 'react-native-leaflet-view'
 import { rainfallJson } from "@/demoData/rainfallJson"
@@ -148,6 +148,15 @@ export const HomeMapView = (
                 <FabIcon as={Settings} />
             </Fab>}
 
+            {!expended && <Fab
+                size="lg"
+                placement="bottom left"
+                onPress={onSettingFabPress}
+                style={{marginStart: 54}}
+            >
+                <FabIcon as={FlagTriangleRight} />
+            </Fab>}
+
              {!expended && <Fab
                 size="lg"
                 placement="bottom left"
@@ -186,6 +195,7 @@ export const HomeMapView = (
                         attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap</a> contributors'              
                     }
                 ]}
+                doDebug={false}
             />
         </Box>
     )

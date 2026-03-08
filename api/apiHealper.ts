@@ -13,3 +13,25 @@ export const testApi = async () => {
         Common.writeConsole(TAG, `Test API error: ${error}`)
     }
 }
+
+export const getSfExpressLocation = async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/umbrellaRental/sfExpress/getLocation`)
+        // Common.writeConsole(TAG, `Get SF Express Location response: ${JSON.stringify(response.data)}`)
+        return response.data
+    } catch (error) {
+        Common.writeConsole(TAG, `Get SF Express Location error: ${error}`)
+        return []
+    }
+}
+
+export const getJockeyClubLocation = async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/umbrellaRental/hkJockeyClub/getLocation`)
+        Common.writeConsole(TAG, `Get Jockey Club Location response: ${JSON.stringify(response.data)}`)
+        return response.data
+    } catch (error) {
+        Common.writeConsole(TAG, `Get Jockey Club Location error: ${error}`)
+        return []
+    }
+}
