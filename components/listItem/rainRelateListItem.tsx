@@ -25,6 +25,23 @@ export const RainRelateListItem = (
     const rateList = [1, 2, 3, 4, 5]
     const iconColor = "#32b4f4"
 
+    const getRateColor = (index: number) => {
+        switch(index) {
+            case 1:
+                return "#c7ebfc"
+            case 2:
+                return "#7ccff8"
+            case 3:
+                return "#32b4f4"
+            case 4:
+                return "#0b8dcd"
+            case 5:
+                return "#075a83"
+            default:
+                return "#838383"
+        }
+    }
+
     return (
         <Card size="md" variant="outline" className="rounded-lg" style={{padding: 10}}>
 
@@ -63,8 +80,8 @@ export const RainRelateListItem = (
                 { displayRateTag.includes(type) && <HStack space="md" style={[styles.fullWidth, {paddingEnd: 25}]}>
                     <CloudRain size={20} color={iconColor} />
                     <HStack space="xs">
-                        {rateList.map((_, i) => (
-                            <Droplet key={i} color={i < item.rate! ? "#32b4f4" : "#838383"} size={16} />
+                        {rateList.map((rate, i) => (
+                            <Droplet key={i} color={getRateColor(rate)} fill={i < item.rate! ? getRateColor(i+1) : "#ffffffff"} size={16} />
                         ))}
                     </HStack>
                 </HStack>}

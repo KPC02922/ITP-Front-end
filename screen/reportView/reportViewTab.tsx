@@ -15,6 +15,8 @@ import { ScrollView } from "react-native"
 import { Divider } from "@/components/ui/divider"
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { reverseGeocodeAsync } from "expo-location"
+import { postRainfallReport } from "@/api/apiHealper"
+import { updateRainfallReport } from "@/db/sqliteHelper"
 
 const TAG = tag.reportViewTab
 
@@ -162,7 +164,7 @@ export const ReportViewTab = (
         }
     }
 
-    const submitReport = () => {
+    const submitReport = async () => {
         if (!validateForm()) {
             Common.writeConsole(TAG, `form is invalid`)
             setValid(false)
@@ -170,19 +172,33 @@ export const ReportViewTab = (
         }
 
         setValid(true)
-        const reportData = {
-            region: region,
-            district: district,
-            location: location,
-            latitude: lat,
-            longitude: lng,
-            rate: type == tag.reportViewRainfallTab ? rate : undefined,
-            storeName: type == tag.reportViewUmbrellaRentalTab ? storeName : undefined,
-            officeHours: type == tag.reportViewUmbrellaRentalTab ? 
-            `${officeOpenHours?.toLocaleTimeString([], {hour12: false, hour: '2-digit', minute:'2-digit'})} - ${officeCloseHours?.toLocaleTimeString([], {hour12: false, hour: '2-digit', minute:'2-digit'})}` 
-            : undefined
+        if (type == tag.reportViewRainfallTab) {
+            const reportData = {
+                regionCode: Common.regionLabelToCode(region),
+                districtCode: Common.districtLabelToCode(district),
+                location: location || '',
+                rate: rate,
+                latitude: lat,
+                longitude: lng,
+            }
+            Common.writeConsole(TAG, `submit report: ${JSON.stringify(reportData)}`)
+            await postRainfallReport(reportData)
+            await updateRainfallReport()
         }
-        Common.writeConsole(TAG, `submit report: ${JSON.stringify(reportData)}`)
+
+        // const reportData = {
+        //     region: region,
+        //     district: district,
+        //     location: location,
+        //     latitude: lat,
+        //     longitude: lng,
+        //     rate: type == tag.reportViewRainfallTab ? rate : undefined,
+        //     storeName: type == tag.reportViewUmbrellaRentalTab ? storeName : undefined,
+        //     officeHours: type == tag.reportViewUmbrellaRentalTab ? 
+        //     `${officeOpenHours?.toLocaleTimeString([], {hour12: false, hour: '2-digit', minute:'2-digit'})} - ${officeCloseHours?.toLocaleTimeString([], {hour12: false, hour: '2-digit', minute:'2-digit'})}` 
+        //     : undefined
+        // }
+        // Common.writeConsole(TAG, `submit report: ${JSON.stringify(reportData)}`)
         showMessage()
     }
 

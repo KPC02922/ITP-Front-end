@@ -52,8 +52,8 @@ export const table = {
     jockeyClub: 'umbrella_rental_hk_jockey_club',
     otherStore: 'umbrella_rental_other',
     umbrellaRentalTemp: 'umbrella_rental_temp',
-    rainfall_report: 'rainfall_report',
-    flooding_report: 'flooding_report',
+    rainfallReport: 'rainfall_report',
+    floodingReport: 'flooding_report',
 }
 
  export const tag = {
@@ -107,4 +107,5 @@ export const table = {
     
     // db
     sqliteHelper: 'sqliteHelper',
+    rainfallReportCount: 'rainfallReportCount',
 }

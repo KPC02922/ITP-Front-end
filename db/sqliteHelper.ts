@@ -34,7 +34,7 @@ export const getAllTableRecords = async (tableName: string, asc: boolean, extra?
         if (extra) {
             sql = `SELECT * FROM ${tableName} ${extra}`
         } else {
-            sql = `SELECT * FROM ${tableName} ORDER BY id ${asc ? 'ASC' : 'DESC'}`
+            sql = `SELECT * FROM ${tableName} ORDER BY sysId ${asc ? 'ASC' : 'DESC'}`
         }
 
         const result = await db!.getAllAsync(sql)
@@ -65,6 +65,44 @@ export const insertRecord = async (tableName: string, columns: string[], values:
         Common.writeConsole(TAG, `Inserted record into table ${tableName} successfully`)
     } catch (error) {
         Common.writeConsole(TAG, `Error inserting record into table ${tableName}: ${error}`)
+    }
+}
+
+export const updateRainfallReport = async () => {
+    Common.writeConsole(TAG, `Updating Rainfall Report...`)
+    const rainfallReportResult = await db!.getFirstAsync(`SELECT * FROM ${table.rainfallReport} LIMIT 1`)
+    const rainfallReportCountResult = await apiHelper.getRainfallReportCount()
+    const prevRainfallReportCount = parseInt(await Common.AsyncGetData(tag.rainfallReportCount, "1") as any)
+    const getRainfallReportId = rainfallReportCountResult > prevRainfallReportCount ? rainfallReportCountResult - 1 : prevRainfallReportCount
+    Common.writeConsole(TAG, `Rainfall Report count from API: ${rainfallReportCountResult}, previous count from storage: ${prevRainfallReportCount}, get rainfall report id: ${getRainfallReportId}`)
+
+    if (!rainfallReportResult || rainfallReportCountResult > prevRainfallReportCount) {
+        apiHelper.getRainfallReport(getRainfallReportId).then(rs => {
+            const data: any[] = rs.data || []
+            Common.AsyncStoreData(tag.rainfallReportCount, rainfallReportCountResult.toString())
+            Common.writeConsole(TAG, `Inserting Rainfall Report data: ${JSON.stringify(data)}`)
+            data.forEach((item) => {
+                const id = item.id
+                const regionCode = item.regionCode
+                const districtCode = item.districtCode
+                const location = item.location
+                const latitude = item.latitude
+                const longitude = item.longitude
+                const rate = item.rate
+                const postTime = item.postTime
+                const status = item.status
+                const updateTime = item.updateTime
+
+                db!.runAsync(`INSERT INTO ${table.rainfallReport} (id, regionCode, districtCode, location, latitude, longitude, rate, postTime, status, updateTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
+                [id, regionCode, districtCode, location, latitude, longitude, rate, postTime, status, updateTime])
+                .then(() => {
+                    Common.writeConsole(TAG, `Inserted Rainfall Report record id: ${id} successfully`)
+                })
+                .catch((error) => {
+                    Common.writeConsole(TAG, `Error inserting Rainfall Report record id: ${id}, error: ${error}`)
+                })
+            })
+        })
     }
 }
 
@@ -147,6 +185,10 @@ const initTable = async () => {
         await createTableAsync(createTable.createUmbrellaRentalTempTable, table.umbrellaRentalTemp)
         const umbrellaRentalTempRecord = await getAllTableRecords(table.umbrellaRentalTemp, true)
         Common.writeConsole(TAG, `Umbrella Rental Temp records from DB: ${JSON.stringify(umbrellaRentalTempRecord)}`)
+
+        // Rainfall Report table
+        await createTableAsync(createTable.createRainfallReportTable, table.rainfallReport)
+        updateRainfallReport()
 
         Common.writeConsole(TAG, 'Tables initialized successfully')
     } catch (error) {

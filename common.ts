@@ -164,3 +164,35 @@ export const findDistrict = (lat: number, lng: number) => {
   }
   return 'Unknown'
 }
+
+export const dbDataTimetoString = (dateTimeStr: string, type: string = 'full') => {
+  let rs = ''
+
+  try {
+    const dateObj = new Date(dateTimeStr)
+    const year = dateObj.getFullYear().toString().padStart(4, '0')
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0')
+    const date = dateObj.getDate().toString().padStart(2, '0')
+    const hours = dateObj.getHours().toString().padStart(2, '0')
+    const minutes = dateObj.getMinutes().toString().padStart(2, '0')
+
+    switch (type) {
+      case 'date':
+        rs = `${year}-${month}-${date}`
+        break
+      case 'time':
+        rs = `${hours}:${minutes}`
+        break
+      case 'full':
+        rs = `${year}-${month}-${date} ${hours}:${minutes}`
+        break
+      case 'short':
+        rs = `${month}/${date} ${hours}:${minutes}`
+    }
+    // writeConsole(TAG, `dbDataTimetoString: ${dateTimeStr} | ${rs}`)
+  } catch (error) {
+    writeConsole(TAG, `Error converting date time string: ${error}`)
+  }
+
+  return rs
+}

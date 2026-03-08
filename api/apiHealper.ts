@@ -35,3 +35,36 @@ export const getJockeyClubLocation = async () => {
         return []
     }
 }
+
+export const getRainfallReport = async (id: number) => {
+    try {
+        const response = await axios.get(`${baseUrl}/report/rainfall/getRainfallReport/${id}`)
+        // Common.writeConsole(TAG, `Get Rainfall Report response: ${JSON.stringify(response.data)}`)
+        return response.data
+    } catch (error) {
+        Common.writeConsole(TAG, `Get Rainfall Report error: ${error}`)
+        return []
+    }
+}
+
+export const getRainfallReportCount = async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/report/rainfall/getRainfallReportCount`)
+        Common.writeConsole(TAG, `Get Rainfall Report Count response: ${JSON.stringify(response.data.data[0].count)}`)
+        return response.data.data[0].count
+    } catch (error) {
+        Common.writeConsole(TAG, `Get Rainfall Report Count error: ${error}`)
+        return 0
+    }
+}
+
+export const postRainfallReport = async (reportData: any) => {
+    try {
+        const response = await axios.post(`${baseUrl}/report/rainfall/postRainfallReport`, reportData)
+        Common.writeConsole(TAG, `Post Rainfall Report response: ${JSON.stringify(response.data)}`)
+        return response.data
+    } catch (error) {
+        Common.writeConsole(TAG, `Post Rainfall Report error: ${error}`)
+        return null
+    }
+}

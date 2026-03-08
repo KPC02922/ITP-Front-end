@@ -54,6 +54,7 @@ export const MapSelectLatLngModal = forwardRef<MapSelectLatLngModalHandle, MapSe
         const tempLatLng = (props.selectedLatLng.lat > 0 && props.selectedLatLng.lng > 0) ? {lat: props.selectedLatLng.lat, lng: props.selectedLatLng.lng}
         : (initPosition.lat > 0 && initPosition.lng > 0  ? {lat: initPosition.lat, lng: initPosition.lng} : {lat: VTCL_POSITION.lat, lng: VTCL_POSITION.lng})
         setPinMarker(tempLatLng)
+        setMapCenterPosition(tempLatLng)
         setVisible(true)
     }
 

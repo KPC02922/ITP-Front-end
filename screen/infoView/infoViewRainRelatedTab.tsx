@@ -7,7 +7,6 @@ import { Button, ButtonText } from "@/components/ui/button"
 import { Box } from "@/components/ui/box"
 import { Divider } from "@/components/ui/divider"
 import { VStack } from "@/components/ui/vstack"
-import { rainfallJson } from "@/demoData/rainfallJson"
 import { Keyboard, ScrollView, ToastAndroid } from "react-native"
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input'
 import { Key, Search, MoveUp } from 'lucide-react-native'
@@ -15,14 +14,13 @@ import { RainRelateListItem } from "@/components/listItem/rainRelateListItem"
 import { floodingJson } from "@/demoData/floodingJson"
 import RainRelateType from "@/interfcaeType/RainRelateType"
 import { useEffect, useRef, useState } from "react"
-import { jockeyClubJson } from "@/demoData/jockeyClubJson"
-import { sfExpressJson } from "@/demoData/sfExpressJson"
 import { Spinner } from "@/components/ui/spinner"
 import { SendHorizonal } from "lucide-react-native"
 import { Toast } from "@/components/ui/toast"
 import { Fab, FabIcon } from "@/components/ui/fab"
-import { createTableAsync, getAllTableRecords, getTableRecords, insertRecord } from "@/db/sqliteHelper"
+import { createTableAsync, getAllTableRecords, getTableRecords, insertRecord, updateRainfallReport } from "@/db/sqliteHelper"
 import { createTable } from "@/db/createTable"
+import RainfallType from "@/interfcaeType/RainfallType"
 
 const TAG = tag.infoViewRainRelatedTab
 
@@ -34,7 +32,9 @@ export const InfoViewRainRelatedTab = (
     const defaultDistrictLabel = "District"
     const defaultStoreLabel = "Store"
     const [rainfallJsonData, setRainfallJsonData] = useState<RainRelateType[]>([])
+    const [DFrainfallJsonData, setDFRainfallJsonData] = useState<RainRelateType[]>([])
     const [floodingJsonData, setFloodingJsonData] = useState<RainRelateType[]>([])
+    const [DFfloodingJsonData, setDFFloodingJsonData] = useState<RainRelateType[]>([])
     const [umbrellaRentalJson, setUmbrellaRentalJson] = useState<RainRelateType[]>([])
     const [DFumbrellaRentalJson, setDFUmbrellaRentalJson] = useState<RainRelateType[]>([])
     const [showAllItem, setShowAllItem] = useState<boolean>(false)
@@ -62,24 +62,61 @@ export const InfoViewRainRelatedTab = (
         //setLoading(true)
         try {
             if (type == tag.infoViewRainfallTab) {
-                if (noFiltering) {
-                    if (mode == defaultRegionLabel) {
-                        if (districtLabel == defaultDistrictLabel) {
-                            setRainfallJsonData(rainfallJson)
-                        }
-                        else {
-                            setRainfallJsonData(rainfallJson.filter(item => Common.districtCodeToLabel(item.districtCode) == districtLabel))
-                        }
-                    }
-                } 
-                else {
-                    if (mode == defaultDistrictLabel) {
-                        setRainfallJsonData(rainfallJson.filter(item => Common.districtCodeToLabel(item.districtCode) == districtLabel))
-                    }
-                    else if (mode == defaultRegionLabel && districtLabel == defaultDistrictLabel) {
-                        setRainfallJsonData(rainfallJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
-                    }
+                const filteringRegion = regionLabel != defaultRegionLabel
+                const filteringDistrict = districtLabel != defaultDistrictLabel
+                const filteringSearchInput = searchInput.trim() != ""
+
+                if (!filteringRegion && !filteringDistrict && !filteringSearchInput) {
+                    setRainfallJsonData(DFrainfallJsonData)
+                    return
                 }
+
+                let rainfallSqlExtra = ``
+                let sqlParams: any[] = []
+                let count = 0
+
+                if (filteringRegion) {
+                    rainfallSqlExtra += `regionCode = ? `
+                    sqlParams.push(Common.regionLabelToCode(regionLabel))
+                    count++
+                }
+
+                if (filteringDistrict) {
+                    if (count > 0) {
+                        rainfallSqlExtra += ` AND `
+                    }
+                    rainfallSqlExtra += ` districtCode = ? `
+                    sqlParams.push(Common.districtLabelToCode(districtLabel))
+                    count++
+                }
+
+                if (filteringSearchInput) {
+                    if (count > 0) {
+                        rainfallSqlExtra += ` AND `
+                    }
+                    rainfallSqlExtra += ` location LIKE ? `
+                    sqlParams.push(`%${searchInput}%`)
+                    count++
+                }
+                rainfallSqlExtra += ` ORDER BY postTime DESC`
+
+                Common.writeConsole(TAG, `setDataHandler sql extra: ${rainfallSqlExtra} | params: ${JSON.stringify(sqlParams)}`)
+                const rainfallRecord = await getTableRecords(table.rainfallReport, rainfallSqlExtra, sqlParams)
+                Common.writeConsole(TAG, `Rainfall records from DB: ${JSON.stringify(rainfallRecord)}`)
+                const rainfallReportData: RainRelateType[] = rainfallRecord.map((item: any) => ({
+                    id: item.id,
+                    regionCode: item.regionCode,
+                    districtCode: item.districtCode,
+                    location: item.location,
+                    latitude: parseFloat(item.latitude),
+                    longitude: parseFloat(item.longitude),
+                    rate: parseFloat(item.rate),
+                    postTime: Common.dbDataTimetoString(item.postTime, 'time'),
+                    updateTime: Common.dbDataTimetoString(item.updateTime, 'time'),
+                    status: item.status,
+                }))
+                setRainfallJsonData(rainfallReportData)
+                fakeLoading()
             }
             else if (type == tag.infoViewFloodingTab) {
                 if (noFiltering) {
@@ -115,25 +152,25 @@ export const InfoViewRainRelatedTab = (
 
                 let umbrellaRentalSqlExtra = ``
                 let sqlParams: any[] = []
-                let urCount = 0
+                let count = 0
 
                 if (filteringRegion) {
                     umbrellaRentalSqlExtra += `regionCode = ?`
                     sqlParams.push(Common.regionLabelToCode(regionLabel))
-                    urCount++
+                    count++
                 }
 
                 if (filteringDistrict) {
-                    if (urCount > 0) {
+                    if (count > 0) {
                         umbrellaRentalSqlExtra += ` AND `
                     }
                     umbrellaRentalSqlExtra += `districtCode = ?`
                     sqlParams.push(Common.districtLabelToCode(districtLabel))
-                    urCount++
+                    count++
                 }
 
                 if (filteringStore) {
-                    if (urCount > 0) {
+                    if (count > 0) {
                         umbrellaRentalSqlExtra += ` AND `
                     }
                     if (storeLabel == 'Others') {
@@ -146,11 +183,11 @@ export const InfoViewRainRelatedTab = (
                         sqlParams.push(`%${storeLabel}%`)
                     }
                     
-                    urCount++
+                    count++
                 }
 
                 if (filteringSearchInput) {
-                    if (urCount > 0) {
+                    if (count > 0) {
                         umbrellaRentalSqlExtra += ` AND `
                     }
                     umbrellaRentalSqlExtra += `(location LIKE ? OR storeName LIKE ?)`
@@ -191,7 +228,7 @@ export const InfoViewRainRelatedTab = (
 
     const searchHandler = (input: string) => {
         Common.writeConsole(TAG, `search handler: ${input}`)
-        ToastAndroid.show(`Search for [${input}]`, ToastAndroid.SHORT)
+        setShowAllItem(false)
         setDataHandler()
         Keyboard.dismiss()
     }
@@ -210,6 +247,24 @@ export const InfoViewRainRelatedTab = (
         setFloodingJsonData(floodingJson)
         setTimeout(() => {
             const loadSqliteData = async () => {
+                const rainfallReportRecord = await getAllTableRecords(table.rainfallReport, true, `ORDER BY postTime DESC`)
+                Common.writeConsole(TAG, `Rainfall Report records from DB: ${JSON.stringify(rainfallReportRecord)}`)
+                const rainfallReportData: RainRelateType[] = rainfallReportRecord.map((item: any) => ({
+                    id: item.id,
+                    regionCode: item.regionCode,
+                    districtCode: item.districtCode,
+                    location: item.location,
+                    latitude: parseFloat(item.latitude),
+                    longitude: parseFloat(item.longitude),
+                    rate: parseFloat(item.rate),
+                    postTime: Common.dbDataTimetoString(item.postTime, 'time'),
+                    updateTime: Common.dbDataTimetoString(item.updateTime, 'time'),
+                    status: item.status,
+                }))
+                setRainfallJsonData(rainfallReportData)
+                setDFRainfallJsonData(rainfallReportData)
+
+
                 const umbrellaRentalDRecord = await getAllTableRecords(table.umbrellaRentalTemp, true, `ORDER BY districtCode ASC, storeName ASC`)
                 // Common.writeConsole(TAG, `Umbrella Rental records from DB: ${JSON.stringify(umbrellaRentalDRecord)}`)
                 const umbrellaRentalData: RainRelateType[] = umbrellaRentalDRecord.map((item: any) => ({
@@ -237,20 +292,23 @@ export const InfoViewRainRelatedTab = (
 
     useEffect(() => {
         Common.writeConsole(TAG, `regionLabel: ${regionLabel} | reredner`)
-        //setLoading(true)
-        setDataHandler(defaultRegionLabel, regionLabel == defaultRegionLabel)
+        setTimeout(() => {
+            setDataHandler(defaultRegionLabel, regionLabel == defaultRegionLabel)
+        },50)
     }, [regionLabel])
 
     useEffect(() => {
         Common.writeConsole(TAG, `districtLabel: ${districtLabel} | reredner`)
-        //setLoading(true)
-        setDataHandler(defaultDistrictLabel, districtLabel == defaultDistrictLabel)
+        setTimeout(() => {
+            setDataHandler(defaultDistrictLabel, districtLabel == defaultDistrictLabel)
+        },50)
     }, [districtLabel])
 
     useEffect(() => {
         Common.writeConsole(TAG, `storeLabel: ${storeLabel} | reredner`)
-        //setLoading(true)
-        setDataHandler(defaultStoreLabel, (storeLabel == defaultStoreLabel && regionLabel == defaultRegionLabel && districtLabel == defaultDistrictLabel))
+        setTimeout(() => {
+            setDataHandler(defaultStoreLabel, (storeLabel == defaultStoreLabel && regionLabel == defaultRegionLabel && districtLabel == defaultDistrictLabel))
+        },50)
     }, [storeLabel])
 
     useEffect(() => {
@@ -258,6 +316,7 @@ export const InfoViewRainRelatedTab = (
         setSearchInput("")
         setListIndex(50)
         setShowAllItem(false)
+        setDataHandler()
         Common.writeConsole(TAG, `type: ${type} | reredner`)
         Keyboard.dismiss()
     }, [type])

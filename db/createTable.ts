@@ -38,5 +38,20 @@ export const createTable = {
 
     createUmbrellaRentalTempTable:
     `CREATE TEMPORARY TABLE IF NOT EXISTS ${table.umbrellaRentalTemp} AS SELECT * FROM ${table.jockeyClub};`
-    + `INSERT INTO ${table.umbrellaRentalTemp} SELECT * FROM ${table.sfExpress};`
+    + `INSERT INTO ${table.umbrellaRentalTemp} SELECT * FROM ${table.sfExpress};`,
+
+    createRainfallReportTable:
+    `CREATE TABLE IF NOT EXISTS ${table.rainfallReport} (`
+    + `sysId INTEGER PRIMARY KEY AUTOINCREMENT, `
+    + `id INTEGER, `
+    + `regionCode TEXT, `
+    + `districtCode TEXT, `
+    + `location TEXT, `
+    + `latitude REAL, `
+    + `longitude REAL, `
+    + `rate REAL, `
+    + `postTime TEXT, `
+    + `status TEXT, `
+    + `updateTime TEXT`
+    + `);`,
 }

@@ -1,4 +1,4 @@
-import { tag, region, district, reFetchTag } from "@/components/tag"
+import { tag, region, district, reFetchTag, table } from "@/components/tag"
 import { styles } from "@/assets/styles/styles"
 import * as Common from "@/common"
 import { Box } from "@/components/ui/box"
@@ -17,6 +17,7 @@ import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff,
 import { Button, ButtonText } from "@/components/ui/button"
 import { LinearGradient } from 'expo-linear-gradient'
 import { testApi } from "@/api/apiHealper"
+import { getAllTableRecords } from "@/db/sqliteHelper"
 
 const TAG = tag.homeWeatherView
 
@@ -32,6 +33,8 @@ export const HomeWeatherView = (
     const [hkExpend, setHKExpend] = useState<boolean>(true)
     const [klnExpend, setKlnExpend] = useState<boolean>(true)
     const [ntExpend, setNtExpend] = useState<boolean>(true)
+    const [rainfallReport, setRainfallReport] = useState<any[]>([])
+    const [rainfallReportCount, setRainfallReportCount] = useState<number>(0)
 
     const fetchWeatherData = () => {
         fetchCurrentWeatherReport()
@@ -116,12 +119,12 @@ export const HomeWeatherView = (
         }
     }
 
-    const refetchData = (mode: string, message: string) => {
+    const refetchData = async(mode: string, message: string) => {
         Common.writeConsole(TAG, `Fetch ${mode} data`)
 
         switch (mode) {
             case reFetchTag.userReport:
-                
+                await getRainfallReportRecord()
                 break
             case reFetchTag.currentWeatherRepoert:
                 fetchCurrentWeatherReport()
@@ -158,13 +161,22 @@ export const HomeWeatherView = (
         return "black"
     }      
 
+    const getRainfallReportRecord = async () => {
+        const rainfallReportRecord = await getAllTableRecords(table.rainfallReport, true)
+        const rainfallReportCount = rainfallReportRecord.length
+        setRainfallReport(rainfallReportRecord)
+        setRainfallReportCount(rainfallReportCount)
+
+        Common.writeConsole(TAG, `Rainfall Report records from DB: ${JSON.stringify(rainfallReportRecord)} | count: ${rainfallReportCount}`)
+    }
+
     useEffect(() => {
         Common.writeConsole(TAG, `Rerender triggered in HomeWeatherView`)
         triggerRerender('all')
     }, [rerender])
 
     useEffect(() => {
-        
+        getRainfallReportRecord()
     }, [])
     
     return (
@@ -194,11 +206,11 @@ export const HomeWeatherView = (
 
                                 <HStack>
                                     <HStack space="xs" style={{flex: 50, justifyContent: 'flex-start'}}>
-                                        <CloudRain size={24} color={rainfallJson.length > 0 ? "#32b4f4" : "gray"} />
+                                        <CloudRain size={24} color={rainfallReportCount > 0 ? "#32b4f4" : "gray"} />
                                         <Text size='lg' style={{textAlign: 'right', width: '100%'}}>Rainfall:</Text>
                                     </HStack>
                                     
-                                    <Text size="lg" style={{flex: 50, textAlign: 'right', right: 20}}>{rainfallJson.length}</Text>
+                                    <Text size="lg" style={{flex: 50, textAlign: 'right', right: 20}}>{rainfallReportCount}</Text>
                                 </HStack>
 
                                 <HStack>
@@ -369,7 +381,7 @@ export const HomeWeatherView = (
                                                         <HStack style={{flex: 99}}>
                                                             <Text size="sm">User report: </Text>
                                                             <Text size="sm" style={[styles.homeViewWeatherInfoCentreLabel]}>
-                                                                {rainfallJson.filter((item: any) => (Common.districtCodeToLabel(item.districtCode)) == districtItem.label).length}
+                                                                {rainfallReport.filter((item: any) => (Common.districtCodeToLabel(item.districtCode)) == districtItem.label).length}
                                                             </Text>
                                                         </HStack>
 
