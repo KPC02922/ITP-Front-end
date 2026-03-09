@@ -58,6 +58,7 @@ const MainView = ({}) => {
     const resetInfoViewDefault = () => {
         setInfoViewDefaultRegion('Region')
         setInfoViewDefaultDistrict('District')
+        setInfoViewDefaultTab(tag.infoViewRainfallTab)
     }
 
     useEffect(() => {

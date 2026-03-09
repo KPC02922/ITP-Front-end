@@ -14,6 +14,7 @@ export const testApi = async () => {
     }
 }
 
+// SF Express
 export const getSfExpressLocation = async () => {
     try {
         const response = await axios.get(`${baseUrl}/umbrellaRental/sfExpress/getLocation`)
@@ -25,6 +26,7 @@ export const getSfExpressLocation = async () => {
     }
 }
 
+// Jockey Club
 export const getJockeyClubLocation = async () => {
     try {
         const response = await axios.get(`${baseUrl}/umbrellaRental/hkJockeyClub/getLocation`)
@@ -36,6 +38,41 @@ export const getJockeyClubLocation = async () => {
     }
 }
 
+// Other Store
+export const getOtherStoreReport = async (id: number) => {
+    try {
+        const response = await axios.get(`${baseUrl}/report/other/getOtherReport/${id}`)
+        // Common.writeConsole(TAG, `Get Other Store Location response: ${JSON.stringify(response.data)}`)
+        return response.data
+    } catch (error) {
+        Common.writeConsole(TAG, `Get Other Store Location error: ${error}`)
+        return []
+    }
+}
+
+export const getOtherStoreReportCount = async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/report/other/getOtherReportCount`)
+        Common.writeConsole(TAG, `Get Other Store Location Count response: ${JSON.stringify(response.data.data[0].count)}`)
+        return response.data.data[0].count
+    } catch (error) {
+        Common.writeConsole(TAG, `Get Other Store Location Count error: ${error}`)
+        return 0
+    }
+}
+
+export const postOtherStoreReport = async (reportData: any) => {
+    try {
+        const response = await axios.post(`${baseUrl}/report/other/postOtherReport`, reportData)
+        Common.writeConsole(TAG, `Post Other Store Location response: ${JSON.stringify(response.data)}`)
+        return response.data
+    } catch (error) {
+        Common.writeConsole(TAG, `Post Other Store Location error: ${error}`)
+        return null
+    }
+}
+
+// Rainfall Report
 export const getRainfallReport = async (id: number) => {
     try {
         const response = await axios.get(`${baseUrl}/report/rainfall/getRainfallReport/${id}`)
@@ -50,7 +87,7 @@ export const getRainfallReport = async (id: number) => {
 export const getRainfallReportCount = async () => {
     try {
         const response = await axios.get(`${baseUrl}/report/rainfall/getRainfallReportCount`)
-        Common.writeConsole(TAG, `Get Rainfall Report Count response: ${JSON.stringify(response.data.data[0].count)}`)
+        // Common.writeConsole(TAG, `Get Rainfall Report Count response: ${JSON.stringify(response.data.data[0].count)}`)
         return response.data.data[0].count
     } catch (error) {
         Common.writeConsole(TAG, `Get Rainfall Report Count error: ${error}`)

@@ -108,4 +108,5 @@ export const table = {
     // db
     sqliteHelper: 'sqliteHelper',
     rainfallReportCount: 'rainfallReportCount',
+    otherStoreReportCount: 'otherStoreReportCount',
 }

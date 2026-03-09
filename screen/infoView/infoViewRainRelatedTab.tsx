@@ -431,7 +431,7 @@ export const InfoViewRainRelatedTab = (
                             ))
                         }
 
-                        {!showAllItem &&
+                        {(!showAllItem && umbrellaRentalJson.length > listIndex) &&
                             <Button variant="outline" size="md" action="primary" onPress={() => listStatusHandler()} style={{alignSelf: 'center'}}>
                                 <ButtonText style={styles.infoPageSubNavText}>Show All</ButtonText>
                             </Button>

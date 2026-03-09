@@ -106,12 +106,61 @@ export const updateRainfallReport = async () => {
     }
 }
 
+export const updateOtherStoreReport = async () => {
+    Common.writeConsole(TAG, `Updating Other Store Report...`)
+    const otherStoreReportResult = await db!.getFirstAsync(`SELECT * FROM ${table.otherStore} LIMIT 1`)
+    const otherStoreReportCountResult = await apiHelper.getOtherStoreReportCount()
+    const prevOtherStoreReportCount = parseInt(await Common.AsyncGetData(tag.otherStoreReportCount, "1") as any)
+    const getOtherStoreReportId = otherStoreReportCountResult > prevOtherStoreReportCount ? otherStoreReportCountResult - 1 : prevOtherStoreReportCount
+    Common.writeConsole(TAG, `Other Store Report count from API: ${otherStoreReportCountResult}, previous count from storage: ${prevOtherStoreReportCount}, get other store report id: ${getOtherStoreReportId}`)
+    
+    if (!otherStoreReportResult || otherStoreReportCountResult > prevOtherStoreReportCount) {
+        apiHelper.getOtherStoreReport(getOtherStoreReportId).then(rs => {
+            const data: any[] = rs.data || []
+            Common.AsyncStoreData(tag.otherStoreReportCount, otherStoreReportCountResult.toString())
+            Common.writeConsole(TAG, `Inserting Other Store Report data: ${JSON.stringify(data)}`)
+            data.forEach((item) => {
+                const id = item.id
+                const regionCode = item.regionCode
+                const districtCode = item.districtCode
+                const code = item.code || ''
+                const location = item.location
+                const storeName = item.storeName
+                const officeHours = item.officeHours
+                const latitude = item.latitude
+                const longitude = item.longitude
+                const status = item.status
+                const lastUpdateTime = item.lastUpdateTime
+
+                db!.runAsync(`INSERT INTO ${table.otherStore} (id, regionCode, districtCode, code, location, officeHours, storeName, latitude, longitude, status, lastUpdateTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
+                [id, regionCode, districtCode, code, location, officeHours, storeName, latitude, longitude, status, lastUpdateTime])
+                .then(() => {
+                    Common.writeConsole(TAG, `Inserted Other Store Report record id: ${id} successfully`)
+                })
+                .catch((error) => {
+                    Common.writeConsole(TAG, `Error inserting Other Store Report record id: ${id}, error: ${error}`)
+                })
+
+                db!.runAsync(`INSERT INTO ${table.umbrellaRentalTemp} (id, regionCode, districtCode, code, location, officeHours, storeName, latitude, longitude, status, lastUpdateTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
+                [id, regionCode, districtCode, code, location, officeHours, storeName, latitude, longitude, status, lastUpdateTime])
+                .then(() => {
+                    Common.writeConsole(TAG, `Inserted SF Express record id: ${id} successfully`)
+                })
+                .catch((error) => {
+                    Common.writeConsole(TAG, `Error inserting SF Express record id: ${id}, error: ${error}`)
+                })
+            })
+        })
+    }
+
+}
+
 const initTable = async () => {
     try {
         Common.writeConsole(TAG, `Initializing tables...`)
         if (false) {
-            await db!.execAsync(`DROP TABLE IF EXISTS ${table.sfExpress}`)
-            await db!.execAsync(`DROP TABLE IF EXISTS ${table.jockeyClub}`)
+            await db!.execAsync(`DROP TABLE IF EXISTS ${table.otherStore}`)
+            Common.AsyncStoreData(tag.otherStoreReportCount, '1')
             return
         }
 
@@ -180,6 +229,10 @@ const initTable = async () => {
                 })
             })
         }
+
+        // Other store table
+        await createTableAsync(createTable.createOtherStoreTable, table.otherStore)
+        updateOtherStoreReport()
 
         // Umbrella Rental Temp table
         await createTableAsync(createTable.createUmbrellaRentalTempTable, table.umbrellaRentalTemp)

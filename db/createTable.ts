@@ -36,9 +36,26 @@ export const createTable = {
         + `lastUpdateTime TEXT`
         + `);`,
 
+    createOtherStoreTable: 
+        `CREATE TABLE IF NOT EXISTS ${table.otherStore} (`
+        + `sysId INTEGER PRIMARY KEY AUTOINCREMENT, `
+        + `id INTEGER, `
+        + `regionCode TEXT, `
+        + `districtCode TEXT, `
+        + `code TEXT, `
+        + `location TEXT, `
+        + `storeName TEXT, `
+        + `officeHours TEXT, `
+        + `latitude REAL, `
+        + `longitude REAL, `
+        + `status TEXT, `
+        + `lastUpdateTime TEXT`
+        + `);`,
+
     createUmbrellaRentalTempTable:
     `CREATE TEMPORARY TABLE IF NOT EXISTS ${table.umbrellaRentalTemp} AS SELECT * FROM ${table.jockeyClub};`
-    + `INSERT INTO ${table.umbrellaRentalTemp} SELECT * FROM ${table.sfExpress};`,
+    + `INSERT INTO ${table.umbrellaRentalTemp} SELECT * FROM ${table.sfExpress};`
+    + `INSERT INTO ${table.umbrellaRentalTemp} SELECT * FROM ${table.otherStore};`,
 
     createRainfallReportTable:
     `CREATE TABLE IF NOT EXISTS ${table.rainfallReport} (`
@@ -54,4 +71,5 @@ export const createTable = {
     + `status TEXT, `
     + `updateTime TEXT`
     + `);`,
+    
 }
