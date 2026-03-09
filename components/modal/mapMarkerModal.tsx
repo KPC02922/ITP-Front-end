@@ -71,8 +71,8 @@ export const MapMarkerModal = forwardRef<MapMarkerModalHandle, MapMarkerModalPro
 
     const onLocateFabPress = async () => {
         Common.writeConsole(TAG, `Locate FAB pressed`)
-        if (initPosition.lat > 0 && initPosition.lng > 0) {
-            setMapCenterPosition({lat: initPosition.lat, lng: initPosition.lng})
+        if (mapCenterPosition.lat > 0 && mapCenterPosition.lng > 0) {
+            setMapCenterPosition({lat: mapCenterPosition.lat, lng: mapCenterPosition.lng})
             
         }
     }

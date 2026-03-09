@@ -11,7 +11,7 @@ import { Keyboard, ScrollView, ToastAndroid } from "react-native"
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input'
 import { Key, Search, MoveUp } from 'lucide-react-native'
 import { RainRelateListItem } from "@/components/listItem/rainRelateListItem"
-import { floodingJson } from "@/demoData/floodingJson"
+import { floodingJson } from "@/JsonData/demoData/floodingJson"
 import RainRelateType from "@/interfcaeType/RainRelateType"
 import { useEffect, useRef, useState } from "react"
 import { Spinner } from "@/components/ui/spinner"

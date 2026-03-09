@@ -11,9 +11,9 @@ import { Fab, FabIcon, FabLabel } from "../../components/ui/fab"
 import { Settings, Locate, CloudRain, FlagTriangleRight } from 'lucide-react-native'
 import * as Location from 'expo-location'
 import { AnimationType, INFINITE_ANIMATION_ITERATIONS, LatLng, LeafletView, MapMarker, WebviewLeafletMessage, WebviewLeafletMessagePayload } from 'react-native-leaflet-view'
-import { rainfallJson } from "@/demoData/rainfallJson"
-import { sfExpressJson } from "@/demoData/sfExpressJson"
-import { jockeyClubJson } from "@/demoData/jockeyClubJson"
+import { rainfallJson } from "@/JsonData/demoData/rainfallJson"
+import { sfExpressJson } from "@/JsonData/demoData/sfExpressJson"
+import { jockeyClubJson } from "@/JsonData/demoData/jockeyClubJson"
 import { getMarkerVisibility } from "@/controller/map/homeMapMarkerController"
 import { getAllTableRecords } from "@/controller/db/sqliteHelper"
 

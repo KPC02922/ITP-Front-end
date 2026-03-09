@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { tag, region, district } from './components/tag'
 import * as turf from '@turf/turf'
-import {hk_18_districts} from './JsonData/hk_18_districts'
+import { hk_18_districts } from './JsonData/hk_18_districts'
+import { automaticWeatherStation } from './JsonData/automaticWeatherStation'
 
 
 const TAG = tag.common
@@ -195,4 +196,9 @@ export const dbDataTimetoString = (dateTimeStr: string, type: string = 'full') =
   }
 
   return rs
+}
+
+export const automaticWeatherStationDistrict = (id: string) => {
+  const tempDistrict = automaticWeatherStation.find((station) => station.automaticWeatherStationId === id)?.district
+  return tempDistrict || 'Unknown'
 }

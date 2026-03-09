@@ -11,25 +11,27 @@ import { VStack } from "@/components/ui/vstack"
 import { Div } from "@expo/html-elements"
 import { Divider } from "@/components/ui/divider"
 import { Card } from "@/components/ui/card"
-import { rainfallJson } from "@/demoData/rainfallJson"
-import { floodingJson } from "@/demoData/floodingJson"
-import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff, Droplet, CloudRain, Waves, ChevronsDown, ChevronsRight, Clock, MirrorRectangular, MapPin } from 'lucide-react-native'
+import { rainfallJson } from "@/JsonData/demoData/rainfallJson"
+import { floodingJson } from "@/JsonData/demoData/floodingJson"
+import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff, Droplet, CloudRain, Waves, ChevronsDown, ChevronsRight, ChevronsLeft, Clock, MirrorRectangular, MapPin } from 'lucide-react-native'
 import { Button, ButtonText } from "@/components/ui/button"
 import { LinearGradient } from 'expo-linear-gradient'
 import { testApi } from "@/controller/api/apiHealper"
 import { getAllTableRecords } from "@/controller/db/sqliteHelper"
+import { automaticWeatherStation } from "@/JsonData/automaticWeatherStation"
 
 const TAG = tag.homeWeatherView
 
 export const HomeWeatherView = (
-    {onChangeView, expendHomeWeatherView, expended}
-    :{onChangeView: any, expendHomeWeatherView: () => void, expended: boolean}
+    {onChangeView, expendHomeWeatherView, pressSelectDistrictBtn, expended, selectedAutomaticWeatherStationDistrict}
+    :{onChangeView: any, expendHomeWeatherView: () => void, pressSelectDistrictBtn: () => void, expended: boolean, selectedAutomaticWeatherStationDistrict: string}
 ) => {
     const [rerender, setRerender] = useState<boolean>(false)
     const [weatherReportRawData, setWeatherReportRawData] = useState<any>(null)
     const [AutomaticWeatherStationRawData, setAutomaticWeatherStationRawData] = useState<any>(null)
     const [rainfallData, setRainfallData] = useState<any[]>([])
     const [automaticWeatherStationData, setAutomaticWeatherStationData] = useState<any[]>([])
+    const [automaticWeatherStationDistrict, setAutomaticWeatherStationDistrict] = useState<string>("Yuen Long")
     const [hkExpend, setHKExpend] = useState<boolean>(true)
     const [klnExpend, setKlnExpend] = useState<boolean>(true)
     const [ntExpend, setNtExpend] = useState<boolean>(true)
@@ -176,7 +178,20 @@ export const HomeWeatherView = (
     }, [rerender])
 
     useEffect(() => {
+        Common.writeConsole(TAG, `Selected AWS District: ${selectedAutomaticWeatherStationDistrict}`)
+        setAutomaticWeatherStationDistrict(selectedAutomaticWeatherStationDistrict)
+    }, [selectedAutomaticWeatherStationDistrict])
+
+    useEffect(() => {
+        const func = async () => {
+            const lastAWSDistrict = await Common.AsyncGetData(tag.automaticWeatherStationDistrict, 'Yuen Long') as any
+            if (lastAWSDistrict) {
+                setAutomaticWeatherStationDistrict(lastAWSDistrict)
+            }
+        }
+
         getRainfallReportRecord()
+        func()
     }, [])
     
     return (
@@ -268,8 +283,8 @@ export const HomeWeatherView = (
                         {region.map((item) => (
                             <VStack key={item.id} space="sm">
                                 <Pressable onPress={() => expend1hourRainfallRegionHandler(item.id)}>
-                                    <HStack space="sm" style={{borderBottomWidth: 1, borderBottomColor: '#032638', marginHorizontal: 5}}>
-                                        <MapPin size={16} color="#032638" />
+                                    <HStack space="sm" style={{borderBottomWidth: 1, borderBottomColor: '#0da6f2', marginHorizontal: 5}}>
+                                        <MapPin size={16} color="#0da6f2" />
                                         <Text size="sm" style={{flex: 99}}>{item.label}</Text>
                                         {getExpend1hourRainfallRegion(item.id) ?
                                             <ChevronUp size={16} color="#032638" style={{position: 'absolute', right: 0, top: 5}} />
@@ -320,12 +335,6 @@ export const HomeWeatherView = (
                                                     }
                                                 />
 
-                                                {/* { rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max > 0
-                                                    || rainfallJson.filter((item: any) => (Common.districtCodeToLabel(item.districtCode)) == districtItem.label).length > 0
-                                                    ?<CloudRain size={36} color="#32b4f4" style={{flex: 20}}/>
-                                                    :<CloudRain size={36} color="gray" style={{flex: 20}}/>
-                                                } */}
-
                                                 <VStack style={{flex: 80, paddingStart: 10}}>
                                                     <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
                                                         <Box style={{flex: 99}}>
@@ -345,12 +354,6 @@ export const HomeWeatherView = (
                                                                     )
                                                                 }
                                                             />
-
-                                                            {/* color={
-                                                                rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max > 0 
-                                                                || rainfallJson.filter((item: any) => (Common.districtCodeToLabel(item.districtCode)) == districtItem.label).length > 0
-                                                                ? "#32b4f4" 
-                                                                : "gray"}  */}
 
                                                             {rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label) ? (
                                                                 <HStack space="xs">
@@ -425,26 +428,89 @@ export const HomeWeatherView = (
                         
 
                         <VStack space="sm">
-                            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                                <HStack space="md">
-
-                                    {automaticWeatherStationData.map((item: any, index: number) => (
-                                        <Card key={index}  variant="outline" className="rounded-lg">
-                                            <VStack key={index}>
-                                                <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel, {width: 60, height: 40}]} >{item.automaticWeatherStation}</Text>
-                                                
-                                                <Divider />
-
-                                                <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
-                                                    <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >{item.value}</Text>
-                                                    <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >{item.unit}</Text>
-                                                </HStack>
-                                            </VStack>
-                                        </Card>
-                                    ))}
-
+                            <Button onPress={pressSelectDistrictBtn}>
+                                <HStack space='sm' style={styles.center}>
+                                    <ChevronsRight size={16} color="#fff" />
+                                    <ButtonText>District: {automaticWeatherStationDistrict}</ButtonText>
+                                    <ChevronsLeft size={16} color="#fff" />
                                 </HStack>
-                            </ScrollView>
+                            </Button>
+
+                            {automaticWeatherStationData
+                            .filter((item: any) => Common.automaticWeatherStationDistrict(item.automaticWeatherStationID) == automaticWeatherStationDistrict)
+                            .map((item: any, index: number) => (
+                                <LinearGradient key={item.automaticWeatherStationID} style={{borderRadius: 8}} start={[0, 10]} end={[1, 0]}
+                                    colors={[
+                                        getRainColor(
+                                            item.automaticWeatherStationID == "RF001" ? 68
+                                            : (item.value || 0) - 1
+                                        )
+                                    , '#ffffffff']}
+                                >
+                                <Card variant="outline" 
+                                    style={
+                                        item.value > 0
+                                        || item.automaticWeatherStationID == "RF001"
+                                        ? {borderColor: '#ffffffff'}
+                                        : {borderRadius: 8, borderColor: '#032638'}
+                                    }
+                                >
+                                <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <CloudRain size={36} style={{flex: 20}} 
+                                        color={ 
+                                            getRainColor(
+                                                item.automaticWeatherStationID == "RF001"  ? 68
+                                                : item.value
+                                            )
+                                        }
+                                    />
+
+                                    <VStack style={{flex: 80, paddingStart: 10}}>
+                                        <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
+                                            <Box style={{flex: 99}}>
+                                                <Text size='lg'>{item.automaticWeatherStation}</Text>
+                                            </Box>
+                                            
+                                            <HStack>
+                                                <Droplet size={16} style={{marginStart: 5}}
+                                                    color={ 
+                                                        getRainColor(
+                                                            item.automaticWeatherStationID == "RF001"  ? 68
+                                                            : item.value
+                                                        )
+                                                    }
+                                                />
+                                                
+                                                <HStack space="xs">
+                                                    <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >
+                                                        {item.automaticWeatherStationID == "RF001"  ? 68
+                                                        : item.value || 0}
+                                                        {/* {rainfallData.find((data: any) => currentWeatherReportPlaceFix(data.place) == districtItem.label)?.max} */}
+                                                    </Text>
+
+                                                    <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]} >
+                                                        mm
+                                                    </Text>
+                                                </HStack>
+                                                
+                                            </HStack>
+                                            
+                                        </HStack>
+
+                                        <Divider className="bg-info-950" />
+                                        
+                                        <HStack space="xs" >
+                                            <Text size='sm' style={[styles.homeViewWeatherInfoCentreLabel]}>
+                                                {item.automaticWeatherStationID}
+                                            </Text>
+                                        </HStack>
+                                    </VStack>
+                                    
+                                </HStack>
+                                </Card>
+                                </LinearGradient>
+                            ))}
+
                         </VStack>
 
                         <HStack space='xs'>

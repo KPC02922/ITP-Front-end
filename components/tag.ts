@@ -1,3 +1,5 @@
+import { automaticWeatherStationDistrict } from "@/common"
+
 export const region = [
     { id: 1, label: 'Hong Kong Island', value: 'HK' },
     { id: 2, label: 'Kowloon', value: 'KL' },
@@ -97,6 +99,7 @@ export const table = {
     weatherApi: 'weatherApi',
     currentWeatherReport: 'currentWeatherReport',
     automaticWeatherStation: 'automaticWeatherStation',
+    automaticWeatherStationDistrict: 'automaticWeatherStationDistrict',
     apiHelper: 'apiHelper',
 
     // controller

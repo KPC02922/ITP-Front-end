@@ -1,16 +1,11 @@
 import { tag } from "@/components/tag"
-import { styles } from "@/assets/styles/styles"
 import * as Common from "@/common"
-import { Text } from "@/components/ui/text"
-import { VStack } from "@/components/ui/vstack"
-import { Navigator } from "@/components/main/navigator"
-import { Header } from "@/components/main/header"
 import { HomeMapView } from "@/screen/homeView/homeMapView"
 import { Box } from "../../components/ui/box"
-import { HStack } from "@/components/ui/hstack"
 import { MapControlPanelModal, MapControlPanelModalHandle } from "@/components/modal/mapControlPanelModal"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { HomeWeatherView } from "./homeWeatherView"
+import { SelectDistrictModal, SelectDistrictModalHandle } from "@/components/modal/selectDistrictModal"
 
 const TAG = tag.homeView
 
@@ -19,8 +14,10 @@ export const HomeView = (
     :{onChangeView: any; webViewContent: string}
 ) => {
     const mapControlPanelModalRef = useRef<MapControlPanelModalHandle>(null)
+    const selectDistrictModalRef = useRef<SelectDistrictModalHandle>(null)
     const [rerender, setRerender] = useState<boolean>(false)
     const [expended, setExpanded] = useState<boolean>(false)
+    const [selectedAWSDistrict, setSelectedAWSDistrict] = useState<string>('Yuen Long')
 
     const triggerRerender = () => {
         Common.writeConsole(TAG, `Trigger rerender from HomeView`)
@@ -31,15 +28,42 @@ export const HomeView = (
         setExpanded(!expended)
     }
 
+    const pressSelectDistrictBtn = () => {
+        Common.writeConsole(TAG, `Press select district button`)
+        selectDistrictModalRef.current?.open()
+    }
+
+    const awsHandler = (district: string) => {
+        setSelectedAWSDistrict(district)
+        Common.AsyncStoreData(tag.automaticWeatherStationDistrict, district)
+    }
+
+    useEffect(() => {
+        const func = async () => {
+            const lastAWSDistrict = await Common.AsyncGetData(tag.automaticWeatherStationDistrict, 'Yuen Long') as any
+            if (lastAWSDistrict) {
+                setSelectedAWSDistrict(lastAWSDistrict)
+            }
+        }
+
+        func()
+        
+    }, [])
+
     return (
         <>
+            <SelectDistrictModal 
+                ref={selectDistrictModalRef} 
+                selectBtnFun={(district) => {awsHandler(district)}}
+            />
+
             <MapControlPanelModal ref={mapControlPanelModalRef} triggerRerender={triggerRerender} />
 
             <HomeMapView onChangeView={onChangeView} webViewContent={webViewContent} mapControlPanelModalRef={mapControlPanelModalRef} rerender={rerender} expended={expended}/>
 
             <Box style={expended ? {flex: 90} : {flex: 38}}>
 
-                <HomeWeatherView onChangeView={onChangeView} expendHomeWeatherView={expendHomeWeatherView} expended={expended}/>
+                <HomeWeatherView onChangeView={onChangeView} expendHomeWeatherView={expendHomeWeatherView} expended={expended} selectedAutomaticWeatherStationDistrict={selectedAWSDistrict} pressSelectDistrictBtn={pressSelectDistrictBtn}/>
 
             </Box>
             

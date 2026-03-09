@@ -32,7 +32,7 @@ export const automaticWeatherStation = [
     {"automaticWeatherStationId": "RF026", "automaticWeatherStation": "Shau Kei Wan", "district": "Eastern", "region": "Hong Kong Island"},
     {"automaticWeatherStationId": "RF027", "automaticWeatherStation": "Happy Valley", "district": "Southern", "region": "Hong Kong Island"},
     {"automaticWeatherStationId": "RF028", "automaticWeatherStation": "The Peak", "district": "Central and Western", "region": "Hong Kong Island"},
-    {"automaticWeatherStationId": "H17", "automaticWeatherStation": "Magazine Gap", "district": "Central and Western", "region": "Hong Kong Island"},
+    {"automaticWeatherStationId": "H17", "automaticWeatherStation": "Magazine Gap", "district": "Wan Chai", "region": "Hong Kong Island"},
     {"automaticWeatherStationId": "H15", "automaticWeatherStation": "Stanley", "district": "Southern", "region": "Hong Kong Island"},
     {"automaticWeatherStationId": "H24", "automaticWeatherStation": "Wong Chuk Hang", "district": "Southern", "region": "Hong Kong Island"},
 ]
