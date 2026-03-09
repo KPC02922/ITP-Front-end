@@ -18,8 +18,8 @@ import { Spinner } from "@/components/ui/spinner"
 import { SendHorizonal } from "lucide-react-native"
 import { Toast } from "@/components/ui/toast"
 import { Fab, FabIcon } from "@/components/ui/fab"
-import { createTableAsync, getAllTableRecords, getTableRecords, insertRecord, updateRainfallReport } from "@/db/sqliteHelper"
-import { createTable } from "@/db/createTable"
+import { createTableAsync, getAllTableRecords, getTableRecords, insertRecord, updateRainfallReport } from "@/controller/db/sqliteHelper"
+import { createTable } from "@/controller/db/createTable"
 import RainfallType from "@/interfcaeType/RainfallType"
 
 const TAG = tag.infoViewRainRelatedTab

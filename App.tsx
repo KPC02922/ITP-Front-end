@@ -6,7 +6,7 @@ import { use, useEffect, useState } from 'react'
 import * as Common from "@/common"
 import { tag } from './components/tag'
 import * as Location from 'expo-location'
-import { initDb } from './db/sqliteHelper'
+import { initDb } from './controller/db/sqliteHelper'
 
 SplashScreen.preventAutoHideAsync()
 

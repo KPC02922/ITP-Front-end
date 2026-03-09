@@ -15,7 +15,7 @@ import { rainfallJson } from "@/demoData/rainfallJson"
 import { sfExpressJson } from "@/demoData/sfExpressJson"
 import { jockeyClubJson } from "@/demoData/jockeyClubJson"
 import { getMarkerVisibility } from "@/controller/map/homeMapMarkerController"
-import { getAllTableRecords } from "@/db/sqliteHelper"
+import { getAllTableRecords } from "@/controller/db/sqliteHelper"
 
 const TAG = tag.homeMapView
 

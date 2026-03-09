@@ -1,5 +1,5 @@
 import * as Common from "@/common"
-import { tag, table } from '../components/tag'
+import { tag, table } from '../../components/tag'
 import * as SQLite from 'expo-sqlite'
 import { useEffect, useState } from 'react'
 

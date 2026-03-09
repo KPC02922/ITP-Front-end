@@ -15,8 +15,8 @@ import { ScrollView } from "react-native"
 import { Divider } from "@/components/ui/divider"
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { reverseGeocodeAsync } from "expo-location"
-import { postOtherStoreReport, postRainfallReport } from "@/api/apiHealper"
-import { updateOtherStoreReport, updateRainfallReport } from "@/db/sqliteHelper"
+import { postOtherStoreReport, postRainfallReport } from "@/controller/api/apiHealper"
+import { updateOtherStoreReport, updateRainfallReport } from "@/controller/db/sqliteHelper"
 
 const TAG = tag.reportViewTab
 

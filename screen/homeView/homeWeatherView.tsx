@@ -16,8 +16,8 @@ import { floodingJson } from "@/demoData/floodingJson"
 import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff, Droplet, CloudRain, Waves, ChevronsDown, ChevronsRight, Clock, MirrorRectangular, MapPin } from 'lucide-react-native'
 import { Button, ButtonText } from "@/components/ui/button"
 import { LinearGradient } from 'expo-linear-gradient'
-import { testApi } from "@/api/apiHealper"
-import { getAllTableRecords } from "@/db/sqliteHelper"
+import { testApi } from "@/controller/api/apiHealper"
+import { getAllTableRecords } from "@/controller/db/sqliteHelper"
 
 const TAG = tag.homeWeatherView
 
