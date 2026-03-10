@@ -119,16 +119,16 @@ export const SelectDistrictModal = forwardRef<SelectDistrictModalHandle, SelectD
                         <VStack space="md" style={styles.commonModalListContainer}>
                             {displayDistrictList.map((district) => (
                                 <VStack space="sm" key={district.id}>
-                                    <Pressable onPress={() => selectBtnFun(district.label)} style={{backgroundColor: selectedDistrict == district.label ? '#DDD' : '#FFF'}}>
-                                        <Text style={{paddingHorizontal: 10}}>{district.label}</Text>
+                                    <Pressable className="rounded-full" onPress={() => selectBtnFun(district.label)} style={{backgroundColor: selectedDistrict == district.label ? '#32b4f4' : '#FFF'}}>
+                                        <Text style={{paddingHorizontal: 10, color: selectedDistrict == district.label ? '#FFF' : '#000'}}>{district.label}</Text>
                                     </Pressable>
-                                    <Divider />
+                                    <Divider className="bg-info-950" />
                                 </VStack>
                             ))}
                         </VStack>
                     </ScrollView>
 
-                    <Text style={{paddingHorizontal: 10, width: '100%'}}>Selected District: {selectedDistrict}</Text>
+                    <Text style={{paddingHorizontal: 10, width: '100%', color: '#000'}}>Selected District: {selectedDistrict}</Text>
                 </Box>
 
                 <Box style={styles.twoBtnRowContainer}>
@@ -136,7 +136,7 @@ export const SelectDistrictModal = forwardRef<SelectDistrictModalHandle, SelectD
                         <Text style={styles.common2BtnModalBtnLabel}>Select</Text>
                     </Pressable>
 
-                    <Divider orientation="vertical" />
+                    <Divider orientation="vertical" className="bg-info-0"/>
 
                     <Pressable style={styles.common2BtnModalBtnContainer} onPress={() => closeBtnFun()}>
                         <Text style={styles.common2BtnModalBtnLabel}>Close</Text>

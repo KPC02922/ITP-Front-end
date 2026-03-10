@@ -175,7 +175,7 @@ export const styles = StyleSheet.create({
 
   bottomBorderContainer: {
     width: '100%',
-    borderBottomColor: '#333',
+    borderBottomColor: '#032638',
     borderBottomWidth: 0.5,
   },
 

@@ -31,6 +31,10 @@ export const MapControlPanelModal = forwardRef<MapControlPanelModalHandle, MapCo
     const [sfExpressMarkerVisible, setSfExpressMarkerVisible] = useState(getMarkerVisibility(mapMarkerTag.sfExpress))
     const [jockeyClubMarkerVisible, setJockeyClubMarkerVisible] = useState(getMarkerVisibility(mapMarkerTag.jockeyClub))
     const [otherStoreMarkerVisible, setOtherStoreMarkerVisible] = useState(getMarkerVisibility(mapMarkerTag.otherStore))
+    const iconColor = '#32b4f4'
+    const trackFalseColor = "#767577"
+    const trackTrueColor = iconColor
+    const thumbColor = "#fafafa"
 
     useImperativeHandle(ref, () => ({
         open: () => openHandler(),
@@ -119,11 +123,13 @@ export const MapControlPanelModal = forwardRef<MapControlPanelModalHandle, MapCo
                         <VStack>
                             <Text style={styles.bottomBorderContainer}>Rainfall related markers</Text>
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <CloudRain size={20} color={'#000000'} style={{ flex: 10}} />
+                                <CloudRain size={20} color={iconColor} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.rainfall}</Text>
                                 <Switch 
                                     size="md" 
                                     style={{ flex: 10}}
+                                    trackColor={{ false: trackFalseColor, true: trackTrueColor }}
+                                    thumbColor={thumbColor}
                                     value={rainfallMarkerVisible}
                                     onValueChange={() => switchHandler(mapMarkerTag.rainfall)}
                                 />
@@ -134,11 +140,13 @@ export const MapControlPanelModal = forwardRef<MapControlPanelModalHandle, MapCo
                         <VStack>
                             <Text style={styles.bottomBorderContainer}>Flooding related markers</Text>
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <Waves size={20} color={'#000000'} style={{ flex: 10}} />
+                                <Waves size={20} color={iconColor} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.flooding}</Text>
                                 <Switch 
                                     size="md" 
                                     style={{ flex: 10}}
+                                    trackColor={{ false: trackFalseColor, true: trackTrueColor }}
+                                    thumbColor={thumbColor}
                                     value={floodingMarkerVisible}
                                     onValueChange={() => switchHandler(mapMarkerTag.flooding)}
                                 />
@@ -149,44 +157,52 @@ export const MapControlPanelModal = forwardRef<MapControlPanelModalHandle, MapCo
                         <VStack>
                             <Text style={styles.bottomBorderContainer}>Umbrella rental related markers</Text>
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <Umbrella size={20} color={'#000000'} style={{ flex: 10}} />
+                                <Umbrella size={20} color={iconColor} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.umbrellaRental}</Text>
                                 <Switch 
                                     size="md" 
                                     style={{ flex: 10}}
+                                    trackColor={{ false: trackFalseColor, true: trackTrueColor }}
+                                    thumbColor={thumbColor}
                                     value={umbrellaRentalMarkerVisible}
                                     onValueChange={() => switchHandler(mapMarkerTag.umbrellaRental)}
                                 />
                             </HStack>
 
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <Package size={20} color={'#000000'} style={{ flex: 10}} />
+                                <Package size={20} color={iconColor} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.sfExpress}</Text>
                                 <Switch 
                                     size="md" 
                                     style={{ flex: 10}}
+                                    trackColor={{ false: trackFalseColor, true: trackTrueColor }}
+                                    thumbColor={thumbColor}
                                     value={sfExpressMarkerVisible}
                                     onValueChange={() => switchHandler(mapMarkerTag.sfExpress)}
                                 />
                             </HStack>
 
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <ChessKnight size={20} color={'#000000'} style={{ flex: 10}} />
+                                <ChessKnight size={20} color={iconColor} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.jockeyClub}</Text>
                                 <Switch 
                                     size="md" 
                                     style={{ flex: 10}}
+                                    trackColor={{ false: trackFalseColor, true: trackTrueColor }}
+                                    thumbColor={thumbColor}
                                     value={jockeyClubMarkerVisible}
                                     onValueChange={() => switchHandler(mapMarkerTag.jockeyClub)}
                                 />
                             </HStack>
 
                             <HStack space="md" style={styles.mapMarkerControlPanelRowContainer}>
-                                <Store size={20} color={'#000000'} style={{ flex: 10}} />
+                                <Store size={20} color={iconColor} style={{ flex: 10}} />
                                 <Text style={{ flex: 80}}>{mapMarkerTag.otherStore}</Text>
                                 <Switch 
                                     size="md" 
                                     style={{ flex: 10}}
+                                    trackColor={{ false: trackFalseColor, true: trackTrueColor }}
+                                    thumbColor={thumbColor}
                                     value={otherStoreMarkerVisible}
                                     onValueChange={() => switchHandler(mapMarkerTag.otherStore)}
                                 />

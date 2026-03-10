@@ -84,15 +84,15 @@ export const SelectStoreModal = forwardRef<SelectStoreModalHandle, SelectStoreMo
                     <VStack space="md" style={styles.commonModalListContainer}>
                         {store.map((region) => (
                             <VStack space="sm" key={region.id}>
-                                <Pressable onPress={() => selectBtnFun(region.label)} style={{backgroundColor: selectedStore == region.label ? '#DDD' : '#FFF'}}>
-                                    <Text style={{paddingHorizontal: 10}}>{region.label}</Text>
+                                <Pressable className="rounded-full" onPress={() => selectBtnFun(region.label)} style={{backgroundColor: selectedStore == region.label ? '#32b4f4' : '#FFF'}}>
+                                    <Text style={{paddingHorizontal: 10, color: selectedStore == region.label ? '#FFF' : '#000'}}>{region.label}</Text>
                                 </Pressable>
-                                <Divider />
+                                <Divider className="bg-info-950" />
                             </VStack>
                         ))}
                     </VStack>
 
-                    <Text style={{paddingHorizontal: 10, width: '100%'}}>Selected Store: {selectedStore}</Text>
+                    <Text style={{paddingHorizontal: 10, width: '100%', color: '#000'}}>Selected Store: {selectedStore}</Text>
                 </Box>
 
                 <Box style={styles.twoBtnRowContainer}>
@@ -100,7 +100,7 @@ export const SelectStoreModal = forwardRef<SelectStoreModalHandle, SelectStoreMo
                         <Text style={styles.common2BtnModalBtnLabel}>Select</Text>
                     </Pressable>
 
-                    <Divider orientation="vertical" />
+                    <Divider orientation="vertical" className="bg-info-0"/>
 
                     <Pressable style={styles.common2BtnModalBtnContainer} onPress={() => closeHandler()}>
                         <Text style={styles.common2BtnModalBtnLabel}>Close</Text>

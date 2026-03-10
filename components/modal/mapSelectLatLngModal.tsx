@@ -144,7 +144,7 @@ export const MapSelectLatLngModal = forwardRef<MapSelectLatLngModalHandle, MapSe
                         <Text style={styles.common2BtnModalBtnLabel}>Select</Text>
                     </Pressable>
 
-                    <Divider orientation="vertical" />
+                    <Divider orientation="vertical" className="bg-info-0"/>
 
                     <Pressable style={styles.common2BtnModalBtnContainer} onPress={() => closeHandler()}>
                         <Text style={styles.common2BtnModalBtnLabel}>Close</Text>
