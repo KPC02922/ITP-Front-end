@@ -114,7 +114,7 @@ export const ReportView = ({webViewContent}: {webViewContent: string}) => {
                 
                 </HStack>
 
-                <Divider />
+                <Divider className="bg-info-600"/>
 
                 {currentTab == tag.reportViewRainfallTab ? <ReportViewTab type={tag.reportViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressMapSelectBtn={pressMapSelectBtn} showMessage={showMessage} selectedRegion={selectedRegion} selectedDistrict={selectedDistrict} selectedLatLng={selectedLatLng} reset={reset} autoFillHandler={autoFillHandler}/> : 
                 currentTab == tag.reportViewFloodingTab ? <ReportViewTab type={tag.reportViewFloodingTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressMapSelectBtn={pressMapSelectBtn} showMessage={showMessage} selectedRegion={selectedRegion} selectedDistrict={selectedDistrict} selectedLatLng={selectedLatLng} reset={reset} autoFillHandler={autoFillHandler}/> :

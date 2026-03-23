@@ -72,4 +72,20 @@ export const createTable = {
     + `updateTime TEXT`
     + `);`,
     
+
+    createFloodingReportTable:
+    `CREATE TABLE IF NOT EXISTS ${table.floodingReport} (`
+    + `sysId INTEGER PRIMARY KEY AUTOINCREMENT, `
+    + `id INTEGER, `
+    + `regionCode TEXT, `
+    + `districtCode TEXT, `
+    + `location TEXT, `
+    + `latitude REAL, `
+    + `longitude REAL, `
+    + `postTime TEXT, `
+    + `status TEXT, `
+    + `updateTime TEXT`
+    + `);`,
+
+
 }

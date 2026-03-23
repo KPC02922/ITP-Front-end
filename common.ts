@@ -202,3 +202,25 @@ export const automaticWeatherStationDistrict = (id: string) => {
   const tempDistrict = automaticWeatherStation.find((station) => station.automaticWeatherStationId === id)?.district
   return tempDistrict || 'Unknown'
 }
+
+export const getRainColor = (value: number) => {
+    if (value < 0) {
+        return "transparent"
+    }
+    if (value == 0) {
+        return "gray"
+    }
+    if (value < 10) {
+        return "lightblue"
+    }
+    if (value < 20) {
+        return "lightgreen"
+    }
+    if (value < 30) {
+        return "yellow"
+    }
+    if (value < 50) {
+        return "red"
+    }
+    return "black"
+}   

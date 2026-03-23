@@ -130,7 +130,7 @@ export const InfoView = (
 
                 </HStack>
 
-                <Divider />
+                <Divider className="bg-info-600"/>
 
                 {currentTab == tag.infoViewRainfallTab ? <InfoViewRainRelatedTab type={tag.infoViewRainfallTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected} openMapMarkerModal={openMapMarkerModal}/> :
                 currentTab == tag.infoViewFloodingTab ? <InfoViewRainRelatedTab type={tag.infoViewFloodingTab} pressRegionBtn={pressRegionBtn} pressDistrictBtn={pressDistrictBtn} pressStoreBtn={pressStoreBtn} regionLabel={regionLabel} districtLabel={districtLabel} storeLabel={storeLabel} resetSelected={resetSelected} openMapMarkerModal={openMapMarkerModal}/> :

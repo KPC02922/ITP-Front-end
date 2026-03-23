@@ -15,8 +15,8 @@ import { ScrollView } from "react-native"
 import { Divider } from "@/components/ui/divider"
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { reverseGeocodeAsync } from "expo-location"
-import { postOtherStoreReport, postRainfallReport } from "@/controller/api/apiHealper"
-import { updateOtherStoreReport, updateRainfallReport } from "@/controller/db/sqliteHelper"
+import { postFloodingReport, postOtherStoreReport, postRainfallReport } from "@/controller/api/apiHealper"
+import { updateFloodingReport, updateOtherStoreReport, updateRainfallReport } from "@/controller/db/sqliteHelper"
 
 const TAG = tag.reportViewTab
 
@@ -130,7 +130,7 @@ export const ReportViewTab = (
             setDistrictValid(district != '')
             // setLocationValid(location != '')
             setLatLngValid(lat != 0 && lng != 0)
-            return region != '' && district != '' && location != '' && lat != 0 && lng != 0
+            return region != '' && district != '' && lat != 0 && lng != 0
         }
         else if (type == tag.reportViewUmbrellaRentalTab) {
             setRegionValid(region != '')
@@ -140,7 +140,7 @@ export const ReportViewTab = (
             setStoreNameValid(storeName != '')
             setOfficeOpenHoursValid(officeOpenHours != null)
             setOfficeCloseHoursValid(officeCloseHours != null)
-            return region != '' && district != '' && location != '' && lat != 0 && lng != 0 && storeName != '' && officeOpenHours != null && officeCloseHours != null
+            return region != '' && district != '' && lat != 0 && lng != 0 && storeName != '' && officeOpenHours != null && officeCloseHours != null
         }
         else {
             return valid
@@ -186,7 +186,16 @@ export const ReportViewTab = (
             await updateRainfallReport()
         }
         else if (type == tag.reportViewFloodingTab) {
-
+            const reportData = {
+                regionCode: Common.regionLabelToCode(region),
+                districtCode: Common.districtLabelToCode(district),
+                location: location || '',
+                latitude: lat,
+                longitude: lng,
+            }
+            Common.writeConsole(TAG, `submit report: ${JSON.stringify(reportData)}`)
+            await postFloodingReport(reportData)
+            await updateFloodingReport()
         }
         else if (type == tag.reportViewUmbrellaRentalTab) {
             const reportData = {
@@ -539,7 +548,7 @@ export const ReportViewTab = (
                     : null
                     }
 
-                    <Divider style={{margin: 5, width: '95%', alignSelf: 'center'}} />
+                    <Divider style={{margin: 5, width: '95%', alignSelf: 'center'}} className="bg-info-600"/>
 
                     {/* Reset and Submit Button */}
                     <Button variant="solid" size="lg" action="primary" onPress={resetForm}>

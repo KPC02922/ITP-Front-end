@@ -8,7 +8,7 @@ import { Box } from "../../components/ui/box"
 import { use, useEffect, useRef, useState } from "react"
 import { ActivityIndicator, Dimensions } from "react-native"
 import { Fab, FabIcon, FabLabel } from "../../components/ui/fab"
-import { Settings, Locate, CloudRain, FlagTriangleRight } from 'lucide-react-native'
+import { Settings, Locate, CloudRain, FlagTriangleRight, CircleQuestionMark } from 'lucide-react-native'
 import * as Location from 'expo-location'
 import { AnimationType, INFINITE_ANIMATION_ITERATIONS, LatLng, LeafletView, MapMarker, WebviewLeafletMessage, WebviewLeafletMessagePayload } from 'react-native-leaflet-view'
 import { rainfallJson } from "@/JsonData/demoData/rainfallJson"
@@ -23,7 +23,7 @@ export const HomeMapView = (
     {onChangeView, webViewContent, mapControlPanelModalRef, rerender, expended}
     :{onChangeView: any; webViewContent: string; mapControlPanelModalRef: any; rerender: boolean; expended: boolean}
 ) => {
-    const VTCL_POSITION = {lat: 22.342747295665276,lng: 114.1087984919611,}
+    const VTCL_POSITION = {lat: 22.5014998, lng: 114.1419827} //{lat: 22.342747295665276,lng: 114.1087984919611,}
     const initPosition = Common.getCurrentPosition()
     const [mapCenterPosition, setMapCenterPosition] = useState<{lat: number, lng: number}>
     (initPosition.lat > 0 && initPosition.lng > 0 
@@ -70,16 +70,35 @@ export const HomeMapView = (
             const tempMapMarkerList: MapMarker[] = []
             
             if (getMarkerVisibility(mapMarkerTag.rainfall)) {
-                const rainfallMarkers = rainfallJson.map((item) => ({
-                    id: `rainfall-${item.id}`,
-                    title: `Rainfall rate: ${item.rate}`,
-                    position: { lat: item.latitude, lng: item.longitude },
-                    icon: "🌧️",
-                }))
-                tempMapMarkerList.push(...rainfallMarkers)
+                const rainfallRecord = await getAllTableRecords(table.rainfallReport, true)
+                // Common.writeConsole(TAG, `Rainfall records from DB: ${JSON.stringify(rainfallRecord)}`)
+
+                rainfallRecord.forEach((item: any) => {
+                    const marker: MapMarker = {
+                        id: `rainfall-${item.id}`,
+                        title: `Rainfall rate: ${item.rate}`,
+                        position: { lat: item.latitude, lng: item.longitude },
+                        icon: "🌧️",
+                    }
+                    tempMapMarkerList.push(marker)
+                })
+
             }
             
-            // TODO: flooding markers
+            if (getMarkerVisibility(mapMarkerTag.flooding)) {
+                const floodingRecord = await getAllTableRecords(table.floodingReport, true)
+                // Common.writeConsole(TAG, `Flooding records from DB: ${JSON.stringify(floodingRecord)}`)
+
+                floodingRecord.forEach((item: any) => {
+                    const marker: MapMarker = {
+                        id: `flooding-${item.id}`,
+                        title: `Flooding level: ${item.level}`,
+                        position: { lat: item.latitude, lng: item.longitude },
+                        icon: "🌊",
+                    }
+                    tempMapMarkerList.push(marker)
+                })
+            }
 
             if (getMarkerVisibility(mapMarkerTag.sfExpress)) {
                 const sfExpressRecord = await getAllTableRecords(table.sfExpress, true)
@@ -111,7 +130,20 @@ export const HomeMapView = (
                 })
             }
 
-            // TODO: other store markers
+            if (getMarkerVisibility(mapMarkerTag.otherStore)) {
+                const otherStoreRecord = await getAllTableRecords(table.otherStore, true)
+                // Common.writeConsole(TAG, `Other store records from DB: ${JSON.stringify(otherStoreRecord)}`)
+
+                otherStoreRecord.forEach((item: any) => {
+                    const marker: MapMarker = {
+                        id: `otherStore-${item.id}`,
+                        title: `${item.storeName}`,
+                        position: { lat: item.latitude, lng: item.longitude },
+                        icon: "🏪",
+                    }
+                    tempMapMarkerList.push(marker)
+                })
+            }
 
             setMapMarkerList([...tempMapMarkerList])
             Common.writeConsole(TAG, `Map markers: ${JSON.stringify(tempMapMarkerList)}`)
@@ -158,7 +190,7 @@ export const HomeMapView = (
                 onPress={onSettingFabPress}
                 style={{marginTop: 24}}
             >
-                <FabIcon as={Settings} />
+                <FabIcon as={CircleQuestionMark} />
             </Fab>}
 
             {!expended && <Fab

@@ -73,7 +73,10 @@ export const updateRainfallReport = async () => {
     const rainfallReportResult = await db!.getFirstAsync(`SELECT * FROM ${table.rainfallReport} LIMIT 1`)
     const rainfallReportCountResult = await apiHelper.getRainfallReportCount()
     const prevRainfallReportCount = parseInt(await Common.AsyncGetData(tag.rainfallReportCount, "1") as any)
-    const getRainfallReportId = rainfallReportCountResult > prevRainfallReportCount ? rainfallReportCountResult - 1 : prevRainfallReportCount
+    let getRainfallReportId = 1
+    if (prevRainfallReportCount > 1) {
+        getRainfallReportId = rainfallReportCountResult > prevRainfallReportCount ? rainfallReportCountResult - 1 : prevRainfallReportCount
+    }
     Common.writeConsole(TAG, `Rainfall Report count from API: ${rainfallReportCountResult}, previous count from storage: ${prevRainfallReportCount}, get rainfall report id: ${getRainfallReportId}`)
 
     if (!rainfallReportResult || rainfallReportCountResult > prevRainfallReportCount) {
@@ -106,12 +109,57 @@ export const updateRainfallReport = async () => {
     }
 }
 
+export const updateFloodingReport = async () => {
+    Common.writeConsole(TAG, `Updating Flooding Report...`)
+    const floodingReportResult = await db!.getFirstAsync(`SELECT * FROM ${table.floodingReport} LIMIT 1`)
+    const floodingReportCountResult = await apiHelper.getFloodingReportCount()
+    const prevFloodingReportCount = parseInt(await Common.AsyncGetData(tag.floodingReportCount, "1") as any)
+    let getFloodingReportId = 1
+    if (prevFloodingReportCount > 1) {
+        getFloodingReportId = floodingReportCountResult > prevFloodingReportCount ? floodingReportCountResult - 1 : prevFloodingReportCount
+    }
+
+    Common.writeConsole(TAG, `Flooding Report count from API: ${floodingReportCountResult}, previous count from storage: ${prevFloodingReportCount}, get flooding report id: ${getFloodingReportId}`)
+
+    if (!floodingReportResult || floodingReportCountResult > prevFloodingReportCount) {
+        apiHelper.getFloodingReport(getFloodingReportId).then(rs => {
+            const data: any[] = rs.data || []
+            Common.AsyncStoreData(tag.floodingReportCount, floodingReportCountResult.toString())
+            Common.writeConsole(TAG, `Inserting Flooding Report data: ${JSON.stringify(data)}`)
+            data.forEach((item) => {
+                const id = item.id
+                const regionCode = item.regionCode
+                const districtCode = item.districtCode
+                const location = item.location
+                const latitude = item.latitude
+                const longitude = item.longitude
+                const postTime = item.postTime
+                const status = item.status
+                const updateTime = item.updateTime
+
+                db!.runAsync(`INSERT INTO ${table.floodingReport} (id, regionCode, districtCode, location, latitude, longitude, postTime, status, updateTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
+                [id, regionCode, districtCode, location, latitude, longitude, postTime, status, updateTime])
+                .then(() => {
+                    Common.writeConsole(TAG, `Inserted Flooding Report record id: ${id} successfully`)
+                })
+                .catch((error) => {
+                    Common.writeConsole(TAG, `Error inserting Flooding Report record id: ${id}, error: ${error}`)
+                })
+            })
+        })
+    }
+}
+
 export const updateOtherStoreReport = async () => {
     Common.writeConsole(TAG, `Updating Other Store Report...`)
     const otherStoreReportResult = await db!.getFirstAsync(`SELECT * FROM ${table.otherStore} LIMIT 1`)
     const otherStoreReportCountResult = await apiHelper.getOtherStoreReportCount()
     const prevOtherStoreReportCount = parseInt(await Common.AsyncGetData(tag.otherStoreReportCount, "1") as any)
-    const getOtherStoreReportId = otherStoreReportCountResult > prevOtherStoreReportCount ? otherStoreReportCountResult - 1 : prevOtherStoreReportCount
+    let getOtherStoreReportId = 1
+    if (prevOtherStoreReportCount > 1) {
+        getOtherStoreReportId = otherStoreReportCountResult > prevOtherStoreReportCount ? otherStoreReportCountResult - 1 : prevOtherStoreReportCount
+    }
+    
     Common.writeConsole(TAG, `Other Store Report count from API: ${otherStoreReportCountResult}, previous count from storage: ${prevOtherStoreReportCount}, get other store report id: ${getOtherStoreReportId}`)
     
     if (!otherStoreReportResult || otherStoreReportCountResult > prevOtherStoreReportCount) {
@@ -159,8 +207,14 @@ const initTable = async () => {
     try {
         Common.writeConsole(TAG, `Initializing tables...`)
         if (false) {
-            await db!.execAsync(`DROP TABLE IF EXISTS ${table.otherStore}`)
-            Common.AsyncStoreData(tag.otherStoreReportCount, '1')
+            // await db!.execAsync(`DROP TABLE IF EXISTS ${table.rainfallReport}`)
+            // Common.AsyncStoreData(tag.rainfallReportCount, '1')
+
+            // await db!.execAsync(`DROP TABLE IF EXISTS ${table.otherStore}`)
+            // Common.AsyncStoreData(tag.otherStoreReportCount, '1')
+
+            await db!.execAsync(`DROP TABLE IF EXISTS ${table.floodingReport}`)
+            Common.AsyncStoreData(tag.floodingReportCount, '1')
             return
         }
 
@@ -242,6 +296,10 @@ const initTable = async () => {
         // Rainfall Report table
         await createTableAsync(createTable.createRainfallReportTable, table.rainfallReport)
         updateRainfallReport()
+
+        // Flooding Report table
+        await createTableAsync(createTable.createFloodingReportTable, table.floodingReport)
+        updateFloodingReport()
 
         Common.writeConsole(TAG, 'Tables initialized successfully')
     } catch (error) {

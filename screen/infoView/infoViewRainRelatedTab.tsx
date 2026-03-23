@@ -119,24 +119,58 @@ export const InfoViewRainRelatedTab = (
                 fakeLoading()
             }
             else if (type == tag.infoViewFloodingTab) {
-                if (noFiltering) {
-                    if (mode == defaultRegionLabel) {
-                        if (districtLabel == defaultDistrictLabel) {
-                            setFloodingJsonData(floodingJson)
-                        }
-                        else {
-                            setFloodingJsonData(floodingJson.filter(item => Common.districtCodeToLabel(item.districtCode) == districtLabel))
-                        }
-                    }
-                } 
-                else {
-                    if (mode == defaultDistrictLabel) {
-                        setFloodingJsonData(floodingJson.filter(item => Common.districtCodeToLabel(item.districtCode) == districtLabel))
-                    }
-                    else if (mode == defaultRegionLabel && districtLabel == defaultDistrictLabel) {
-                        setFloodingJsonData(floodingJson.filter(item => Common.regionCodeToLabel(Common.regionCodeToFullLabel(item.regionCode)) == regionLabel))
-                    }
+                const filteringRegion = regionLabel != defaultRegionLabel
+                const filteringDistrict = districtLabel != defaultDistrictLabel
+                const filteringSearchInput = searchInput.trim() != ""
+
+                if (!filteringRegion && !filteringDistrict && !filteringSearchInput) {
+                    setFloodingJsonData(DFfloodingJsonData)
+                    return
                 }
+
+                let floodingSqlExtra = ``
+                let sqlParams: any[] = []
+                let count = 0
+                if (filteringRegion) {
+                    floodingSqlExtra += `regionCode = ? `
+                    sqlParams.push(Common.regionLabelToCode(regionLabel))
+                    count++
+                }
+                if (filteringDistrict) {
+                    if (count > 0) {
+                        floodingSqlExtra += ` AND `
+                    }
+                    floodingSqlExtra += ` districtCode = ? `
+                    sqlParams.push(Common.districtLabelToCode(districtLabel))
+                    count++
+                }
+                if (filteringSearchInput) {
+                    if (count > 0) {
+                        floodingSqlExtra += ` AND `
+                    }
+                    floodingSqlExtra += ` location LIKE ? `
+                    sqlParams.push(`%${searchInput}%`)
+                    count++
+                }
+                floodingSqlExtra += ` ORDER BY postTime DESC`
+
+                Common.writeConsole(TAG, `setDataHandler sql extra: ${floodingSqlExtra} | params: ${JSON.stringify(sqlParams)}`)
+                const floodingRecord = await getTableRecords(table.floodingReport, floodingSqlExtra, sqlParams)
+                Common.writeConsole(TAG, `Flooding records from DB: ${JSON.stringify(floodingRecord)}`)
+                const floodingReportData: RainRelateType[] = floodingRecord.map((item: any) => ({
+                    id: item.id,
+                    regionCode: item.regionCode,
+                    districtCode: item.districtCode,
+                    location: item.location,
+                    latitude: parseFloat(item.latitude),
+                    longitude: parseFloat(item.longitude),
+                    postTime: Common.dbDataTimetoString(item.postTime, 'time'),
+                    updateTime: Common.dbDataTimetoString(item.updateTime, 'time'),
+                    status: item.status,
+                }))
+
+                setFloodingJsonData(floodingReportData)
+                fakeLoading()
             }
             // need to re-design the if statement logic
             else if (type == tag.infoViewUmbrellaRentalTab) { 
@@ -264,6 +298,22 @@ export const InfoViewRainRelatedTab = (
                 setRainfallJsonData(rainfallReportData)
                 setDFRainfallJsonData(rainfallReportData)
 
+                const floodingReportRecord = await getAllTableRecords(table.floodingReport, true, `ORDER BY postTime DESC`)
+                Common.writeConsole(TAG, `Flooding records from DB: ${JSON.stringify(floodingReportRecord)}`)
+                const floodingReportData: RainRelateType[] = floodingReportRecord.map((item: any) => ({
+                    id: item.id,
+                    regionCode: item.regionCode,
+                    districtCode: item.districtCode,
+                    location: item.location,
+                    latitude: parseFloat(item.latitude),
+                    longitude: parseFloat(item.longitude),
+                    level: parseFloat(item.level),
+                    postTime: Common.dbDataTimetoString(item.postTime, 'time'),
+                    updateTime: Common.dbDataTimetoString(item.updateTime, 'time'),
+                    status: item.status,
+                }))
+                setFloodingJsonData(floodingReportData)
+                setDFFloodingJsonData(floodingReportData)
 
                 const umbrellaRentalDRecord = await getAllTableRecords(table.umbrellaRentalTemp, true, `ORDER BY districtCode ASC, storeName ASC`)
                 // Common.writeConsole(TAG, `Umbrella Rental records from DB: ${JSON.stringify(umbrellaRentalDRecord)}`)
@@ -362,7 +412,7 @@ export const InfoViewRainRelatedTab = (
                 </HStack>
                 
 
-                <Divider />
+                <Divider className="bg-info-600"/>
             </VStack>    
 
             {loading && 
@@ -375,7 +425,7 @@ export const InfoViewRainRelatedTab = (
             {(type == tag.infoViewRainfallTab && !loading) && 
                 <Box>
                     <ScrollView ref={rainfallScrollRef}>
-                        <VStack space="sm" style={[styles.paddingNav, {paddingTop: 10}]}>
+                        <VStack space="lg" style={[styles.paddingNav, {paddingTop: 15}]}>
                         {
                             rainfallJsonData.length == 0 ?
                                 <Box style={{padding: 10}}>
@@ -396,9 +446,9 @@ export const InfoViewRainRelatedTab = (
             {(type == tag.infoViewFloodingTab && !loading) && 
                 <Box>
                     <ScrollView ref={floodingScrollRef}>
-                        <VStack space="sm" style={[styles.paddingNav, {paddingTop: 10}]}>
+                        <VStack space="lg" style={[styles.paddingNav, {paddingTop: 15}]}>
                         {
-                            floodingJsonData.length == 1 ?
+                            floodingJsonData.length == 0 ?
                                 <Box style={{padding: 10}}>
                                     <Text style={{textAlign: 'center'}}>No data</Text>
                                 </Box>
@@ -417,7 +467,7 @@ export const InfoViewRainRelatedTab = (
             {(type == tag.infoViewUmbrellaRentalTab && !loading) && 
                 <Box>
                     <ScrollView ref={umbrellaRentalScrollRef}>
-                        <VStack space="sm" style={[styles.paddingNav, {paddingTop: 10}]}>
+                        <VStack space="lg" style={[styles.paddingNav, {paddingTop: 15}]}>
                         {
                             umbrellaRentalJson.length == 0 ?
                                 <Box style={{padding: 10}}>

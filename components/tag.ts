@@ -1,5 +1,3 @@
-import { automaticWeatherStationDistrict } from "@/common"
-
 export const region = [
     { id: 1, label: 'Hong Kong Island', value: 'HK' },
     { id: 2, label: 'Kowloon', value: 'KL' },
@@ -94,6 +92,7 @@ export const table = {
     mapSelectLatLngModal: 'mapSelectLatLngModal',
     messageModal: 'messageModal',
     mapMarkerModal: 'mapMarkerModal',
+    weatherTipsModal: 'weatherTipsModal',
 
     // api
     weatherApi: 'weatherApi',
@@ -112,4 +111,5 @@ export const table = {
     sqliteHelper: 'sqliteHelper',
     rainfallReportCount: 'rainfallReportCount',
     otherStoreReportCount: 'otherStoreReportCount',
+    floodingReportCount: 'floodingReportCount',
 }

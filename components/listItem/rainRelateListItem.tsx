@@ -69,7 +69,7 @@ export const RainRelateListItem = (
 
                 <HStack space="md" style={[styles.fullWidth, {paddingEnd: 25}]}>
                     <MapPin size={20} color={iconColor} />
-                    <Text size="md">{item.location}</Text>
+                    <Text size="md">{item.location == '' ? '[Location not available]' : item.location}</Text>
                 </HStack>
 
                 { displayOfficeHourTag.includes(type) && <HStack space="md" style={[styles.fullWidth, {paddingEnd: 25}]} >

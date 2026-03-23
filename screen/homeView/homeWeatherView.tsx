@@ -13,18 +13,20 @@ import { Divider } from "@/components/ui/divider"
 import { Card } from "@/components/ui/card"
 import { rainfallJson } from "@/JsonData/demoData/rainfallJson"
 import { floodingJson } from "@/JsonData/demoData/floodingJson"
-import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff, Droplet, CloudRain, Waves, ChevronsDown, ChevronsRight, ChevronsLeft, Clock, MirrorRectangular, MapPin } from 'lucide-react-native'
+import { ChevronRight, RefreshCw, ChevronUp, ChevronDown, Umbrella, UmbrellaOff, Droplet, CloudRain, Waves, 
+    ChevronsDown, ChevronsRight, ChevronsLeft, Clock, MirrorRectangular, MapPin , CircleQuestionMark
+} from 'lucide-react-native'
 import { Button, ButtonText } from "@/components/ui/button"
 import { LinearGradient } from 'expo-linear-gradient'
 import { testApi } from "@/controller/api/apiHealper"
-import { getAllTableRecords } from "@/controller/db/sqliteHelper"
+import { getAllTableRecords, updateRainfallReport } from "@/controller/db/sqliteHelper"
 import { automaticWeatherStation } from "@/JsonData/automaticWeatherStation"
 
 const TAG = tag.homeWeatherView
 
 export const HomeWeatherView = (
-    {onChangeView, expendHomeWeatherView, pressSelectDistrictBtn, expended, selectedAutomaticWeatherStationDistrict}
-    :{onChangeView: any, expendHomeWeatherView: () => void, pressSelectDistrictBtn: () => void, expended: boolean, selectedAutomaticWeatherStationDistrict: string}
+    {onChangeView, expendHomeWeatherView, pressSelectDistrictBtn, expended, selectedAutomaticWeatherStationDistrict, openWeatherTipsModal}
+    :{onChangeView: any, expendHomeWeatherView: () => void, pressSelectDistrictBtn: () => void, expended: boolean, selectedAutomaticWeatherStationDistrict: string, openWeatherTipsModal: () => void}
 ) => {
     const [rerender, setRerender] = useState<boolean>(false)
     const [weatherReportRawData, setWeatherReportRawData] = useState<any>(null)
@@ -37,6 +39,8 @@ export const HomeWeatherView = (
     const [ntExpend, setNtExpend] = useState<boolean>(true)
     const [rainfallReport, setRainfallReport] = useState<any[]>([])
     const [rainfallReportCount, setRainfallReportCount] = useState<number>(0)
+    const [floodingJson, setFloodingJsonData] = useState<any[]>([])
+    const [floodingReportCount, setFloodingReportCount] = useState<number>(0)
 
     const fetchWeatherData = () => {
         fetchCurrentWeatherReport()
@@ -126,7 +130,9 @@ export const HomeWeatherView = (
 
         switch (mode) {
             case reFetchTag.userReport:
+                await updateRainfallReport()
                 await getRainfallReportRecord()
+                await getFloodingReportRecord()
                 break
             case reFetchTag.currentWeatherRepoert:
                 fetchCurrentWeatherReport()
@@ -141,28 +147,6 @@ export const HomeWeatherView = (
         ToastAndroid.show(message, ToastAndroid.SHORT)
     }
 
-    const getRainColor = (value: number) => {
-        if (value < 0) {
-            return "transparent"
-        }
-        if (value == 0) {
-            return "gray"
-        }
-        if (value <= 10) {
-            return "lightblue"
-        }
-        if (value <= 20) {
-            return "lightgreen"
-        }
-        if (value <= 30) {
-            return "yellow"
-        }
-        if (value <= 50) {
-            return "red"
-        }
-        return "black"
-    }      
-
     const getRainfallReportRecord = async () => {
         const rainfallReportRecord = await getAllTableRecords(table.rainfallReport, true)
         const rainfallReportCount = rainfallReportRecord.length
@@ -170,6 +154,15 @@ export const HomeWeatherView = (
         setRainfallReportCount(rainfallReportCount)
 
         Common.writeConsole(TAG, `Rainfall Report records from DB: ${JSON.stringify(rainfallReportRecord)} | count: ${rainfallReportCount}`)
+    }
+
+    const getFloodingReportRecord = async () => {
+        const floodingReportRecord = await getAllTableRecords(table.floodingReport, true)
+        const floodingReportCount = floodingReportRecord.length
+        setFloodingJsonData(floodingReportRecord)
+        setFloodingReportCount(floodingReportCount)
+
+        Common.writeConsole(TAG, `Flooding Report records from DB: ${JSON.stringify(floodingReportRecord)} | count: ${floodingReportCount}`)
     }
 
     useEffect(() => {
@@ -191,6 +184,7 @@ export const HomeWeatherView = (
         }
 
         getRainfallReportRecord()
+        getFloodingReportRecord()
         func()
     }, [])
     
@@ -230,11 +224,11 @@ export const HomeWeatherView = (
 
                                 <HStack>
                                     <HStack space="xs" style={{flex: 50, justifyContent: 'flex-start'}}>
-                                        <Waves size={24} color={floodingJson.length > 1 ? "#32b4f4" : "gray"} />
+                                        <Waves size={24} color={floodingReportCount > 0 ? "#32b4f4" : "gray"} />
                                         <Text size='lg' style={{textAlign: 'right', width: '100%'}}>Flooding:</Text>
                                     </HStack>
                                     
-                                    <Text size="lg" style={{flex: 50, textAlign: 'right', right: 20}}>{floodingJson.length - 1}</Text>
+                                    <Text size="lg" style={{flex: 50, textAlign: 'right', right: 20}}>{floodingReportCount}</Text>
                                 </HStack>
 
                                 <Divider className="bg-info-950" />
@@ -253,7 +247,7 @@ export const HomeWeatherView = (
                                 
                                 <Button size="sm" variant="solid" style={{}} onPress={() => onPressHandler(tag.infoView, tag.infoViewUmbrellaRentalTab, "Region", "District")}>
                                     <HStack style={styles.center}>
-                                        <ButtonText>Reant one from store</ButtonText>
+                                        <ButtonText>Rent one from store</ButtonText>
                                         <ChevronsRight size={16} color="white" />
                                     </HStack>
                                     
@@ -274,6 +268,9 @@ export const HomeWeatherView = (
                         <HStack space="md" style={styles.hastckContainer}>
                             <CloudRain size={20} color="#032638" />
                             <Text size='lg' style={{flex: 99}}>18 district 1 hour rainfall</Text>
+                            <Pressable onPress={() => openWeatherTipsModal()}>
+                                <CircleQuestionMark size={20} color="#032638" />
+                            </Pressable>
                             <Pressable onPress={() => refetchData(reFetchTag.currentWeatherRepoert, 'Fetching current weather report data...')}>
                                 <RefreshCw size={20} color="#032638"/>
                             </Pressable>
@@ -297,7 +294,7 @@ export const HomeWeatherView = (
                                     {district.filter(district => district.region == item.label).map((districtItem) => (
                                         <LinearGradient key={districtItem.id} style={{borderRadius: 8}} start={[0, 10]} end={[1, 0]}
                                             colors={[
-                                                getRainColor(
+                                                Common.getRainColor(
                                                     districtItem.label == "Yau Tsim Mong"  ? 5
                                                     : districtItem.label == "Sham Shui Po" ? 18
                                                     : districtItem.label == "Kowloon City" ? 29
@@ -324,7 +321,7 @@ export const HomeWeatherView = (
                                             <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
                                                 <CloudRain size={36} style={{flex: 20}} 
                                                     color={ 
-                                                        getRainColor(
+                                                        Common.getRainColor(
                                                             districtItem.label == "Yau Tsim Mong"  ? 5
                                                             : districtItem.label == "Sham Shui Po" ? 18
                                                             : districtItem.label == "Kowloon City" ? 29
@@ -344,7 +341,7 @@ export const HomeWeatherView = (
                                                         <HStack>
                                                             <Droplet size={16} style={{marginStart: 5}}
                                                                 color={ 
-                                                                    getRainColor(
+                                                                    Common.getRainColor(
                                                                         districtItem.label == "Yau Tsim Mong"  ? 5
                                                                         : districtItem.label == "Sham Shui Po" ? 18
                                                                         : districtItem.label == "Kowloon City" ? 29
@@ -408,10 +405,13 @@ export const HomeWeatherView = (
                         ))}
                         </VStack>
 
-                        <HStack space='xs'>
-                            <Clock size={16} color="#032638" />
-                            <Text size="sm">Rainfall time period: {weatherReportRawData?.rainfall.startTime.match(/T(\d{2}:\d{2})/)?.[1]} to {weatherReportRawData?.rainfall.endTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
-                        </HStack>
+                        <VStack space="xs">
+                            <HStack space='xs'>
+                                <Clock size={16} color="#032638" />
+                                <Text size="sm">Time period: {weatherReportRawData?.rainfall.startTime.match(/T(\d{2}:\d{2})/)?.[1]} to {weatherReportRawData?.rainfall.endTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
+                            </HStack>
+                            <Text size="sm" style={{color: 'gray'}}>Rainfall data source: Hong Kong Observatory</Text>
+                        </VStack>
                     </VStack>
                     
 
@@ -421,6 +421,9 @@ export const HomeWeatherView = (
                         <HStack space="md" style={styles.hastckContainer}>
                             <MirrorRectangular size={20} color="#032638" />
                             <Text size='lg' style={{flex: 99}}>Automatic weather station data</Text>
+                            <Pressable onPress={() => openWeatherTipsModal()}>
+                                <CircleQuestionMark size={20} color="#032638" />
+                            </Pressable>
                             <Pressable onPress={() => refetchData(reFetchTag.automaticWeatherStation, 'Fetching automatic weather station data...')}>
                                 <RefreshCw size={20} color="#032638"/>
                             </Pressable>
@@ -441,7 +444,7 @@ export const HomeWeatherView = (
                             .map((item: any, index: number) => (
                                 <LinearGradient key={item.automaticWeatherStationID} style={{borderRadius: 8}} start={[0, 10]} end={[1, 0]}
                                     colors={[
-                                        getRainColor(
+                                        Common.getRainColor(
                                             item.automaticWeatherStationID == "RF001" ? 68
                                             : (item.value || 0) - 1
                                         )
@@ -458,7 +461,7 @@ export const HomeWeatherView = (
                                 <HStack space="xs" style={{justifyContent: 'center', alignItems: 'center'}}>
                                     <CloudRain size={36} style={{flex: 20}} 
                                         color={ 
-                                            getRainColor(
+                                            Common.getRainColor(
                                                 item.automaticWeatherStationID == "RF001"  ? 68
                                                 : item.value
                                             )
@@ -474,7 +477,7 @@ export const HomeWeatherView = (
                                             <HStack>
                                                 <Droplet size={16} style={{marginStart: 5}}
                                                     color={ 
-                                                        getRainColor(
+                                                        Common.getRainColor(
                                                             item.automaticWeatherStationID == "RF001"  ? 68
                                                             : item.value
                                                         )
@@ -513,10 +516,13 @@ export const HomeWeatherView = (
 
                         </VStack>
 
-                        <HStack space='xs'>
-                            <Clock size={16} color="#032638" />
-                            <Text size="sm">Update time: {AutomaticWeatherStationRawData?.obsTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
-                        </HStack>
+                        <VStack space="xs">
+                            <HStack space='xs'>
+                                <Clock size={16} color="#032638" />
+                                <Text size="sm">Update time: {AutomaticWeatherStationRawData?.obsTime.match(/T(\d{2}:\d{2})/)?.[1]}</Text>
+                            </HStack>
+                            <Text size="sm" style={{color: 'gray'}}>Rainfall data source: Hong Kong Observatory</Text>
+                        </VStack>
                 </VStack>
                     
                 </VStack>
