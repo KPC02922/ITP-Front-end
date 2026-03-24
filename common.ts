@@ -3,6 +3,7 @@ import { tag, region, district } from './components/tag'
 import * as turf from '@turf/turf'
 import { hk_18_districts } from './JsonData/hk_18_districts'
 import { automaticWeatherStation } from './JsonData/automaticWeatherStation'
+import { mapMarkerTag } from './components/tag'
 
 
 const TAG = tag.common
@@ -224,3 +225,20 @@ export const getRainColor = (value: number) => {
     }
     return "black"
 }   
+
+export const getMapMarkerIcon = (type: string) => {
+    switch (type) {
+      case mapMarkerTag.rainfall:
+        return '🌧️'
+      case mapMarkerTag.flooding:
+        return '🌊'
+      case mapMarkerTag.sfExpress:
+        return '📦'
+      case mapMarkerTag.jockeyClub:
+        return '🏇'
+      case mapMarkerTag.otherStore:
+        return '🏪'
+      default:
+        return '📍'
+    }
+}

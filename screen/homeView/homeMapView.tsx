@@ -78,7 +78,7 @@ export const HomeMapView = (
                         id: `rainfall-${item.id}`,
                         title: `Rainfall rate: ${item.rate}`,
                         position: { lat: item.latitude, lng: item.longitude },
-                        icon: "🌧️",
+                        icon: Common.getMapMarkerIcon(mapMarkerTag.rainfall),
                     }
                     tempMapMarkerList.push(marker)
                 })
@@ -94,7 +94,7 @@ export const HomeMapView = (
                         id: `flooding-${item.id}`,
                         title: `Flooding level: ${item.level}`,
                         position: { lat: item.latitude, lng: item.longitude },
-                        icon: "🌊",
+                        icon: Common.getMapMarkerIcon(mapMarkerTag.flooding),
                     }
                     tempMapMarkerList.push(marker)
                 })
@@ -109,7 +109,7 @@ export const HomeMapView = (
                         id: `sf-${item.code}`,
                         title: `SF Express: ${item.code}`,
                         position: { lat: item.latitude, lng: item.longitude },
-                        icon: "📦",
+                        icon: Common.getMapMarkerIcon(mapMarkerTag.sfExpress),
                     }
                     tempMapMarkerList.push(marker)
                 })    
@@ -124,7 +124,7 @@ export const HomeMapView = (
                         id: `jockey-${item.id}`,
                         title: `Jockey Club`,
                         position: { lat: item.latitude, lng: item.longitude },
-                        icon: "🏇",
+                        icon: Common.getMapMarkerIcon(mapMarkerTag.jockeyClub),
                     }
                     tempMapMarkerList.push(marker)
                 })
@@ -139,7 +139,7 @@ export const HomeMapView = (
                         id: `otherStore-${item.id}`,
                         title: `${item.storeName}`,
                         position: { lat: item.latitude, lng: item.longitude },
-                        icon: "🏪",
+                        icon: Common.getMapMarkerIcon(mapMarkerTag.otherStore),
                     }
                     tempMapMarkerList.push(marker)
                 })
@@ -184,14 +184,14 @@ export const HomeMapView = (
 
     return (
         <Box style={expended ? {flex: 10, height: '100%'} : {flex: 62, height: '100%'}}>
-            {!expended && <Fab
+            {/* {!expended && <Fab
                 size="lg"
                 placement="top left"
                 onPress={onSettingFabPress}
                 style={{marginTop: 24}}
             >
-                <FabIcon as={CircleQuestionMark} />
-            </Fab>}
+                <FabIcon as={FlagTriangleRight} />
+            </Fab>} */}
 
             {!expended && <Fab
                 size="lg"

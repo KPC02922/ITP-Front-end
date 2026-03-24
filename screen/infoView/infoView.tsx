@@ -78,9 +78,9 @@ export const InfoView = (
         selectDistrictModalRef.current?.setSelectedRegion("Region")
     }
 
-    const openMapMarkerModal = (lat: number, lng: number) => {
+    const openMapMarkerModal = (lat: number, lng: number, type: string) => {
         Common.writeConsole(TAG, `open map marker modal`)
-        mapMarkerModalRef.current?.setLatLng(lat, lng)
+        mapMarkerModalRef.current?.setMarker(lat, lng, type)
         mapMarkerModalRef.current?.open()
     }
 

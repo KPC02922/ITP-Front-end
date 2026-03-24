@@ -1,4 +1,4 @@
-import { tag, region, district } from "@/components/tag"
+import { tag, region, district, mapMarkerTag } from "@/components/tag"
 import { styles } from "@/assets/styles/styles"
 import * as Common from "@/common"
 import RainRelateType from "@/interfcaeType/RainRelateType"
@@ -16,12 +16,12 @@ const TAG = tag.rainRelateListItem
 
 export const RainRelateListItem = (
     {type, item, openMapMarkerModal}:
-    {type: string, item: RainRelateType, openMapMarkerModal: (lat: number, lng: number) => void}
+    {type: string, item: RainRelateType, openMapMarkerModal: (lat: number, lng: number, type: string) => void}
 ) => {
-    const districtTimeHeader: string[] = [tag.infoViewRainfallTab, tag.infoViewFloodingTab]
-    const displaytStoreName: string[] = [tag.infoViewUmbrellaRentalTab]
-    const displayRateTag: string[] = [tag.infoViewRainfallTab]
-    const displayOfficeHourTag: string[] = [tag.infoViewUmbrellaRentalTab]
+    const districtTimeHeader: string[] = [tag.infoViewRainfallTab, tag.infoViewFloodingTab, mapMarkerTag.rainfall, mapMarkerTag.flooding]
+    const displaytStoreName: string[] = [tag.infoViewUmbrellaRentalTab, mapMarkerTag.otherStore]
+    const displayRateTag: string[] = [tag.infoViewRainfallTab, mapMarkerTag.rainfall]
+    const displayOfficeHourTag: string[] = [tag.infoViewUmbrellaRentalTab, mapMarkerTag.otherStore]
     const rateList = [1, 2, 3, 4, 5]
     const iconColor = "#32b4f4"
 
@@ -87,7 +87,7 @@ export const RainRelateListItem = (
                 </HStack>}
             </VStack>
 
-            <Button variant="solid" size="sm" action="primary" onPress={() => openMapMarkerModal(item.latitude, item.longitude)}>
+            <Button variant="solid" size="sm" action="primary" onPress={() => openMapMarkerModal(item.latitude, item.longitude, type)}>
                 <HStack space="sm" style={[styles.hastckContainer, {justifyContent: 'center', alignItems: 'center'}]}>
                     <MapPinned color="#ffffff" size={16} />
                     <Text style={{color: '#ffffff'}}>View location on Map</Text>

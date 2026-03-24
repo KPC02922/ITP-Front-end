@@ -1,4 +1,4 @@
-import { tag, store } from "@/components/tag"
+import { tag, store, mapMarkerTag } from "@/components/tag"
 import { styles } from "@/assets/styles/styles"
 import * as Common from "@/common"
 import React, {useState, useRef, forwardRef, useImperativeHandle, useEffect} from 'react'
@@ -19,7 +19,7 @@ const TAG = tag.mapMarkerModal
 export interface MapMarkerModalHandle {
     open: () => void
     close: () => void
-    setLatLng: (lat: number, lng: number) => void
+    setMarker: (lat: number, lng: number, type?: string) => void
 }
 
 interface MapMarkerModalProps {
@@ -29,6 +29,7 @@ interface MapMarkerModalProps {
 
 export const MapMarkerModal = forwardRef<MapMarkerModalHandle, MapMarkerModalProps>((props, ref) => {
     const [visible, setVisible] = useState(false)
+    const [type, setType] = useState<string | null>(null)
     const webViewContent = props.webViewContent
 
     const initPosition = Common.getCurrentPosition()
@@ -43,15 +44,19 @@ export const MapMarkerModal = forwardRef<MapMarkerModalHandle, MapMarkerModalPro
     useImperativeHandle(ref, () => ({
         open: () => openHandler(),
         close: () => closeHandler(),
-        setLatLng: (lat: number, lng: number) => {
+        setMarker: (lat: number, lng: number, type?: string) => {
+            let markerIcon = "📍"
+            if (type) {
+                markerIcon = Common.getMapMarkerIcon(type)
+            }
             Common.writeConsole(TAG, `Set marker position to lat: ${lat}, lng: ${lng}`)
             setMapCenterPosition({lat, lng})
             setMarkerList([
                 {
                     id: 'selectedLocation',
                     position: {lat, lng},
-                    title: 'Selected Location',
-                    icon: "📍",
+                    title: 'Location',
+                    icon: markerIcon,
                     size: [30, 30],
                     iconAnchor: [5, 30],
                 }
@@ -67,6 +72,7 @@ export const MapMarkerModal = forwardRef<MapMarkerModalHandle, MapMarkerModalPro
     const closeHandler = () => {
         Common.writeConsole(TAG, `close modal`)
         setVisible(false)
+        setType(null)
     }
 
     const onLocateFabPress = async () => {
@@ -108,6 +114,19 @@ export const MapMarkerModal = forwardRef<MapMarkerModalHandle, MapMarkerModalPro
                                 attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap</a> contributors'              
                             }
                         ]}
+                        ownPositionMarker={{
+                            title: "You are here",
+                            id: 'userPosition',
+                            position: { lat: initPosition.lat, lng: initPosition.lng },
+                            icon: "📍",
+                            size: [24, 24],
+                            animation: {
+                                type: AnimationType.PULSE, // Requires importing AnimationType
+                                duration: 5,
+                                delay: 0,
+                                iterationCount: INFINITE_ANIMATION_ITERATIONS
+                            }
+                    }}
                     />
                 </Box>
 

@@ -1,4 +1,4 @@
-import { table, tag } from "@/components/tag"
+import { mapMarkerTag, table, tag } from "@/components/tag"
 import { styles } from "@/assets/styles/styles"
 import * as Common from "@/common"
 import { Text } from "@/components/ui/text"
@@ -18,7 +18,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { SendHorizonal } from "lucide-react-native"
 import { Toast } from "@/components/ui/toast"
 import { Fab, FabIcon } from "@/components/ui/fab"
-import { createTableAsync, getAllTableRecords, getTableRecords, insertRecord, updateRainfallReport } from "@/controller/db/sqliteHelper"
+import { createTableAsync, getAllTableRecords, getTableRecords, getAllTableRecordsByDistance, insertRecord, updateRainfallReport, getTableRecordsByDistance } from "@/controller/db/sqliteHelper"
 import { createTable } from "@/controller/db/createTable"
 import RainfallType from "@/interfcaeType/RainfallType"
 
@@ -26,7 +26,7 @@ const TAG = tag.infoViewRainRelatedTab
 
 export const InfoViewRainRelatedTab = (
     {type, pressRegionBtn, pressDistrictBtn, pressStoreBtn, resetSelected, openMapMarkerModal, regionLabel, districtLabel, storeLabel}: 
-    {type: string, pressRegionBtn: () => void, pressDistrictBtn: () => void, pressStoreBtn: () => void, resetSelected: () => void, openMapMarkerModal: (lat: number, lng: number) => void, regionLabel: string, districtLabel: string, storeLabel: string}
+    {type: string, pressRegionBtn: () => void, pressDistrictBtn: () => void, pressStoreBtn: () => void, resetSelected: () => void, openMapMarkerModal: (lat: number, lng: number, type: string) => void, regionLabel: string, districtLabel: string, storeLabel: string}
 ) => {
     const defaultRegionLabel = "Region"
     const defaultDistrictLabel = "District"
@@ -74,6 +74,7 @@ export const InfoViewRainRelatedTab = (
                 let rainfallSqlExtra = ``
                 let sqlParams: any[] = []
                 let count = 0
+                const { lat, lng } = Common.getCurrentPosition()
 
                 if (filteringRegion) {
                     rainfallSqlExtra += `regionCode = ? `
@@ -98,10 +99,17 @@ export const InfoViewRainRelatedTab = (
                     sqlParams.push(`%${searchInput}%`)
                     count++
                 }
-                rainfallSqlExtra += ` ORDER BY postTime DESC`
+
+                let rainfallRecord: any[] = []
+                if (filteringRegion || filteringDistrict) {
+                    rainfallRecord = await getTableRecords(table.rainfallReport, rainfallSqlExtra, sqlParams, 'ORDER BY distance ASC, postTime DESC')
+                }
+                else {
+                    rainfallRecord = await getTableRecordsByDistance(table.rainfallReport, lat, lng, rainfallSqlExtra, sqlParams)
+                }
 
                 Common.writeConsole(TAG, `setDataHandler sql extra: ${rainfallSqlExtra} | params: ${JSON.stringify(sqlParams)}`)
-                const rainfallRecord = await getTableRecords(table.rainfallReport, rainfallSqlExtra, sqlParams)
+                // const rainfallRecord = await getTableRecords(table.rainfallReport, rainfallSqlExtra, sqlParams)
                 Common.writeConsole(TAG, `Rainfall records from DB: ${JSON.stringify(rainfallRecord)}`)
                 const rainfallReportData: RainRelateType[] = rainfallRecord.map((item: any) => ({
                     id: item.id,
@@ -125,12 +133,15 @@ export const InfoViewRainRelatedTab = (
 
                 if (!filteringRegion && !filteringDistrict && !filteringSearchInput) {
                     setFloodingJsonData(DFfloodingJsonData)
+                    fakeLoading()
                     return
                 }
 
                 let floodingSqlExtra = ``
                 let sqlParams: any[] = []
                 let count = 0
+                const { lat, lng } = Common.getCurrentPosition()
+
                 if (filteringRegion) {
                     floodingSqlExtra += `regionCode = ? `
                     sqlParams.push(Common.regionLabelToCode(regionLabel))
@@ -152,10 +163,16 @@ export const InfoViewRainRelatedTab = (
                     sqlParams.push(`%${searchInput}%`)
                     count++
                 }
-                floodingSqlExtra += ` ORDER BY postTime DESC`
 
+                let floodingRecord: any[] = []
+                if (filteringRegion || filteringDistrict) {
+                    floodingRecord = await getTableRecords(table.floodingReport, floodingSqlExtra, sqlParams, 'ORDER BY distance ASC, postTime DESC')
+                }
+                else {
+                    floodingRecord = await getTableRecordsByDistance(table.floodingReport, lat, lng, floodingSqlExtra, sqlParams)
+                }
                 Common.writeConsole(TAG, `setDataHandler sql extra: ${floodingSqlExtra} | params: ${JSON.stringify(sqlParams)}`)
-                const floodingRecord = await getTableRecords(table.floodingReport, floodingSqlExtra, sqlParams)
+                // const floodingRecord = await getTableRecords(table.floodingReport, floodingSqlExtra, sqlParams)
                 Common.writeConsole(TAG, `Flooding records from DB: ${JSON.stringify(floodingRecord)}`)
                 const floodingReportData: RainRelateType[] = floodingRecord.map((item: any) => ({
                     id: item.id,
@@ -181,12 +198,14 @@ export const InfoViewRainRelatedTab = (
 
                 if (!filteringRegion && !filteringDistrict && !filteringStore && !filteringSearchInput) {
                     setUmbrellaRentalJson(DFumbrellaRentalJson)
+                    fakeLoading()
                     return
                 }
 
                 let umbrellaRentalSqlExtra = ``
                 let sqlParams: any[] = []
                 let count = 0
+                const { lat, lng } = Common.getCurrentPosition()
 
                 if (filteringRegion) {
                     umbrellaRentalSqlExtra += `regionCode = ?`
@@ -230,7 +249,15 @@ export const InfoViewRainRelatedTab = (
                 }
 
                 Common.writeConsole(TAG, `setDataHandler sql extra: ${umbrellaRentalSqlExtra} | params: ${JSON.stringify(sqlParams)}`)
-                const umbrellaRentalDRecord = await getTableRecords(table.umbrellaRentalTemp, umbrellaRentalSqlExtra, sqlParams)
+                let umbrellaRentalDRecord: any[] = []
+                if (filteringRegion || filteringDistrict) {
+                    umbrellaRentalDRecord = await getTableRecords(table.umbrellaRentalTemp, umbrellaRentalSqlExtra, sqlParams, 'ORDER BY districtCode ASC, storeName ASC')
+                }
+                else {
+                    umbrellaRentalDRecord = await getTableRecordsByDistance(table.umbrellaRentalTemp, lat, lng, umbrellaRentalSqlExtra, sqlParams)
+                }
+
+                // const umbrellaRentalDRecord = await getTableRecordsByDistance(table.umbrellaRentalTemp, lat, lng, umbrellaRentalSqlExtra, sqlParams)
                 Common.writeConsole(TAG, `Umbrella Rental records from DB: ${JSON.stringify(umbrellaRentalDRecord)}`)
                 const umbrellaRentalData: RainRelateType[] = umbrellaRentalDRecord.map((item: any) => ({
                     id: `umbrella-${item.id}-${item.sysid}-${Math.random()}`,
@@ -281,7 +308,10 @@ export const InfoViewRainRelatedTab = (
         setFloodingJsonData(floodingJson)
         setTimeout(() => {
             const loadSqliteData = async () => {
-                const rainfallReportRecord = await getAllTableRecords(table.rainfallReport, true, `ORDER BY postTime DESC`)
+                const {lat, lng} = Common.getCurrentPosition()
+
+                const rainfallReportRecord = await getAllTableRecordsByDistance(table.rainfallReport, lat, lng, ' ,postTime DESC')
+                // const rainfallReportRecord = await getAllTableRecords(table.rainfallReport, true, `ORDER BY postTime DESC`)
                 Common.writeConsole(TAG, `Rainfall Report records from DB: ${JSON.stringify(rainfallReportRecord)}`)
                 const rainfallReportData: RainRelateType[] = rainfallReportRecord.map((item: any) => ({
                     id: item.id,
@@ -298,7 +328,8 @@ export const InfoViewRainRelatedTab = (
                 setRainfallJsonData(rainfallReportData)
                 setDFRainfallJsonData(rainfallReportData)
 
-                const floodingReportRecord = await getAllTableRecords(table.floodingReport, true, `ORDER BY postTime DESC`)
+                const floodingReportRecord = await getAllTableRecordsByDistance(table.floodingReport, lat, lng, ' ,postTime DESC')
+                // const floodingReportRecord = await getAllTableRecords(table.floodingReport, true, `ORDER BY postTime DESC`)
                 Common.writeConsole(TAG, `Flooding records from DB: ${JSON.stringify(floodingReportRecord)}`)
                 const floodingReportData: RainRelateType[] = floodingReportRecord.map((item: any) => ({
                     id: item.id,
@@ -315,8 +346,10 @@ export const InfoViewRainRelatedTab = (
                 setFloodingJsonData(floodingReportData)
                 setDFFloodingJsonData(floodingReportData)
 
-                const umbrellaRentalDRecord = await getAllTableRecords(table.umbrellaRentalTemp, true, `ORDER BY districtCode ASC, storeName ASC`)
-                // Common.writeConsole(TAG, `Umbrella Rental records from DB: ${JSON.stringify(umbrellaRentalDRecord)}`)
+                
+                const umbrellaRentalDRecord = await getAllTableRecordsByDistance(table.umbrellaRentalTemp, lat, lng, ' ,districtCode ASC, storeName ASC')
+                // const umbrellaRentalDRecord = await getAllTableRecords(table.umbrellaRentalTemp, true, `ORDER BY districtCode ASC, storeName ASC`)
+                Common.writeConsole(TAG, `Umbrella Rental records from DB: ${JSON.stringify(umbrellaRentalDRecord)}`)
                 const umbrellaRentalData: RainRelateType[] = umbrellaRentalDRecord.map((item: any) => ({
                     id: `umbrella-${item.id}-${item.sysid}-${Math.random()}`,
                     regionCode: item.regionCode,
@@ -434,7 +467,7 @@ export const InfoViewRainRelatedTab = (
                             :
                             rainfallJsonData.map((item) => (
                                 <Box key={item.id} style={{paddingHorizontal: 10}}>
-                                    <RainRelateListItem type={type} item={item} openMapMarkerModal={openMapMarkerModal}/>
+                                    <RainRelateListItem type={mapMarkerTag.rainfall} item={item} openMapMarkerModal={openMapMarkerModal}/>
                                 </Box>
                             ))
                         }
@@ -455,7 +488,7 @@ export const InfoViewRainRelatedTab = (
                             :
                             floodingJsonData.map((item) => (
                                 <Box key={item.id} style={{paddingHorizontal: 10}}>
-                                    <RainRelateListItem type={type} item={item} openMapMarkerModal={openMapMarkerModal}/>
+                                    <RainRelateListItem type={mapMarkerTag.flooding} item={item} openMapMarkerModal={openMapMarkerModal}/>
                                 </Box>
                             ))
                         }
@@ -476,7 +509,7 @@ export const InfoViewRainRelatedTab = (
                             :
                             umbrellaRentalJson.map((item, index) => ( index < listIndex ) && (
                                 <Box key={item.id} style={{paddingHorizontal: 10}}>
-                                    <RainRelateListItem type={type} item={item} openMapMarkerModal={openMapMarkerModal}/>
+                                    <RainRelateListItem type={mapMarkerTag.otherStore} item={item} openMapMarkerModal={openMapMarkerModal}/>
                                 </Box>
                             ))
                         }

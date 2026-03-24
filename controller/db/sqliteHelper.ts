@@ -28,11 +28,11 @@ export const createTableAsync = async (createTableQuery: string, table?: string)
     }
 }
 
-export const getAllTableRecords = async (tableName: string, asc: boolean, extra?: string) => {
+export const getAllTableRecords = async (tableName: string, asc: boolean, order?: string) => {
     try {
         let sql
-        if (extra) {
-            sql = `SELECT * FROM ${tableName} ${extra}`
+        if (order) {
+            sql = `SELECT * FROM ${tableName} ${order}`
         } else {
             sql = `SELECT * FROM ${tableName} ORDER BY sysId ${asc ? 'ASC' : 'DESC'}`
         }
@@ -46,14 +46,46 @@ export const getAllTableRecords = async (tableName: string, asc: boolean, extra?
     }
 }
 
-export const getTableRecords = async (tableName: string, condition: string, params: any) => {
+export const getTableRecords = async (tableName: string, condition: string, params: any, order?: string) => {
     try {
-        const sql = `SELECT * FROM ${tableName} WHERE ${condition}`
+        const sql = `SELECT * FROM ${tableName} WHERE ${condition} ${order ? order : ''}`
         const result = await db!.getAllAsync(sql, params)
         Common.writeConsole(TAG, `Get records from table ${tableName} with condition: ${condition}`)
         return result
     } catch (error) {
         Common.writeConsole(TAG, `Error getting records from table ${tableName}: ${error}`)
+        return []
+    }
+}
+
+export const getAllTableRecordsByDistance = async (tableName: string, latitude: number, longitude: number, order?: string) => {
+    try {
+        const sql = `SELECT *, ( (latitude - ?) * (latitude - ?) ) + ( (longitude - ?) * (longitude - ?) ) AS distance FROM ${tableName} ORDER BY distance ASC ${order ? order : ''}`
+        const result = await db!.getAllAsync(sql, [latitude, latitude, longitude, longitude])
+        Common.writeConsole(TAG, `Get records from table ${tableName} by distance with latitude: ${latitude}, longitude: ${longitude}`)
+        return result
+    }
+    catch (error) {
+        Common.writeConsole(TAG, `Error getting records from table ${tableName} by distance: ${error}`)
+        return []
+    }
+}
+
+export const getTableRecordsByDistance = async (tableName: string, latitude: number, longitude: number, condition: string, params: any[], order?: string) => {
+    try {
+        let sql
+        let sqlParams = [latitude, latitude, longitude, longitude, ...params]
+        if (condition) {
+            sql = `SELECT *, ( (latitude - ?) * (latitude - ?) ) + ( (longitude - ?) * (longitude - ?) ) AS distance FROM ${tableName} WHERE ${condition} ORDER BY distance ASC ${order ? order : ''}`
+        } else {
+            sql = `SELECT *, ( (latitude - ?) * (latitude - ?) ) + ( (longitude - ?) * (longitude - ?) ) AS distance FROM ${tableName} ORDER BY distance ASC ${order ? order : ''}`
+        }
+        const result = await db!.getAllAsync(sql, sqlParams)
+        Common.writeConsole(TAG, `Get records from table ${tableName} by distance with latitude: ${latitude}, longitude: ${longitude}`)
+        return result
+    }
+    catch (error) {
+        Common.writeConsole(TAG, `Error getting record from table ${tableName} by distance: ${error}`)
         return []
     }
 }
