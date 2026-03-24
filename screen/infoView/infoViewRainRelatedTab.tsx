@@ -102,7 +102,7 @@ export const InfoViewRainRelatedTab = (
 
                 let rainfallRecord: any[] = []
                 if (filteringRegion || filteringDistrict) {
-                    rainfallRecord = await getTableRecords(table.rainfallReport, rainfallSqlExtra, sqlParams, 'ORDER BY distance ASC, postTime DESC')
+                    rainfallRecord = await getTableRecords(table.rainfallReport, rainfallSqlExtra, sqlParams, 'ORDER BY postTime DESC')
                 }
                 else {
                     rainfallRecord = await getTableRecordsByDistance(table.rainfallReport, lat, lng, rainfallSqlExtra, sqlParams)
@@ -166,7 +166,7 @@ export const InfoViewRainRelatedTab = (
 
                 let floodingRecord: any[] = []
                 if (filteringRegion || filteringDistrict) {
-                    floodingRecord = await getTableRecords(table.floodingReport, floodingSqlExtra, sqlParams, 'ORDER BY distance ASC, postTime DESC')
+                    floodingRecord = await getTableRecords(table.floodingReport, floodingSqlExtra, sqlParams, 'ORDER BY postTime DESC')
                 }
                 else {
                     floodingRecord = await getTableRecordsByDistance(table.floodingReport, lat, lng, floodingSqlExtra, sqlParams)
@@ -251,7 +251,7 @@ export const InfoViewRainRelatedTab = (
                 Common.writeConsole(TAG, `setDataHandler sql extra: ${umbrellaRentalSqlExtra} | params: ${JSON.stringify(sqlParams)}`)
                 let umbrellaRentalDRecord: any[] = []
                 if (filteringRegion || filteringDistrict) {
-                    umbrellaRentalDRecord = await getTableRecords(table.umbrellaRentalTemp, umbrellaRentalSqlExtra, sqlParams, 'ORDER BY districtCode ASC, storeName ASC')
+                    umbrellaRentalDRecord = await getTableRecords(table.umbrellaRentalTemp, umbrellaRentalSqlExtra, sqlParams, 'ORDER BY storeName ASC')
                 }
                 else {
                     umbrellaRentalDRecord = await getTableRecordsByDistance(table.umbrellaRentalTemp, lat, lng, umbrellaRentalSqlExtra, sqlParams)
@@ -349,7 +349,7 @@ export const InfoViewRainRelatedTab = (
                 
                 const umbrellaRentalDRecord = await getAllTableRecordsByDistance(table.umbrellaRentalTemp, lat, lng, ' ,districtCode ASC, storeName ASC')
                 // const umbrellaRentalDRecord = await getAllTableRecords(table.umbrellaRentalTemp, true, `ORDER BY districtCode ASC, storeName ASC`)
-                Common.writeConsole(TAG, `Umbrella Rental records from DB: ${JSON.stringify(umbrellaRentalDRecord)}`)
+                // Common.writeConsole(TAG, `Umbrella Rental records from DB: ${JSON.stringify(umbrellaRentalDRecord)}`)
                 const umbrellaRentalData: RainRelateType[] = umbrellaRentalDRecord.map((item: any) => ({
                     id: `umbrella-${item.id}-${item.sysid}-${Math.random()}`,
                     regionCode: item.regionCode,

@@ -15,7 +15,7 @@ export const initDb = async () => {
         await initTable()
     } 
     catch (error) {
-        Common.writeConsole(TAG, `Error initializing database: ${error}`)
+        Common.writeConsole(TAG, `[initDb] Error initializing database: ${error}`)
     }
 }
 
@@ -24,7 +24,7 @@ export const createTableAsync = async (createTableQuery: string, table?: string)
         await db!.execAsync(createTableQuery)
         Common.writeConsole(TAG, `Table [${table}] created successfully`)
     } catch (error) {
-        Common.writeConsole(TAG, `Error creating table [${table}]: ${error}`)
+        Common.writeConsole(TAG, `[createTableAsync] Error creating table [${table}]: ${error}`)
     }
 }
 
@@ -41,7 +41,7 @@ export const getAllTableRecords = async (tableName: string, asc: boolean, order?
         Common.writeConsole(TAG, `Get all records from table ${tableName}`)
         return result
     } catch (error) {
-        Common.writeConsole(TAG, `Error getting records from table ${tableName}: ${error}`)
+        Common.writeConsole(TAG, `[getAllTableRecords] Error getting records from table ${tableName}: ${error}`)
         return []
     }
 }
@@ -49,11 +49,11 @@ export const getAllTableRecords = async (tableName: string, asc: boolean, order?
 export const getTableRecords = async (tableName: string, condition: string, params: any, order?: string) => {
     try {
         const sql = `SELECT * FROM ${tableName} WHERE ${condition} ${order ? order : ''}`
+        Common.writeConsole(TAG, `Get records from table ${tableName} | sql: ${sql} | params: ${JSON.stringify(params)}`)
         const result = await db!.getAllAsync(sql, params)
-        Common.writeConsole(TAG, `Get records from table ${tableName} with condition: ${condition}`)
         return result
     } catch (error) {
-        Common.writeConsole(TAG, `Error getting records from table ${tableName}: ${error}`)
+        Common.writeConsole(TAG, `[getTableRecords] Error getting records from table ${tableName}: ${error}`)
         return []
     }
 }
@@ -66,7 +66,7 @@ export const getAllTableRecordsByDistance = async (tableName: string, latitude: 
         return result
     }
     catch (error) {
-        Common.writeConsole(TAG, `Error getting records from table ${tableName} by distance: ${error}`)
+        Common.writeConsole(TAG, `[getAllTableRecordsByDistance] Error getting records from table ${tableName} by distance: ${error}`)
         return []
     }
 }
@@ -85,7 +85,7 @@ export const getTableRecordsByDistance = async (tableName: string, latitude: num
         return result
     }
     catch (error) {
-        Common.writeConsole(TAG, `Error getting record from table ${tableName} by distance: ${error}`)
+        Common.writeConsole(TAG, `[getTableRecordsByDistance] Error getting record from table ${tableName} by distance: ${error}`)
         return []
     }
 }
@@ -96,7 +96,7 @@ export const insertRecord = async (tableName: string, columns: string[], values:
         await db!.runAsync(`INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${placeholders})`, values)
         Common.writeConsole(TAG, `Inserted record into table ${tableName} successfully`)
     } catch (error) {
-        Common.writeConsole(TAG, `Error inserting record into table ${tableName}: ${error}`)
+        Common.writeConsole(TAG, `[insertRecord] Error inserting record into table ${tableName}: ${error}`)
     }
 }
 
@@ -134,7 +134,7 @@ export const updateRainfallReport = async () => {
                     Common.writeConsole(TAG, `Inserted Rainfall Report record id: ${id} successfully`)
                 })
                 .catch((error) => {
-                    Common.writeConsole(TAG, `Error inserting Rainfall Report record id: ${id}, error: ${error}`)
+                    Common.writeConsole(TAG, `[updateRainfallReport] Error inserting Rainfall Report record id: ${id}, error: ${error}`)
                 })
             })
         })
@@ -175,7 +175,7 @@ export const updateFloodingReport = async () => {
                     Common.writeConsole(TAG, `Inserted Flooding Report record id: ${id} successfully`)
                 })
                 .catch((error) => {
-                    Common.writeConsole(TAG, `Error inserting Flooding Report record id: ${id}, error: ${error}`)
+                    Common.writeConsole(TAG, `[updateFloodingReport] Error inserting Flooding Report record id: ${id}, error: ${error}`)
                 })
             })
         })
@@ -277,7 +277,7 @@ const initTable = async () => {
                         Common.writeConsole(TAG, `Inserted SF Express record id: ${id} successfully`)
                     })
                     .catch((error) => {
-                        Common.writeConsole(TAG, `Error inserting SF Express record id: ${id}, error: ${error}`)
+                        Common.writeConsole(TAG, `[updateSfExpress] Error inserting SF Express record id: ${id}, error: ${error}`)
                     })
                 })
             })
@@ -310,7 +310,7 @@ const initTable = async () => {
                         Common.writeConsole(TAG, `Inserted Jockey Club record id: ${id} successfully`)
                     })
                     .catch((error) => {
-                        Common.writeConsole(TAG, `Error inserting Jockey Club record id: ${id}, error: ${error}`)
+                        Common.writeConsole(TAG, `[updateJockeyClub] Error inserting Jockey Club record id: ${id}, error: ${error}`)
                     })
                 })
             })
@@ -335,7 +335,7 @@ const initTable = async () => {
 
         Common.writeConsole(TAG, 'Tables initialized successfully')
     } catch (error) {
-        Common.writeConsole(TAG, `Error initializing tables: ${error}`)
+        Common.writeConsole(TAG, `[initDb] Error initializing tables: ${error}`)
     }
 }
 
