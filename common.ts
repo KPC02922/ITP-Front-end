@@ -1,10 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { tag, region, district } from './components/tag'
+import { tag, region, district, mapMarkerTag } from './components/tag'
 import * as turf from '@turf/turf'
 import { hk_18_districts } from './JsonData/hk_18_districts'
 import { automaticWeatherStation } from './JsonData/automaticWeatherStation'
-import { mapMarkerTag } from './components/tag'
-
 
 const TAG = tag.common
 let currentPosition = {lat: 0, lng: 0}

@@ -3,7 +3,7 @@ import { tag } from '../../components/tag'
 import * as Common from '../../common'
 
 const TAG = tag.apiHelper
-const baseUrl = 'http://192.168.128.54:8080'    // check if same as expo provide ip address
+const baseUrl = 'http://192.168.128.53:8080'    // check if same as expo provide ip address
 
 export const testApi = async () => {
     try {
